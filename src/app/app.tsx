@@ -1,3 +1,12 @@
+import { Outlet } from 'react-router';
+import { useLocaleSync } from '@/shared/i18next/use-locale-sync';
+
 export const App = () => {
-  return <div>Hello world</div>;
+	useLocaleSync();
+
+	return (
+		<div>
+			<Outlet />
+		</div>
+	);
 };

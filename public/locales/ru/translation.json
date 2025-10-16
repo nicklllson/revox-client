@@ -1,0 +1,5 @@
+{
+	"hello": "Привет, {{name}}!",
+	"description": "Это React приложение с поддержкой i18n",
+	"changeLanguage": "Сменить язык"
+}
