@@ -6,13 +6,21 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky",
+    "format": "biome format --write",
+    "lint": "biome lint --write",
+    "check": "biome check --write"
   },
   "dependencies": {
+    "@tailwindcss/vite": "^4.1.14",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "react-router": "^7.9.4",
+    "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.2.6",
     "@eslint/js": "^9.36.0",
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",
@@ -20,6 +28,7 @@
     "@vitejs/plugin-react": "^5.0.4",
     "babel-plugin-react-compiler": "^19.1.0-rc.3",
     "globals": "^16.4.0",
+    "husky": "^9.1.7",
     "typescript": "~5.9.3",
     "vite": "^7.1.7"
   }
