@@ -1,3 +1,4 @@
 pnpm lint
 pnpm format
 pnpm check
+npx lint-staged
