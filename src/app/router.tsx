@@ -1,11 +1,10 @@
-import { createBrowserRouter, Navigate } from 'react-router';
-import i18n from '@/shared/i18next/config';
+import { createBrowserRouter } from 'react-router';
 import { ROUTES } from '@/shared/model/routes';
 import { App } from './app';
 
 export const router = createBrowserRouter([
 	{
-		path: '/:locale',
+		path: '/',
 		element: <App />,
 		children: [
 			{
@@ -29,11 +28,5 @@ export const router = createBrowserRouter([
 				lazy: () => import('@/pages/private/video.page'),
 			},
 		],
-	},
-	{
-		path: '/',
-		element: (
-			<Navigate to={`/${i18n.language || i18n.options.fallbackLng}`} replace />
-		),
 	},
 ]);

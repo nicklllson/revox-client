@@ -11,7 +11,8 @@ i18n
 	.use(Backend)
 	.init({
 		fallbackLng: 'en',
-		debug: import.meta.env.DEV,
+		lng: 'en',
+		debug: true,
 		supportedLngs: ['en', 'ru'],
 
 		interpolation: {
