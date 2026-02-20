@@ -7,9 +7,10 @@ export const ROUTES = {
 		PASSWORD: 'password',
 		CONFIRM: 'email-confirm',
 		PASSCODE: 'passcode',
+		HOME: '/',
+		PRICING: 'pricing',
 	},
 	PRIVATE: {
-		HOME: '',
 		VIDEO: 'videos/:videoId',
 		META: {
 			PURPOSE: 'meta/purpose',

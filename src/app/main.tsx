@@ -1,9 +1,12 @@
-import '@/shared/i18next/config';
 import { Suspense } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
+
+import '@/shared/i18next/config';
 import { ErrorBound } from '@/shared/model/error';
+
 import { router } from './router';
+import './index.css';
 
 const rootElement = document.getElementById('root');
 

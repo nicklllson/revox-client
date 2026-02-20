@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router';
 import { ROUTES } from '@/shared/model/routes';
 import { App } from './app';
+import { MainLayout } from './layouts/main-layout';
 
 export const router = createBrowserRouter([
 	{
@@ -20,12 +21,17 @@ export const router = createBrowserRouter([
 				lazy: () => import('@/pages/public/sign-in.page'),
 			},
 			{
-				path: ROUTES.PRIVATE.HOME,
-				lazy: () => import('@/pages/private/home.page'),
-			},
-			{
-				path: ROUTES.PRIVATE.VIDEO,
-				lazy: () => import('@/pages/private/video.page'),
+				element: <MainLayout />,
+				children: [
+					{
+						path: ROUTES.PUBLIC.HOME,
+						lazy: () => import('@/pages/private/home.page'),
+					},
+					{
+						path: ROUTES.PRIVATE.VIDEO,
+						lazy: () => import('@/pages/private/video.page'),
+					},
+				],
 			},
 		],
 	},
