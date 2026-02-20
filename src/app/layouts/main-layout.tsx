@@ -3,9 +3,11 @@ import { Header } from '@/widgets/header';
 
 export const MainLayout = () => {
 	return (
-		<div className='container'>
+		<>
 			<Header />
-			<Outlet />
-		</div>
+			<main className='mt-18 px-5'>
+				<Outlet />
+			</main>
+		</>
 	);
 };

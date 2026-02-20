@@ -4,7 +4,7 @@ import { ShinyText } from './shiny-text';
 
 export const Logo = () => {
 	return (
-		<Link to={ROUTES.PUBLIC.HOME} className='p-2 font-bold text-xl'>
+		<Link to={ROUTES.PUBLIC.HOME} className='font-bold text-xl'>
 			<ShinyText spread={100} text='REEEVOX' />
 		</Link>
 	);

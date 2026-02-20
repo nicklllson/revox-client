@@ -1,4 +1,6 @@
 import { Diamond, Globe, LogOut, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { ROUTES } from '@/shared/model/routes';
 import { Button } from '@/shared/ui/button';
 import {
 	DropdownMenu,
@@ -9,6 +11,8 @@ import {
 } from '@/shared/ui/dropdown-menu';
 
 export const ProfileMenu = () => {
+	const navigation = useNavigate();
+
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild>
@@ -16,7 +20,7 @@ export const ProfileMenu = () => {
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className='w-50' align='start'>
 				<DropdownMenuGroup>
-					<DropdownMenuItem>
+					<DropdownMenuItem onClick={() => navigation(ROUTES.PUBLIC.PRICING)}>
 						<Diamond />
 						Pricing
 					</DropdownMenuItem>

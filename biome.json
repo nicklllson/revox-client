@@ -104,7 +104,8 @@
 				"useIsArray": "error",
 				"useAwait": "error",
 				"useErrorMessage": "error",
-				"useAdjacentOverloadSignatures": "error"
+				"useAdjacentOverloadSignatures": "error",
+				"noArrayIndexKey": "off"
 			},
 			"security": {
 				"noDangerouslySetInnerHtml": "warn"

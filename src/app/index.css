@@ -122,9 +122,8 @@
   }
 }
 
-
-.container {
-  @apply w-full mx-auto max-w-full;
+h1 {
+  @apply text-6xl font-semibold
 }
 
 button,

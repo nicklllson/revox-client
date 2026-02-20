@@ -25,7 +25,11 @@ export const router = createBrowserRouter([
 				children: [
 					{
 						path: ROUTES.PUBLIC.HOME,
-						lazy: () => import('@/pages/private/home.page'),
+						lazy: () => import('@/pages/public/home.page'),
+					},
+					{
+						path: ROUTES.PUBLIC.PRICING,
+						lazy: () => import('@/pages/public/pricing.page'),
 					},
 					{
 						path: ROUTES.PRIVATE.VIDEO,
