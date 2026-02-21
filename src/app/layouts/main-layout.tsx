@@ -1,12 +1,14 @@
+import type { PropsWithChildren } from 'react';
 import { Outlet } from 'react-router';
 import { Header } from '@/widgets/header';
 
-export const MainLayout = () => {
+export const MainLayout = ({ children }: PropsWithChildren) => {
 	return (
 		<>
 			<Header />
-			<main className='mt-18 px-5'>
+			<main className='mt-18 flex h-full flex-1 flex-col px-5'>
 				<Outlet />
+				{children}
 			</main>
 		</>
 	);

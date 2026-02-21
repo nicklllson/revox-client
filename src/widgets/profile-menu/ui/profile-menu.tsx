@@ -18,7 +18,7 @@ export const ProfileMenu = () => {
 			<DropdownMenuTrigger asChild>
 				<Button variant='outline'>NS</Button>
 			</DropdownMenuTrigger>
-			<DropdownMenuContent className='w-50' align='start'>
+			<DropdownMenuContent className='w-50' align='end'>
 				<DropdownMenuGroup>
 					<DropdownMenuItem onClick={() => navigation(ROUTES.PUBLIC.PRICING)}>
 						<Diamond />

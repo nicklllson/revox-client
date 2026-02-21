@@ -3,12 +3,7 @@ import { DropdownMenu as DropdownMenuPrimitive } from 'radix-ui';
 import type * as React from 'react';
 
 import { cn } from '@/shared/lib/utils';
-
-const DROPDOWN_ITEM_SIZES = {
-	default: 'p-3 rounded-lg',
-	large: 'p-4 rounded-xl',
-	small: 'p-2.5',
-} as const;
+import { DROPDOWN_ITEM_SIZES } from '../model/styles-constants';
 
 function DropdownMenu({
 	...props

@@ -128,5 +128,9 @@ h1 {
 
 button,
 a {
-  @apply cursor-pointer
+  @apply cursor-pointer;
+}
+
+body {
+  @apply flex flex-col min-h-dvh;
 }
