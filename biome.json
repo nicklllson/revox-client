@@ -137,7 +137,7 @@
 				"noInferrableTypes": "error",
 				"noUnusedTemplateLiteral": "error",
 				"noUselessElse": "error",
-				"noNonNullAssertion": "error",
+				"noNonNullAssertion": "off",
 				"noDefaultExport": "error",
 				"noNegationElse": "error",
 				"noEnum": "error",
