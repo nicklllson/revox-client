@@ -1,5 +1,6 @@
-import { createBrowserRouter } from 'react-router';
+import { createBrowserRouter, Outlet } from 'react-router';
 import { ROUTES } from '@/shared/model/routes';
+import { History } from '@/widgets/history';
 import { App } from './app';
 import { MainLayout } from './layouts/main-layout';
 
@@ -24,21 +25,26 @@ export const router = createBrowserRouter([
 				element: <MainLayout />,
 				children: [
 					{
-						path: ROUTES.PUBLIC.HOME,
-						lazy: () => import('@/pages/public/home.page'),
-					},
-					{
-						path: ROUTES.PRIVATE.VIDEO,
-						lazy: () => import('@/pages/private/video.page'),
-					},
-				],
-			},
-			{
-				element: <MainLayout />,
-				children: [
-					{
 						path: ROUTES.PUBLIC.PRICING,
 						lazy: () => import('@/pages/public/pricing.page'),
+					},
+					{
+						element: (
+							<>
+								<History />
+								<Outlet />
+							</>
+						),
+						children: [
+							{
+								path: ROUTES.PUBLIC.HOME,
+								lazy: () => import('@/pages/public/home.page'),
+							},
+							{
+								path: ROUTES.PRIVATE.VIDEO,
+								lazy: () => import('@/pages/private/video.page'),
+							},
+						],
 					},
 				],
 			},

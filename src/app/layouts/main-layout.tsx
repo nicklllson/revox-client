@@ -7,7 +7,7 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
 	return (
 		<ModelProvider>
 			<Header />
-			<main className='mt-19 flex h-full flex-1 flex-col px-5'>
+			<main className='mt-22.5 flex h-full flex-1 flex-col px-5'>
 				<Outlet />
 				{children}
 			</main>

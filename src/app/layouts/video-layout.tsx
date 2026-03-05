@@ -1,6 +1,6 @@
 export const VideoLayout = () => {
 	return (
-		<div className='flex w-full flex-1 flex-col gap-2'>
+		<div className='mx-auto flex w-full max-w-[82vw] flex-1 flex-col gap-2'>
 			<div className='flex h-[70dvh] min-h-[440px] w-full gap-5'>
 				<div className='w-[70%] min-w-[] rounded-2xl bg-white/10'></div>
 				<div className='w-[30%] rounded-2xl bg-white/10'></div>
