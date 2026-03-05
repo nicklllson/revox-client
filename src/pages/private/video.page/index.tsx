@@ -1,5 +1,7 @@
+import { VideoLayout } from '@/app/layouts/video-layout';
+
 const VideoPage = () => {
-	return <div className=''>video page</div>;
+	return <VideoLayout />;
 };
 
 export const Component = VideoPage;
