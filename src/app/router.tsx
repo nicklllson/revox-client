@@ -2,6 +2,7 @@ import { createBrowserRouter, Outlet } from 'react-router';
 import { ROUTES } from '@/shared/model/routes';
 import { History } from '@/widgets/history';
 import { App } from './app';
+import { AuthLayout } from './layouts/auth-layout';
 import { MainLayout } from './layouts/main-layout';
 
 export const router = createBrowserRouter([
@@ -10,16 +11,18 @@ export const router = createBrowserRouter([
 		element: <App />,
 		children: [
 			{
-				path: ROUTES.PUBLIC.LOGIN,
-				lazy: () => import('@/pages/public/log-in.page'),
-			},
-			{
-				path: ROUTES.PUBLIC.SIGNIN,
-				lazy: () => import('@/pages/public/log-in.page'),
-			},
-			{
-				path: ROUTES.PUBLIC.LOGIN,
-				lazy: () => import('@/pages/public/sign-in.page'),
+				path: '/auth',
+				element: <AuthLayout />,
+				children: [
+					{
+						path: ROUTES.PUBLIC.SIGNUP,
+						lazy: () => import('@/pages/public/sign-up.page'),
+					},
+					{
+						path: ROUTES.PUBLIC.SIGNIN,
+						lazy: () => import('@/pages/public/sign-in.page'),
+					},
+				],
 			},
 			{
 				element: <MainLayout />,

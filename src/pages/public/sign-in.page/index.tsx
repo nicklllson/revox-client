@@ -1,5 +1,7 @@
-const SignInPage = () => {
-  return <div className="">signin page</div>
+import { LoginForm } from '@/features/auth';
+
+const LoginPage = () => {  
+  return <LoginForm />;
 }
 
-export const Component = SignInPage;
+export const Component = LoginPage;

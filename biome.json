@@ -35,7 +35,7 @@
 		"rules": {
 			"recommended": true,
 			"a11y": {
-				"noSvgWithoutTitle": "error",
+				"noSvgWithoutTitle": "off",
 				"noAriaUnsupportedElements": "warn",
 				"noAriaHiddenOnFocusable": "error",
 				"noRedundantRoles": "error",
@@ -46,7 +46,8 @@
 				"useKeyWithClickEvents": "error",
 				"useValidAriaProps": "warn",
 				"useValidAriaValues": "warn",
-				"useValidAriaRole": "warn"
+				"useValidAriaRole": "warn",
+				"noRedundantAlt": "off"
 			},
 			"correctness": {
 				"noUnusedImports": "error",
@@ -84,7 +85,7 @@
 			"performance": {
 				"noDelete": "error",
 				"noDynamicNamespaceImportAccess": "error",
-				"noImgElement": "error",
+				"noImgElement": "off",
 				"useTopLevelRegex": "error"
 			},
 			"suspicious": {

@@ -2,8 +2,8 @@ import 'react-router-dom';
 
 export const ROUTES = {
 	PUBLIC: {
-		LOGIN: 'login',
-		SIGNIN: 'register',
+		SIGNUP: '/auth/sign-up',
+		SIGNIN: '/auth/sign-in',
 		PASSWORD: 'password',
 		CONFIRM: 'email-confirm',
 		PASSCODE: 'passcode',
