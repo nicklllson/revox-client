@@ -2,7 +2,7 @@
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"files": {
 		"includes": [
-			"src/**/*.{js,jsx,ts,tsx,json,md,mdx,yml,yaml,html,css,scss,sass}",
+			"src/**/*.{js,jsx,ts,tsx,json,md,mdx,yml,yaml,html}",
 			"!**/node_modules/**/*",
 			"!**/.next",
 			"!**/public"

@@ -4,9 +4,9 @@ export const ROUTES = {
 	PUBLIC: {
 		SIGNUP: '/auth/sign-up',
 		SIGNIN: '/auth/sign-in',
-		PASSWORD: 'password',
-		CONFIRM: 'email-confirm',
-		PASSCODE: 'passcode',
+		PASSWORD: '/auth/password',
+		CONFIRM: '/auth/email-confirm',
+		PASSCODE: '/auth/passcode',
 		HOME: '/',
 		PRICING: 'pricing',
 	},

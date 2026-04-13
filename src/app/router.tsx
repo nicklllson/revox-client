@@ -22,6 +22,14 @@ export const router = createBrowserRouter([
 						path: ROUTES.PUBLIC.SIGNIN,
 						lazy: () => import('@/pages/public/sign-in.page'),
 					},
+					{
+						path: ROUTES.PUBLIC.PASSWORD,
+						lazy: () => import('@/pages/public/password.page'),
+					},
+					{
+						path: ROUTES.PUBLIC.CONFIRM,
+						lazy: () => import('@/pages/public/confirmation-code.page'),
+					},
 				],
 			},
 			{

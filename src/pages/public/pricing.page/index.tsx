@@ -1,4 +1,4 @@
-import { PricingCards } from '@/features/pricing';
+import { PricingCards } from '@/widgets/pricing';
 
 const PricingPage = () => {
   return (
