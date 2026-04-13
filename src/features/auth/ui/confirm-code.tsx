@@ -47,7 +47,7 @@ export const ConfirmCodeForm = ({
 
 		handleVerifyEmail(payload).then(res => {
 			login(res.accessToken);
-			navigate(ROUTES.PRIVATE.META.INFO);
+			navigate(ROUTES.PRIVATE.META);
 		});
 	};
 

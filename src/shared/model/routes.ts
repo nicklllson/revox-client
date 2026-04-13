@@ -13,11 +13,7 @@ export const ROUTES = {
 	PRIVATE: {
 		VIDEO: '/videos/:videoId',
 		SETTINGS: '/settings',
-		META: {
-			PURPOSE: '/meta/purpose',
-			INFO: '/meta/info',
-			ONBOARDING: '/onboarding',
-		},
+		META: '/meta',
 	},
 } as const;
 
