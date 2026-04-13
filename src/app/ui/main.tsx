@@ -4,7 +4,7 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router';
 import { queryClient } from '@/shared/lib/api';
 import { ErrorBound } from '@/shared/model/error';
-import { router } from './router';
+import { router } from '../lib/router';
 
 import './index.css';
 

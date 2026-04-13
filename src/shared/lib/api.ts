@@ -1,4 +1,5 @@
 import { QueryClient } from '@tanstack/react-query';
+import { useSession } from '@/entities/auth';
 
 export const queryClient = new QueryClient({
 	defaultOptions: {
@@ -16,6 +17,11 @@ export const api = async <ReqData, ResData>(
 	init?: RequestInit & { json?: ReqData },
 ): Promise<ResData> => {
 	const serverRoute = `${SERVER_API}${route}`;
+	const token = await useSession.getState().refreshToken();
+
+	if (!token) {
+		throw new Error('401 You are not authorized');
+	}
 
 	const initParams: RequestInit = {
 		credentials: 'include',
@@ -25,6 +31,7 @@ export const api = async <ReqData, ResData>(
 			headers: {
 				...init?.headers,
 				'Content-type': 'application/json',
+				Authorization: `Bearer ${token}`,
 			},
 		}),
 	};

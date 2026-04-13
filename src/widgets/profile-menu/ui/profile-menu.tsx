@@ -1,5 +1,6 @@
 import { Diamond, Globe, LogOut, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router';
+import { useSession } from '@/entities/auth';
 import { ROUTES } from '@/shared/model/routes';
 import { Button } from '@/shared/ui/button';
 import {
@@ -12,6 +13,7 @@ import {
 
 export const ProfileMenu = () => {
 	const navigation = useNavigate();
+	const { logout } = useSession();
 
 	return (
 		<DropdownMenu>
@@ -24,7 +26,7 @@ export const ProfileMenu = () => {
 						<Diamond />
 						Pricing
 					</DropdownMenuItem>
-					<DropdownMenuItem>
+					<DropdownMenuItem onClick={() => navigation(ROUTES.PRIVATE.SETTINGS)}>
 						<Settings />
 						Settings
 					</DropdownMenuItem>
@@ -32,7 +34,7 @@ export const ProfileMenu = () => {
 						<Globe />
 						Join Community
 					</DropdownMenuItem>
-					<DropdownMenuItem variant='destructive'>
+					<DropdownMenuItem variant='destructive' onClick={logout}>
 						<LogOut />
 						Log out
 					</DropdownMenuItem>

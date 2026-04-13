@@ -11,11 +11,12 @@ export const ROUTES = {
 		PRICING: 'pricing',
 	},
 	PRIVATE: {
-		VIDEO: 'videos/:videoId',
+		VIDEO: '/videos/:videoId',
+		SETTINGS: '/settings',
 		META: {
-			PURPOSE: 'meta/purpose',
-			INFO: 'meta/info',
-			ONBOARDING: 'onboarding',
+			PURPOSE: '/meta/purpose',
+			INFO: '/meta/info',
+			ONBOARDING: '/onboarding',
 		},
 	},
 } as const;

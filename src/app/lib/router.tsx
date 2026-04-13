@@ -1,9 +1,10 @@
 import { createBrowserRouter, Outlet } from 'react-router';
 import { ROUTES } from '@/shared/model/routes';
 import { History } from '@/widgets/history';
-import { App } from './app';
-import { AuthLayout } from './layouts/auth-layout';
-import { MainLayout } from './layouts/main-layout';
+import { AuthLayout } from '../layouts/auth-layout';
+import { MainLayout } from '../layouts/main-layout';
+import { App } from '../ui/app';
+import { ProtectedRoute, protectedLoader } from './protected-route';
 
 export const router = createBrowserRouter([
 	{
@@ -52,8 +53,14 @@ export const router = createBrowserRouter([
 								lazy: () => import('@/pages/public/home.page'),
 							},
 							{
-								path: ROUTES.PRIVATE.VIDEO,
-								lazy: () => import('@/pages/private/video.page'),
+								Component: ProtectedRoute,
+								loader: protectedLoader,
+								children: [
+									{
+										path: ROUTES.PRIVATE.VIDEO,
+										lazy: () => import('@/pages/private/video.page'),
+									},
+								],
 							},
 						],
 					},

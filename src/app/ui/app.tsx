@@ -1,6 +1,6 @@
 import { Outlet } from 'react-router';
-import { AuthProvider } from './providers/auth-provider';
-import { ThemeProvider } from './providers/theme-provider';
+import { AuthProvider } from '../providers/auth-provider';
+import { ThemeProvider } from '../providers/theme-provider';
 
 export const App = () => {
 	return (
