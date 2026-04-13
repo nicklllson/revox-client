@@ -1,6 +1,7 @@
-import { ArrowLeft, CheckCircle2, Loader2, Mail } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Mail } from 'lucide-react';
 import { useState } from 'react';
 import { Link } from 'react-router';
+import { useUserPassword } from '@/entities/auth';
 import { ROUTES } from '@/shared/model/routes';
 import { Alert, AlertDescription } from '@/shared/ui/alert';
 import { Button } from '@/shared/ui/button';
@@ -18,14 +19,14 @@ import { Label } from '@/shared/ui/label';
 const REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export const ForgerPasswordForm = () => {
-	const [email, setEmail] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
-	const [isSubmitted, setIsSubmitted] = useState(false);
-	const [error, setError] = useState('');
+	const [email, setEmail] = useState<string>('');
+	const [isSubmitted, setIsSubmitted] = useState<boolean>(false);
+	const [error, setError] = useState<string>('');
+	const { handleSendTokenToUser, isSendingTokens } = useUserPassword();
 
 	const validateEmail = (value: string) => REGEX.test(value);
 
-	const handleSubmit = async (e: React.FormEvent) => {
+	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
 		setError('');
 
@@ -38,15 +39,11 @@ export const ForgerPasswordForm = () => {
 			return;
 		}
 
-		setIsLoading(true);
-		// Simulate API call
-		await new Promise(resolve => setTimeout(resolve, 1500));
-		setIsLoading(false);
-		setIsSubmitted(true);
+		handleSendTokenToUser({ email }).then(() => setIsSubmitted(true));
 	};
 
 	return (
-		<div className='flex min-h-screen items-center justify-center bg-muted/40 p-4'>
+		<div className='flex items-center justify-center p-4'>
 			<div className='w-full max-w-md'>
 				<Card className='shadow-lg'>
 					<CardHeader className=''>
@@ -76,9 +73,7 @@ export const ForgerPasswordForm = () => {
 								<div className='space-y-1'>
 									<p className='font-semibold text-base'>Check your inbox</p>
 									<p className='text-muted-foreground text-sm'>
-										We've sent a password reset link to{' '}
-										<span className='font-medium text-foreground'>{email}</span>
-										.
+										We've sent a password reset link to your email.
 									</p>
 								</div>
 								<p className='text-muted-foreground text-xs'>
@@ -125,15 +120,11 @@ export const ForgerPasswordForm = () => {
 									</Alert>
 								)}
 
-								<Button type='submit' className='w-full' disabled={isLoading}>
-									{isLoading ? (
-										<>
-											<Loader2 className='mr-2 h-4 w-4 animate-spin' />
-											Sending...
-										</>
-									) : (
-										'Send reset link'
-									)}
+								<Button
+									type='submit'
+									className='w-full'
+									isLoading={isSendingTokens}>
+									Submit
 								</Button>
 							</form>
 						)}

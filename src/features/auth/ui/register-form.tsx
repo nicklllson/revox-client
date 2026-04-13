@@ -2,8 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 import type { z } from 'zod';
-import { useAuth } from '@/app/providers/auth-provider';
-import { useRegister } from '@/entities/auth';
+import { useAuth, useRegister } from '@/entities/auth';
 import { IconGoogle } from '@/shared/icons/google';
 import { cn } from '@/shared/lib/utils';
 import { ROUTES } from '@/shared/model/routes';
@@ -110,7 +109,7 @@ export const RegisterForm = ({
 								</Field>
 							</FieldGroup>
 							<Field>
-								<Button type='submit' disabled={isPending}>
+								<Button type='submit' isLoading={isPending}>
 									Signup
 								</Button>
 							</Field>

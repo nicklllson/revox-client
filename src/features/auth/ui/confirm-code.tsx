@@ -28,9 +28,9 @@ export const ConfirmCodeForm = ({
 
 	const {
 		register,
+		setValue,
 		handleSubmit,
 		formState: { errors },
-		setValue,
 	} = useForm<ConfirmCodeFormData>({
 		mode: 'onBlur',
 		resolver: zodResolver(confirmCodeSchema),
@@ -73,7 +73,11 @@ export const ConfirmCodeForm = ({
 											onChange={value => setValue('code', value)}>
 											<InputOTPGroup className='gap-1'>
 												{[...Array(4)].map((_, index) => (
-													<InputOTPSlot index={index} key={index} />
+													<InputOTPSlot
+														index={index}
+														key={index}
+														className='text-2xl'
+													/>
 												))}
 											</InputOTPGroup>
 										</InputOTP>

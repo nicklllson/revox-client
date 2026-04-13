@@ -7,6 +7,8 @@ export const ROUTES = {
 		PASSWORD: '/auth/password',
 		CONFIRM: '/auth/email-confirm',
 		PASSCODE: '/auth/passcode',
+		RESET_PASSWORD: '/reset-password',
+		NEW_PASSWORD: '/new-password',
 		HOME: '/',
 		PRICING: 'pricing',
 	},

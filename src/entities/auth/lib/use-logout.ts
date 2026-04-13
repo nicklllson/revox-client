@@ -1,10 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import { authApi } from '../api/auth.api';
 
-export const useLogin = () => {
+export const useLogout = () => {
 	const { mutateAsync, isPending } = useMutation({
-		mutationFn: authApi.login,
+		mutationFn: authApi.logout,
 	});
 
-	return { handleLogin: mutateAsync, isPending };
+	return { handleLogout: mutateAsync, isPending };
 };

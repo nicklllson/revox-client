@@ -1,10 +1,9 @@
-import { format } from 'date-fns';
-import { ru } from 'date-fns/locale';
-import { CalendarIcon } from 'lucide-react';
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useUser } from '@/entities/user';
 import { cn } from '@/shared/lib/utils';
+import { ROUTES } from '@/shared/model/routes';
 import { Button } from '@/shared/ui/button';
-import { Calendar } from '@/shared/ui/calendar';
 import {
 	Card,
 	CardContent,
@@ -12,6 +11,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/shared/ui/card';
+import { DatePicker } from '@/shared/ui/date-picker';
 import { Field, FieldLabel } from '@/shared/ui/field';
 import { Input } from '@/shared/ui/input';
 import { PURPOSE_OPTIONS } from './model/constants';
@@ -20,35 +20,35 @@ export const MetaPage = () => {
 	const [nickname, setNickname] = useState('');
 	const [purpose, setPurpose] = useState('');
 	const [birthDate, setBirthDate] = useState<Date | undefined>(undefined);
-	const [showCalendar, setShowCalendar] = useState(false);
+	const navigate = useNavigate();
+
+	const { handleUpdateUser, isUpdating } = useUser();
 
 	const handleSubmit = (e: React.FormEvent) => {
 		e.preventDefault();
-		// console.log({
-		// 	nickname,
-		// 	purpose,
-		// 	birthDate: birthDate ? birthDate.toISOString() : undefined,
-		// });
-	};
-
-	const handleDateSelect = (date: Date | undefined) => {
-		setBirthDate(date);
-		setShowCalendar(false);
+		const payload = {
+			nickname,
+			purpose,
+			birthdate: birthDate ? birthDate.toISOString() : undefined,
+		};
+		handleUpdateUser(payload).then(() => {
+			navigate(ROUTES.PUBLIC.HOME);
+		});
 	};
 
 	return (
 		<div className='flex min-h-screen items-center justify-center p-4'>
 			<Card className='w-full max-w-md'>
 				<CardHeader>
-					<CardTitle>Добро пожаловать</CardTitle>
-					<CardDescription>Расскажите немного о себе</CardDescription>
+					<CardTitle className='text-2xl'>Welcome</CardTitle>
+					<CardDescription>Tell us a little about yourself</CardDescription>
 				</CardHeader>
 				<CardContent>
 					<form onSubmit={handleSubmit} className='flex flex-col gap-4'>
 						<Field>
 							<FieldLabel>Nickname</FieldLabel>
 							<Input
-								placeholder='Введите ваш nickname'
+								placeholder='Insert your nickname'
 								value={nickname}
 								onChange={e => setNickname(e.target.value)}
 								required
@@ -56,7 +56,12 @@ export const MetaPage = () => {
 						</Field>
 
 						<Field>
-							<FieldLabel>Цель использования</FieldLabel>
+							<FieldLabel>Birthdate</FieldLabel>
+							<DatePicker value={birthDate} onChange={setBirthDate} />
+						</Field>
+
+						<Field>
+							<FieldLabel>Purpose of use</FieldLabel>
 							<div className='grid grid-cols-2 gap-3'>
 								{PURPOSE_OPTIONS.map(({ value, label, icon: Icon }) => (
 									<button
@@ -77,38 +82,7 @@ export const MetaPage = () => {
 							</div>
 						</Field>
 
-						<Field>
-							<FieldLabel>Дата рождения</FieldLabel>
-							<div className='relative'>
-								<Button
-									type='button'
-									variant='outline'
-									className={cn(
-										'w-full justify-start text-left font-normal',
-										!birthDate && 'text-muted-foreground',
-									)}
-									onClick={() => setShowCalendar(!showCalendar)}>
-									<CalendarIcon className='mr-2 size-4' />
-									{birthDate ? (
-										format(birthDate, 'dd MMMM yyyy', { locale: ru })
-									) : (
-										<span>Выберите дату</span>
-									)}
-								</Button>
-								{showCalendar && (
-									<div className='absolute bottom-full left-0 z-50 mb-2 rounded-lg border bg-popover p-3 shadow-md'>
-										<Calendar
-											mode='single'
-											selected={birthDate}
-											captionLayout='dropdown'
-											onSelect={handleDateSelect}
-										/>
-									</div>
-								)}
-							</div>
-						</Field>
-
-						<Button type='submit' className='mt-2'>
+						<Button type='submit' className='mt-2' disabled={isUpdating}>
 							Продолжить
 						</Button>
 					</form>

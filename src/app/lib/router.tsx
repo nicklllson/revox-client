@@ -1,7 +1,8 @@
-import { createBrowserRouter, Outlet } from 'react-router';
+import { createBrowserRouter } from 'react-router';
 import { ROUTES } from '@/shared/model/routes';
-import { History } from '@/widgets/history';
+
 import { AuthLayout } from '../layouts/auth-layout';
+import { HistoryLayout } from '../layouts/history-layout';
 import { MainLayout } from '../layouts/main-layout';
 import { App } from '../ui/app';
 // import { ProtectedRoute, protectedLoader } from './protected-route';
@@ -34,6 +35,14 @@ export const router = createBrowserRouter([
 				],
 			},
 			{
+				path: ROUTES.PUBLIC.RESET_PASSWORD,
+				lazy: () => import('@/pages/public/reset-password.page'),
+			},
+			{
+				path: ROUTES.PUBLIC.NEW_PASSWORD,
+				lazy: () => import('@/pages/public/new-password.page'),
+			},
+			{
 				element: <MainLayout />,
 				children: [
 					{
@@ -41,12 +50,7 @@ export const router = createBrowserRouter([
 						lazy: () => import('@/pages/public/pricing.page'),
 					},
 					{
-						element: (
-							<>
-								<History />
-								<Outlet />
-							</>
-						),
+						element: <HistoryLayout />,
 						children: [
 							{
 								path: ROUTES.PUBLIC.HOME,
