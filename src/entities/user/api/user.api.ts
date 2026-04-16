@@ -1,6 +1,6 @@
 import { queryOptions } from '@tanstack/react-query';
 import { privateApi } from '@/shared/lib/api';
-import type { TUpdateUser } from '../model/types';
+import type { TUpdateUser, TUser } from '../model/types';
 
 export const usersApi = {
 	BASE_KEY: 'users',
@@ -12,7 +12,7 @@ export const usersApi = {
 	getSingleUser: (userId: string) => {
 		return queryOptions({
 			queryKey: [usersApi.BASE_KEY, userId],
-			queryFn: () => privateApi(`/users/${userId}`),
+			queryFn: () => privateApi<void, TUser>(`/users/${userId}`),
 		});
 	},
 };

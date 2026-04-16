@@ -4,7 +4,6 @@ import {
 	Card,
 	CardContent,
 	CardDescription,
-	CardFooter,
 	CardHeader,
 	CardTitle,
 } from '@/shared/ui/card';
@@ -12,7 +11,7 @@ import { MOCK_TARIFFS } from '../model/constants';
 
 export const PricingCards = () => {
 	return (
-		<div className='mb-10 flex items-start justify-between gap-10'>
+		<div className='mx-auto mb-10 flex w-full max-w-[1400px] items-start justify-between gap-10'>
 			{MOCK_TARIFFS.map(tariff => (
 				<Card key={tariff.id} className='min-h-[710px] w-full'>
 					<CardHeader>
@@ -30,9 +29,13 @@ export const PricingCards = () => {
 							</span>
 						</div>
 						<div className='flex flex-col items-center gap-8'>
-							<Button className='w-full'>
+							<Button
+								disabled
+								className='w-full'
+								variant='secondary'
+								accent={tariff.isActive ? 'secondary' : 'primary'}>
 								<ArrowUpRight />
-								Get {tariff.name}
+								{tariff.name !== 'Basic' ? 'Coming soon}' : 'Active plan'}
 							</Button>
 							<span className='text-sm'>
 								{tariff.computeUnits} compute units / month
@@ -53,12 +56,6 @@ export const PricingCards = () => {
 							</ul>
 						</div>
 					</CardContent>
-					<CardFooter className='flex justify-center'>
-						<Button variant='ghost' className='text-muted-foreground'>
-							View all features
-							<ArrowUpRight />
-						</Button>
-					</CardFooter>
 				</Card>
 			))}
 		</div>

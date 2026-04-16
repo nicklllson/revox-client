@@ -1,19 +1,25 @@
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AVAILABLE_MODELS } from '@/entities/translation-models';
+import { useClickOutside } from '@/shared/hooks';
 import { useMouseAnimations } from '../model/use-mouse-animations';
 import { useSelectTranslation } from '../model/use-select-translation';
 import { ModelCard } from './model-card';
 
 export const TranslationModelSelect = () => {
+	const containerRef = useRef<HTMLDivElement>(null);
 	const [open, setOpen] = useState<boolean>(false);
 	const [hoveredId, setHoveredId] = useState<string | null>(null);
 
 	const { activeModel, handleSelectModel } = useSelectTranslation();
 	const { rotateX, rotateY, ...mouseController } = useMouseAnimations();
 
+	useClickOutside(containerRef, () => setOpen(false), open);
+
 	return (
-		<div className='-translate-x-1/2 fixed bottom-5 left-1/2 z-50 flex flex-col items-center gap-3'>
+		<div
+			ref={containerRef}
+			className='-translate-x-1/2 fixed bottom-5 left-1/2 z-50 flex flex-col items-center gap-3'>
 			{/* ── Floating model cards (open state) ──────────────────────── */}
 			<AnimatePresence>
 				{open && (
@@ -32,8 +38,9 @@ export const TranslationModelSelect = () => {
 									key={model.id}
 									model={model}
 									isHovered={isHov}
-									onSelect={handleSelectModel}
 									isActive={isActive}
+									onSelect={handleSelectModel}
+									isEnabled={model.isEnabled}
 									onModelHover={setHoveredId}
 								/>
 							);

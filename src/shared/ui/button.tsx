@@ -32,7 +32,7 @@ const buttonVariants = cva(
 				'icon-lg': 'size-10',
 			},
 			accent: {
-				primary: 'bg-white',
+				primary: 'bg-white text-black hover:bg-white/80',
 				secondary: 'bg-blue-800 hover:bg-blue-800/80',
 			},
 		},

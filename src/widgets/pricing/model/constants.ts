@@ -7,13 +7,13 @@ export const MOCK_TARIFFS = [
 		billing: 'monthly',
 		computeUnits: 5000,
 		features: [
-			'Everything in Free plus',
 			'Commercial license',
 			'Full access to image, 3D, and lipsync models',
 			'Full access to LoRA training',
 			'Upscale images up to 4k resolution',
 			'Access to selected video models',
 		],
+		isActive: true,
 	},
 	{
 		id: 'tariff-2',
@@ -30,6 +30,7 @@ export const MOCK_TARIFFS = [
 			'Bulk discounts on extra compute units',
 			'Early access to new features',
 		],
+		isActive: false,
 	},
 	{
 		id: 'tariff-3',
@@ -47,5 +48,6 @@ export const MOCK_TARIFFS = [
 			'Unlimited relaxed generations on selected models',
 			'High priority queues',
 		],
+		isActive: false,
 	},
 ] as const;

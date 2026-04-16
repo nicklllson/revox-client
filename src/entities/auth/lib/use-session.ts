@@ -6,7 +6,7 @@ import { publicApi } from '@/shared/lib/api';
 const ACCESS_TOKEN_KEY = 'access_token';
 
 type TSession = {
-	userId: string;
+	sub: string;
 	email: string;
 	exp: number;
 	iat: string;

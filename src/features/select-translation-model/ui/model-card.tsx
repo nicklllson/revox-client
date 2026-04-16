@@ -8,6 +8,7 @@ export const ModelCard = ({
 	index = 0,
 	onSelect,
 	onModelHover,
+	isEnabled = true,
 }: {
 	model: TTranslationModel;
 	isActive: boolean;
@@ -15,10 +16,12 @@ export const ModelCard = ({
 	index?: number;
 	onSelect?: (model: TTranslationModel) => void;
 	onModelHover?: (value: string | null) => void;
+	isEnabled?: boolean;
 }) => {
 	return (
 		<motion.button
 			key={model.id}
+			disabled={!isEnabled}
 			initial={{
 				opacity: 0,
 				y: 40,
@@ -41,7 +44,7 @@ export const ModelCard = ({
 			onClick={() => onSelect?.(model)}
 			onMouseEnter={() => onModelHover?.(model.id)}
 			onMouseLeave={() => onModelHover?.(null)}
-			className='relative flex h-28 w-24 flex-col items-start justify-between overflow-hidden rounded-2xl border p-3 text-left'
+			className='relative flex h-28 w-24 flex-col items-start justify-between overflow-hidden rounded-2xl border p-3 text-left disabled:opacity-60!'
 			style={{
 				background: isActive
 					? `linear-gradient(135deg, ${model.accent}22, ${model.accent}08)`
