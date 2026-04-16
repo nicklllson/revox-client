@@ -14,7 +14,7 @@ const SERVER_API = import.meta.env.VITE_PUBLIC_SERVER_API;
 
 export const api = async <ReqData, ResData>(
 	route: string,
-	init?: RequestInit & { json?: ReqData },
+	init?: RequestInit & { json?: ReqData; params?: Record<string, unknown> },
 ): Promise<ResData> => {
 	const serverRoute = `${SERVER_API}${route}`;
 
@@ -49,14 +49,14 @@ export const api = async <ReqData, ResData>(
 
 export const publicApi = async <ReqData, ResData>(
 	route: string,
-	init?: RequestInit & { json?: ReqData },
+	init?: RequestInit & { json?: ReqData; params?: Record<string, unknown> },
 ) => {
 	return await api<ReqData, ResData>(route, init);
 };
 
 export const privateApi = async <ReqData, ResData>(
 	route: string,
-	init?: RequestInit & { json?: ReqData },
+	init?: RequestInit & { json?: ReqData; params?: Record<string, unknown> },
 ) => {
 	const token = await useSession.getState().refreshToken();
 

@@ -2,7 +2,6 @@ import { createGStore } from 'create-gstore';
 import { jwtDecode } from 'jwt-decode';
 import { useState } from 'react';
 import { publicApi } from '@/shared/lib/api';
-import { useLogout } from './use-logout';
 
 const ACCESS_TOKEN_KEY = 'access_token';
 
@@ -20,15 +19,13 @@ export const useSession = createGStore(() => {
 		localStorage.getItem(ACCESS_TOKEN_KEY),
 	);
 
-	const { handleLogout } = useLogout();
-
 	const login = (token: string) => {
 		localStorage.setItem(ACCESS_TOKEN_KEY, token);
 		setToken(token);
 	};
 
 	const logout = () => {
-		handleLogout().then(() => {
+		publicApi('/auth/logout', { method: 'POST' }).finally(() => {
 			localStorage.removeItem(ACCESS_TOKEN_KEY);
 			setToken(null);
 		});
