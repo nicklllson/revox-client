@@ -17,7 +17,6 @@ export const Prompt = () => {
 	const { handleCreateVideo, isVideoCreating } = useCreateVideo();
 	const navigate = useNavigate();
 
-	// TODO - сделать состояние ошибки
 	const onSubmit = (fields: TPromptField) => {
 		handleCreateVideo(fields).then(res => {
 			navigate(`/videos/${res.id}`);
@@ -30,6 +29,7 @@ export const Prompt = () => {
 			className='grid w-full max-w-2xl gap-6'>
 			<InputGroup className='shadow-2xl'>
 				<TextareaAutosize
+					defaultValue={'https://www.youtube.com/watch?v=gR-CSgUgftQ'}
 					data-slot='input-group-control'
 					aria-invalid={!!errors.videoUrl}
 					className='field-sizing-content flex min-h-16 w-full resize-none rounded-md bg-transparent px-3 py-2.5 text-base outline-none transition-[color,box-shadow] placeholder:text-shadow-input md:text-sm'

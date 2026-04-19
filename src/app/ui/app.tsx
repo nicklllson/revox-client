@@ -1,13 +1,14 @@
 import { Outlet } from 'react-router';
+import { Toaster } from 'sonner';
 import { AuthProvider } from '../providers/auth-provider';
-import { ThemeProvider } from '../providers/theme-provider';
+import { useTheme } from '../providers/theme-provider';
 
 export const App = () => {
+	const { theme } = useTheme();
 	return (
-		<ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
-			<AuthProvider>
-				<Outlet />
-			</AuthProvider>
-		</ThemeProvider>
+		<AuthProvider>
+			<Outlet />
+			<Toaster position='bottom-right' theme={theme} richColors />
+		</AuthProvider>
 	);
 };

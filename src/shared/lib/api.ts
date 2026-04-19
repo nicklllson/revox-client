@@ -1,4 +1,5 @@
-import { QueryClient } from '@tanstack/react-query';
+import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { useSession } from '@/entities/auth';
 
 export const queryClient = new QueryClient({
@@ -8,6 +9,20 @@ export const queryClient = new QueryClient({
 			gcTime: 120000,
 		},
 	},
+	queryCache: new QueryCache({
+		onError: (error, _) => {
+			const message =
+				error instanceof Error ? error.message : 'Something went wrong';
+			toast.error(message);
+		},
+	}),
+	mutationCache: new MutationCache({
+		onError: (error, _) => {
+			const message =
+				error instanceof Error ? error.message : 'Error in mutating';
+			toast.error(message);
+		},
+	}),
 });
 
 const SERVER_API = import.meta.env.VITE_PUBLIC_SERVER_API;
@@ -34,9 +49,8 @@ export const api = async <ReqData, ResData>(
 	try {
 		const res = await fetch(serverRoute, initParams);
 
-		if (!res.ok) {
-			throw new Error(`API Error ${res.status}: ${res.statusText}`);
-		}
+		if (!res.ok) throw await res.json();
+
 		return (await res.json()) as ResData;
 	} catch (error) {
 		if (error instanceof Error) {

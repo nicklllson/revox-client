@@ -2,8 +2,6 @@ import { useMutation } from '@tanstack/react-query';
 import { videosApi } from '@/entities/video';
 import { queryClient } from '@/shared/lib/api';
 
-// TODO - сделать позитивное обновление
-// TODO - сделать ошибку
 export const useCreateVideo = () => {
 	const { mutateAsync, isPending } = useMutation({
 		mutationFn: videosApi.createVideo,

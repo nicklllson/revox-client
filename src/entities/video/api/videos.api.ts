@@ -32,8 +32,8 @@ export const videosApi = {
 			},
 		}),
 
-	createVideo: (dto: TCreateVideoDto) =>
-		privateApi<TCreateVideoDto, TVideo>('/videos', {
+	createVideo: (dto: Omit<TCreateVideoDto, 'youtubeVideoId'>) =>
+		privateApi<Omit<TCreateVideoDto, 'youtubeVideoId'>, TVideo>('/videos', {
 			method: 'POST',
 			json: dto,
 		}),
