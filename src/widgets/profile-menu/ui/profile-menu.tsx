@@ -1,4 +1,4 @@
-import { Diamond, Globe, LogOut, Settings } from 'lucide-react';
+import { Diamond, LogOut, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useSession } from '@/entities/auth';
 import { useUser } from '@/entities/user';
@@ -38,10 +38,6 @@ export const ProfileMenu = () => {
 					<DropdownMenuItem onClick={() => navigation(ROUTES.PRIVATE.SETTINGS)}>
 						<Settings />
 						Settings
-					</DropdownMenuItem>
-					<DropdownMenuItem>
-						<Globe />
-						Join Community
 					</DropdownMenuItem>
 					<DropdownMenuItem variant='destructive' onClick={logout}>
 						<LogOut />

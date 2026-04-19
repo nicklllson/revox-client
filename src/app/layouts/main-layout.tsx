@@ -3,8 +3,27 @@ import { Outlet } from 'react-router';
 import { Aurora } from '@/shared/ui/aurora';
 import { Header } from '@/widgets/header';
 import { ModelProvider } from '../providers/model-provider';
+import { useTheme } from '../providers/theme-provider';
+
+const THEME_COLORS: Record<
+	string,
+	{
+		colors: string[];
+		blend: number;
+	}
+> = {
+	dark: {
+		colors: ['#0F2854', '#1C4D8D', '#4988C4', '#BDE8F5'],
+		blend: 0.5,
+	},
+	light: {
+		colors: ['#DDF0FA', '#9DC2E0', '#BDD8EC', '#DDF0FA'],
+		blend: 1,
+	},
+};
 
 export const MainLayout = ({ children }: PropsWithChildren) => {
+	const { theme } = useTheme();
 	return (
 		<ModelProvider>
 			<Header />
@@ -12,9 +31,9 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
 				<Outlet />
 				<Aurora
 					speed={1}
-					blend={0.5}
 					amplitude={1.0}
-					colorStops={['#0F2854', '#1C4D8D', '#4988C4', '#BDE8F5']}
+					blend={THEME_COLORS[theme].blend}
+					colorStops={THEME_COLORS[theme].colors}
 				/>
 				{children}
 			</main>

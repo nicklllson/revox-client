@@ -64,6 +64,10 @@ export const router = createBrowserRouter([
 										path: ROUTES.PRIVATE.VIDEO,
 										lazy: () => import('@/pages/private/video.page'),
 									},
+									{
+										path: ROUTES.PRIVATE.SETTINGS,
+										lazy: () => import('@/pages/private/settings.page'),
+									},
 								],
 							},
 						],

@@ -5,20 +5,20 @@ import { Switch } from '@/shared/ui/switch';
 const NOTIFICATIONS = [
 	{
 		id: 'done',
-		label: 'Перевод завершён',
-		desc: 'Email когда видео готово',
+		label: 'Translation completed',
+		desc: 'Email when video is ready',
 		default: true,
 	},
 	{
 		id: 'error',
-		label: 'Ошибка обработки',
-		desc: 'Уведомлять если задача упала',
+		label: 'Processing error',
+		desc: 'Notify if a task fails',
 		default: true,
 	},
 	{
 		id: 'news',
-		label: 'Новости и обновления',
-		desc: 'Новые функции платформы',
+		label: 'News & updates',
+		desc: 'New platform features',
 		default: false,
 	},
 ];
@@ -47,7 +47,7 @@ export const NotificationsTab = () => {
 				))}
 			</div>
 			<div className='mt-5 flex justify-end'>
-				<Button>Сохранить</Button>
+				<Button>Save</Button>
 			</div>
 		</div>
 	);

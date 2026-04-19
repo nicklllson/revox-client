@@ -28,7 +28,7 @@ export const PlanTab = () => {
 						key={plan.id}
 						className={cn(
 							'relative rounded-lg border p-4',
-							plan.id === currentPlan && 'border-blue-500 bg-blue-50',
+							plan.id === currentPlan && 'border-blue-500',
 							!plan.available && 'cursor-not-allowed opacity-50',
 						)}>
 						{!plan.available && (
