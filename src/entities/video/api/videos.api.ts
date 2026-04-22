@@ -48,5 +48,8 @@ export const videosApi = {
 		queryOptions({
 			queryKey: [videosApi.BASE_KEY, videoId],
 			queryFn: () => privateApi<void, TVideo>(`/videos/${videoId}`),
+			refetchOnMount: false,
+			refetchOnReconnect: false,
+			refetchOnWindowFocus: false,
 		}),
 };

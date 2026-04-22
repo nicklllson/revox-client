@@ -15,10 +15,10 @@ export const VideoLayout = () => {
 	const { video } = useVideo(videoId);
 	const { handleUpdateVideo } = useUpdateVideo();
 
-	const youtubeVideoId = useMemo(
-		() => video?.youtubeVideoId ?? '',
-		[video?.youtubeVideoId],
-	);
+	const youtubeVideoId = useMemo(() => {
+		if (!video || !video?.youtubeVideoId) return '';
+		return video.youtubeVideoId;
+	}, [video?.youtubeVideoId]);
 
 	useEffect(() => {
 		if (video?.title && video?.thumbnail) {
@@ -36,7 +36,13 @@ export const VideoLayout = () => {
 
 	return (
 		<div className='relative z-10 mx-auto flex w-full max-w-[70vw] flex-1 flex-col gap-2'>
-			<Player key={video?.externalJobId} youtubeVideoId={youtubeVideoId} />
+			<Player
+				videoId={videoId!}
+				key={video?.externalJobId}
+				youtubeVideoId={youtubeVideoId}
+				videoUrl={video?.videoUrl ?? ''}
+				targetLang={video?.language ?? 'en'}
+			/>
 			<VideoBottomBar>
 				<VideoTitle title={video?.title} />
 				<VideoSettings />

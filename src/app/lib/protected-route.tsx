@@ -13,11 +13,12 @@ export const ProtectedRoute = () => {
 };
 
 export const protectedLoader = async () => {
-	const { refreshToken } = useSession.getState();
+	const { refreshToken, logout } = useSession.getState();
 
 	const freshToken = await refreshToken();
 
 	if (!freshToken) {
+		logout();
 		return redirect(ROUTES.PUBLIC.SIGNIN);
 	}
 	return null;
