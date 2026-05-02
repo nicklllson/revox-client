@@ -43,7 +43,7 @@ export const Player = ({
 		state: { isPlaying },
 	} = usePlayer();
 
-	const { chunks, sendHeartbeat } = useTranslationWs({
+	const { chunks, sendHeartbeat, error, progress } = useTranslationWs({
 		videoId,
 		targetLang,
 		youtubeUrl: videoUrl,
@@ -117,7 +117,10 @@ export const Player = ({
 
 	return (
 		<div className='relative flex h-[76dvh] min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'>
-			<Suspense>
+			<Suspense
+				fallback={
+					<div className='absolute top-0 left-0 h-full w-full bg-red' />
+				}>
 				<YouTubePlayer
 					ref={playerRef}
 					loading='eager'
@@ -128,17 +131,42 @@ export const Player = ({
 				/>
 			</Suspense>
 
-			{/* Кнопка Play/Pause */}
+			{/* Overlay пока не стартовали */}
 			{isReady && !isStarted && (
 				<>
-					{/* Overlay — перекрывает iframe чтобы клики не уходили в YouTube */}
-					<div className='absolute inset-0 z-10 bg-black/80' />
-					<Button
-						variant={'outline'}
-						onClick={handleStart}
-						className='-translate-y-1/2 -translate-x-1/2 absolute top-1/2 left-1/2 z-20 flex size-20 items-center gap-2 rounded-full bg-black/60 text-white backdrop-blur-sm transition hover:bg-black/80'>
-						<Play className='size-10' />
-					</Button>
+					<div className='absolute inset-0 z-10 bg-black/80 backdrop-blur-sm' />
+
+					<div className='-translate-y-1/2 -translate-x-1/2 absolute top-1/2 left-1/2 z-20 flex flex-col items-center gap-4'>
+						{progress && progress.stage !== 'done' ? (
+							<div className='flex flex-col items-center gap-2 text-center text-white'>
+								<div className='h-10 w-10 animate-spin rounded-full border-4 border-white/20 border-t-white' />
+								<span className='font-medium text-sm'>{progress.message}</span>
+								<div className='h-1 w-48 overflow-hidden rounded-full bg-white/20'>
+									<div
+										className='h-full rounded-full bg-white transition-all duration-500'
+										style={{ width: `${progress.percent}%` }}
+									/>
+								</div>
+							</div>
+						) : (
+							<Button
+								variant='outline'
+								onClick={handleStart}
+								className='flex size-20 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition hover:bg-black/80'>
+								<Play className='size-10' />
+							</Button>
+						)}
+					</div>
+				</>
+			)}
+
+			{error && (
+				<>
+					<div className='absolute inset-0 z-10 bg-black/80 backdrop-blur-sm' />
+					<div className='-translate-y-1/2 -translate-x-1/2 absolute top-1/2 left-1/2 z-20 flex flex-col items-center gap-3 text-center text-white'>
+						<span className='text-4xl'>⚠️</span>
+						<span className='font-medium text-sm'>{error}</span>
+					</div>
 				</>
 			)}
 		</div>

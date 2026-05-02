@@ -52,4 +52,10 @@ export const videosApi = {
 			refetchOnReconnect: false,
 			refetchOnWindowFocus: false,
 		}),
+
+	deleteVideo: (videoId: string) => {
+		return privateApi<void, { ok: string }>(`/videos/${videoId}`, {
+			method: 'DELETE',
+		});
+	},
 };

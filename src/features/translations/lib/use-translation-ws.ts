@@ -48,7 +48,6 @@ export const useTranslationWs = ({
 
 	const { token } = useSession();
 
-	// Запросить конкретный чанк если ещё не запрашивали
 	const requestChunk = useCallback((chunkId: number) => {
 		const ws = wsRef.current;
 		const meta = metadataRef.current;

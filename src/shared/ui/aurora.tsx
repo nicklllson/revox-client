@@ -1,5 +1,7 @@
+/** biome-ignore-all lint/performance/noDelete: <explanation> */
 import { Color, Mesh, Program, Renderer, Triangle } from 'ogl';
 import { useEffect, useRef } from 'react';
+import { useTheme } from '@/app/providers/theme-provider';
 
 const VERT = `#version 300 es
 in vec2 position;
@@ -115,11 +117,30 @@ interface AuroraProps {
 	speed?: number;
 }
 
+const THEME_COLORS: Record<
+	string,
+	{
+		colors: string[];
+		blend: number;
+	}
+> = {
+	dark: {
+		colors: ['#0F2854', '#1C4D8D', '#4988C4', '#BDE8F5'],
+		blend: 0.5,
+	},
+	light: {
+		colors: ['#DDF0FA', '#9DC2E0', '#BDD8EC', '#DDF0FA'],
+		blend: 1,
+	},
+};
+
 export function Aurora(props: AuroraProps) {
+	const { theme } = useTheme();
+
 	const {
-		colorStops = ['#5227FF', '#7cff67', '#5227FF'],
+		colorStops = THEME_COLORS[theme].colors,
 		amplitude = 1.0,
-		blend = 0.5,
+		blend = THEME_COLORS[theme].blend,
 	} = props;
 	const propsRef = useRef<AuroraProps>(props);
 	propsRef.current = props;
