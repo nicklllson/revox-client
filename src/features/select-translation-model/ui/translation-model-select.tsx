@@ -19,7 +19,7 @@ export const TranslationModelSelect = () => {
 	return (
 		<div
 			ref={containerRef}
-			className='-translate-x-1/2 fixed bottom-5 left-1/2 z-50 flex flex-col items-center gap-3'>
+			className='-translate-x-1/2 absolute bottom-5 left-1/2 z-50 flex flex-col items-center gap-3'>
 			{/* ── Floating model cards (open state) ──────────────────────── */}
 			<AnimatePresence>
 				{open && (

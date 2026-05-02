@@ -16,6 +16,8 @@ export const ROUTES = {
 		VIDEO: '/videos/:videoId',
 		SETTINGS: '/settings',
 		META: '/meta',
+		FAVORITES: '/favorites',
+		PLAYLISTS: '/playlists',
 	},
 } as const;
 

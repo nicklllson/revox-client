@@ -1,6 +1,5 @@
 import { lazy } from 'react';
 import { ThemeToggle } from '@/features/toggle-theme';
-import { ProfileMenu } from '@/widgets/profile-menu';
 
 const SearchMenu = lazy(() =>
 	import('@/widgets/search-menu').then(res => {
@@ -13,7 +12,6 @@ export const LoggedInActions = () => {
 		<div className='flex items-center gap-1'>
 			<SearchMenu />
 			<ThemeToggle />
-			<ProfileMenu />
 		</div>
 	);
 };

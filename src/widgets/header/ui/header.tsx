@@ -3,7 +3,7 @@ import { HeaderActions } from '@/widgets/header-actions';
 
 export const Header = () => {
 	return (
-		<header className='fixed top-5 right-5 left-5 z-10'>
+		<header className='absolute top-5 right-5 left-5 z-10'>
 			<div className='flex items-center justify-between'>
 				<Logo />
 				<HeaderActions />
