@@ -1,6 +1,7 @@
 import { Ellipsis, MoveRight, Star, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useFavorites } from '@/entities/favorites';
+import { useDeleteVideo } from '@/entities/video';
 import { Button } from '@/shared/ui/button';
 import {
 	DropdownMenu,
@@ -22,6 +23,7 @@ export const VideoActions = ({
 }) => {
 	const navigate = useNavigate();
 	const { toggleFavorite } = useFavorites(isFavorite);
+	const { handleDeleteVideo, isDeleting } = useDeleteVideo();
 
 	const handleGoToSession = () => {
 		navigate(`/videos/${videoId}`);
@@ -45,7 +47,10 @@ export const VideoActions = ({
 						{isFavorite ? 'Remove to favorites' : 'Add to favorites'}
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
-					<DropdownMenuItem variant='destructive'>
+					<DropdownMenuItem
+						onClick={() => handleDeleteVideo(videoId)}
+						variant='destructive'
+						disabled={isDeleting}>
 						<Trash />
 						Delete session
 					</DropdownMenuItem>
