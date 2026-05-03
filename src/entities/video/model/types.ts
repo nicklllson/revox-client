@@ -9,6 +9,7 @@ export type TVideo = {
 	videoUrl: string;
 	createdAt?: string | Date;
 	youtubeVideoId: string;
+	isFavorite: boolean;
 };
 
 export type TCreateVideoDto = Omit<

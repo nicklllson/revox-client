@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import { ROUTES } from '@/shared/model/routes';
 
 import { AuthLayout } from '../layouts/auth-layout';
+import { BannerLayout } from '../layouts/banner-layout';
 import { HistoryLayout } from '../layouts/history-layout';
 import { MainLayout } from '../layouts/main-layout';
 import { App } from '../ui/app';
@@ -65,8 +66,21 @@ export const router = createBrowserRouter([
 										lazy: () => import('@/pages/private/video.page'),
 									},
 									{
-										path: ROUTES.PRIVATE.SETTINGS,
-										lazy: () => import('@/pages/private/settings.page'),
+										element: <BannerLayout />,
+										children: [
+											{
+												path: ROUTES.PRIVATE.SETTINGS,
+												lazy: () => import('@/pages/private/settings.page'),
+											},
+											{
+												path: ROUTES.PRIVATE.FAVORITES,
+												lazy: () => import('@/pages/private/favorites.page'),
+											},
+											{
+												path: ROUTES.PRIVATE.PLAYLISTS,
+												lazy: () => import('@/pages/private/playlists.page'),
+											},
+										],
 									},
 								],
 							},

@@ -31,7 +31,20 @@ export const api = async <ReqData, ResData>(
 	route: string,
 	init?: RequestInit & { json?: ReqData; params?: Record<string, unknown> },
 ): Promise<ResData> => {
-	const serverRoute = `${SERVER_API}${route}`;
+	let serverRoute = `${SERVER_API}${route}`;
+
+	if (init?.params) {
+		const searchParams = new URLSearchParams();
+		Object.entries(init.params).forEach(([key, value]) => {
+			if (value !== undefined && value !== null && value !== '') {
+				searchParams.set(key, String(value));
+			}
+		});
+		const queryString = searchParams.toString();
+		if (queryString) {
+			serverRoute = `${serverRoute}?${queryString}`;
+		}
+	}
 
 	const baseHeaders = new Headers(init?.headers as HeadersInit);
 

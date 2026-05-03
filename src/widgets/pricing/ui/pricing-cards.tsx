@@ -13,7 +13,7 @@ export const PricingCards = () => {
 	return (
 		<div className='mx-auto mb-10 flex w-full max-w-[1400px] items-start justify-between gap-10'>
 			{MOCK_TARIFFS.map(tariff => (
-				<Card key={tariff.id} className='min-h-[710px] w-full'>
+				<Card key={tariff.id} className='min-h-[610px] w-full'>
 					<CardHeader>
 						<CardTitle className='text-3xl'>{tariff.name}</CardTitle>
 						<CardDescription>{tariff.description}</CardDescription>

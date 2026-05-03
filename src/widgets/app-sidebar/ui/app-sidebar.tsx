@@ -1,4 +1,4 @@
-import { Link } from 'react-router';
+import { Link, useLocation } from 'react-router';
 import {
 	Sidebar,
 	SidebarContent,
@@ -20,6 +20,7 @@ import { HistoryItem } from './history-item';
 
 export const AppSidebar = () => {
 	const { videos, isFetching } = useUsersVideos();
+	const { pathname } = useLocation();
 
 	return (
 		<Sidebar collapsible='icon'>
@@ -31,6 +32,7 @@ export const AppSidebar = () => {
 							<SidebarMenuButton
 								asChild
 								size='lg'
+								isActive={pathname === item.href}
 								className='data-[state=open]:bg-sidebar-accent'>
 								<Link to={item.href}>
 									{item.icon}
@@ -53,6 +55,7 @@ export const AppSidebar = () => {
 									thumbnail=''
 									language='none'
 									title='Loading'
+									isFavorite={false}
 								/>
 							) : (
 								videos?.map(video => (
@@ -62,6 +65,7 @@ export const AppSidebar = () => {
 										title={video.title}
 										language={video.language}
 										thumbnail={video.thumbnail}
+										isFavorite={video.isFavorite}
 									/>
 								))
 							)}

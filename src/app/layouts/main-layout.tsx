@@ -8,7 +8,7 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
 		<ModelProvider>
 			<div className='flex h-full flex-1 flex-col'>
 				<Outlet />
-				<Aurora speed={1} amplitude={1.0} />
+				{/* <Aurora speed={1} amplitude={1.0} /> */}
 				{children}
 			</div>
 		</ModelProvider>

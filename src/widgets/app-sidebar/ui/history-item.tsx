@@ -1,5 +1,7 @@
+import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { AVAILABLE_LANGUAGES } from '@/entities/video';
+import { VideoActions } from '@/features/video-actions';
 import { SidebarMenuButton, SidebarMenuItem } from '@/shared/ui/sidebar';
 
 export const HistoryItem = ({
@@ -7,18 +9,30 @@ export const HistoryItem = ({
 	title,
 	language,
 	thumbnail,
+	isFavorite,
 }: {
 	id: string;
 	thumbnail?: string;
 	title?: string;
 	language: string;
+	isFavorite: boolean;
 }) => {
-	const availableLang = AVAILABLE_LANGUAGES.find(
-		lang => lang.value === language,
-	);
+	const [isHovered, setHovered] = useState(false);
+	const [isMenuOpen, setMenuOpen] = useState(false);
+
+	const isVisible = isHovered || isMenuOpen;
+
+	const availableLang = useMemo(() => {
+		return AVAILABLE_LANGUAGES.find(lang => lang.value === language);
+	}, [language]);
+
+	const handleMouseEnter = () => setHovered(true);
+	const handleMouseLeave = () => setHovered(false);
 
 	return (
-		<SidebarMenuItem>
+		<SidebarMenuItem
+			onMouseEnter={handleMouseEnter}
+			onMouseLeave={handleMouseLeave}>
 			<SidebarMenuButton asChild tooltip={title} className='h-auto py-1.5'>
 				<Link to={`/videos/${id}`}>
 					{thumbnail ? (
@@ -38,6 +52,21 @@ export const HistoryItem = ({
 							{availableLang?.label}
 						</span>
 					</div>
+
+					{isVisible && (
+						<button
+							type='button'
+							onClick={e => {
+								e.preventDefault();
+								e.stopPropagation();
+							}}>
+							<VideoActions
+								videoId={id}
+								isFavorite={isFavorite}
+								onOpenChange={setMenuOpen}
+							/>
+						</button>
+					)}
 				</Link>
 			</SidebarMenuButton>
 		</SidebarMenuItem>

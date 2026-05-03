@@ -8,7 +8,7 @@ export const HistoryLayout = () => {
 	return (
 		<SidebarProvider>
 			<AppSidebar />
-			<SidebarInset className='px-5 pt-22.5'>
+			<SidebarInset>
 				<Header />
 				<Outlet />
 			</SidebarInset>
