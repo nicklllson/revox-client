@@ -8,3 +8,10 @@ export type TFavoriteVideo = {
 	video: TVideo;
 	isFavorite: boolean;
 };
+
+export type TFavoriteVideoResponse = {
+	id: string;
+	createdAt: Date;
+	userId: string;
+	videoId: string;
+};

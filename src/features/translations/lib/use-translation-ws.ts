@@ -20,16 +20,16 @@ export const useTranslationWs = ({
 	enabled,
 }: Options) => {
 	const wsRef = useRef<WebSocket | null>(null);
-	const pendingMetaRef = useRef<Extract<
-		TTranslationMessage,
-		{ type: 'chunk_meta' }
-	> | null>(null);
+
+	const pendingMetaQueueRef = useRef<
+		Map<number, Extract<TTranslationMessage, { type: 'chunk_meta' }>>
+	>(new Map());
+
 	const metadataRef = useRef<Extract<
 		TTranslationMessage,
 		{ type: 'metadata' }
 	> | null>(null);
 
-	// Чанки которые уже запрошены на генерацию — не запрашиваем повторно
 	const requestedChunksRef = useRef<Set<number>>(new Set());
 
 	const [progress, setProgress] = useState<Extract<
@@ -40,7 +40,10 @@ export const useTranslationWs = ({
 		TTranslationMessage,
 		{ type: 'metadata' }
 	> | null>(null);
+
+	const chunksRef = useRef<Map<number, ArrayBuffer>>(new Map());
 	const [chunks, setChunks] = useState<Map<number, ArrayBuffer>>(new Map());
+
 	const [chunkMetas, setChunkMetas] = useState<
 		Map<number, Extract<TTranslationMessage, { type: 'chunk_meta' }>>
 	>(new Map());
@@ -51,6 +54,9 @@ export const useTranslationWs = ({
 	const requestChunk = useCallback((chunkId: number) => {
 		const ws = wsRef.current;
 		const meta = metadataRef.current;
+
+		console.log('requestChunk check:', { chunkId, total: meta?.total_chunks });
+
 		if (!ws || ws.readyState !== WebSocket.OPEN || !meta) return;
 		if (chunkId < 0 || chunkId >= meta.total_chunks) return;
 		if (requestedChunksRef.current.has(chunkId)) return;
@@ -107,18 +113,21 @@ export const useTranslationWs = ({
 				}
 
 				if (msg.type === 'chunk_meta') {
-					pendingMetaRef.current = msg;
+					pendingMetaQueueRef.current.set(msg.chunk_id, msg);
 					setChunkMetas(prev => new Map(prev).set(msg.chunk_id, msg));
 				}
 
 				if (msg.type === 'error') setError(msg.message);
 			} else {
-				const meta = pendingMetaRef.current;
-				if (meta) {
-					setChunks(prev =>
-						new Map(prev).set(meta.chunk_id, e.data as ArrayBuffer),
-					);
-					pendingMetaRef.current = null;
+				const pendingEntry = [...pendingMetaQueueRef.current.entries()].find(
+					([chunkId]) => !chunksRef.current.has(chunkId),
+				);
+
+				if (pendingEntry) {
+					const [chunkId, _] = pendingEntry;
+					pendingMetaQueueRef.current.delete(chunkId);
+					chunksRef.current.set(chunkId, e.data as ArrayBuffer);
+					setChunks(new Map(chunksRef.current));
 				}
 			}
 		};
@@ -134,13 +143,11 @@ export const useTranslationWs = ({
 		};
 	}, [enabled, youtubeUrl, token, targetLang, videoId]);
 
-	// Вызывается из плеера при timeupdate
 	const sendHeartbeat = useCallback(
 		(chunkId: number, currentTime: number) => {
 			const ws = wsRef.current;
 			if (!ws || ws.readyState !== WebSocket.OPEN) return;
 
-			// Заполняем буфер вперёд от текущей позиции
 			fillBuffer(chunkId);
 
 			ws.send(
@@ -153,7 +160,6 @@ export const useTranslationWs = ({
 		[fillBuffer],
 	);
 
-	// Вызывается при seek
 	const sendSeek = useCallback(
 		(time: number) => {
 			const ws = wsRef.current;
@@ -192,5 +198,7 @@ export const useTranslationWs = ({
 		sendHeartbeat,
 		sendSeek,
 		isChunkReady,
+		chunksRef,
+		requestedChunksRef,
 	};
 };

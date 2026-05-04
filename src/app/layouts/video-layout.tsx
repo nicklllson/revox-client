@@ -45,7 +45,7 @@ export const VideoLayout = () => {
 			/>
 			<VideoBottomBar>
 				<VideoTitle title={video?.title} />
-				<VideoSettings />
+				<VideoSettings isFavorite={video?.isFavorite} videoId={videoId} />
 			</VideoBottomBar>
 		</div>
 	);

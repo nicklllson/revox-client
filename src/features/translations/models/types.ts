@@ -1,3 +1,5 @@
+import type { TSegment } from '@/entities/translation';
+
 export type TTranslationMessage =
 	| { type: 'progress'; stage: string; percent: number; message: string }
 	| {
@@ -10,7 +12,7 @@ export type TTranslationMessage =
 	| {
 			type: 'chunk_meta';
 			chunk_id: number;
-			segments: unknown[];
+			segments: TSegment[];
 			is_last: boolean;
 	  }
 	| { type: 'error'; message: string };

@@ -2,6 +2,7 @@ import { Ellipsis, MoveRight, Star, Trash } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useFavorites } from '@/entities/favorites';
 import { useDeleteVideo } from '@/entities/video';
+import { ROUTES } from '@/shared/model/routes';
 import { Button } from '@/shared/ui/button';
 import {
 	DropdownMenu,
@@ -29,6 +30,11 @@ export const VideoActions = ({
 		navigate(`/videos/${videoId}`);
 	};
 
+	const deleteVideo = async () => {
+		await handleDeleteVideo(videoId);
+		navigate(ROUTES.PUBLIC.HOME);
+	};
+
 	return (
 		<DropdownMenu onOpenChange={onOpenChange}>
 			<DropdownMenuTrigger asChild>
@@ -48,7 +54,7 @@ export const VideoActions = ({
 					</DropdownMenuItem>
 					<DropdownMenuSeparator />
 					<DropdownMenuItem
-						onClick={() => handleDeleteVideo(videoId)}
+						onClick={deleteVideo}
 						variant='destructive'
 						disabled={isDeleting}>
 						<Trash />

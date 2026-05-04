@@ -29,7 +29,7 @@ export const Prompt = () => {
 			className='grid w-full max-w-2xl gap-6'>
 			<InputGroup className='shadow-2xl'>
 				<TextareaAutosize
-					defaultValue={'https://www.youtube.com/watch?v=M-ZH3psUbfU'}
+					defaultValue={'https://www.youtube.com/watch?v=0Bo-RA0sGLU'}
 					data-slot='input-group-control'
 					aria-invalid={!!errors.videoUrl}
 					className='field-sizing-content flex min-h-16 w-full resize-none rounded-md bg-transparent px-3 py-2.5 text-base outline-none transition-[color,box-shadow] placeholder:text-shadow-input md:text-sm'

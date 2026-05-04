@@ -1,5 +1,11 @@
 import { Outlet, useLocation } from 'react-router';
-import { Button } from '@/shared/ui/button';
+
+type TBannerContentItem = {
+	href: string;
+	title: string;
+	description: string;
+	actions: React.ReactNode | null;
+};
 
 const BANNER_CONTENT = [
 	{
@@ -12,13 +18,9 @@ const BANNER_CONTENT = [
 		href: '/playlists',
 		title: 'Playlists',
 		description: 'Here you can find your playlists for translated videos',
-		actions: (
-			<Button variant='secondary' accent='secondary'>
-				See all playlists
-			</Button>
-		),
+		actions: null,
 	},
-];
+] satisfies TBannerContentItem[];
 
 export const BannerLayout = () => {
 	const { pathname } = useLocation();

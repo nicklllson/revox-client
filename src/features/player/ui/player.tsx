@@ -19,6 +19,7 @@ const YouTubePlayer = lazy(() => import('react-youtube'));
 
 const CHUNK_DURATION = 30;
 const HEARTBEAT_INTERVAL = 1000;
+const PREFETCH_AHEAD = 3;
 
 export const Player = ({
 	youtubeVideoId,
@@ -33,7 +34,12 @@ export const Player = ({
 }) => {
 	const [isReady, setIsReady] = useState<boolean>(false);
 	const [isStarted, setIsStarted] = useState<boolean>(false);
+	const [isBuffering, setIsBuffering] = useState<boolean>(false);
+
 	const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
+	const bufferingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
+		null,
+	);
 
 	const {
 		playerRef,
@@ -43,17 +49,63 @@ export const Player = ({
 		state: { isPlaying },
 	} = usePlayer();
 
-	const { chunks, sendHeartbeat, error, progress } = useTranslationWs({
+	const {
+		chunks,
+		sendHeartbeat,
+		progress,
+		chunkMetas,
+		chunksRef,
+		requestedChunksRef,
+	} = useTranslationWs({
 		videoId,
 		targetLang,
 		youtubeUrl: videoUrl,
 		enabled: !!videoUrl,
 	});
 
+	const onBuffering = useCallback(() => {
+		if (isBuffering) return;
+		setIsBuffering(true);
+
+		bufferingIntervalRef.current = setInterval(() => {
+			const time = playerTimeRef.current;
+			const chunkId = Math.floor(time / CHUNK_DURATION);
+
+			for (let i = chunkId; i <= chunkId + PREFETCH_AHEAD; i++) {
+				if (!chunksRef.current.has(i)) {
+					requestedChunksRef.current.delete(i);
+				}
+			}
+
+			sendHeartbeat(chunkId, time);
+		}, 1000);
+
+		getPlayer()?.pauseVideo();
+	}, [
+		isBuffering,
+		getPlayer,
+		sendHeartbeat,
+		playerTimeRef,
+		chunksRef,
+		requestedChunksRef,
+	]);
+
+	const onBuffered = useCallback(() => {
+		setIsBuffering(false);
+		if (bufferingIntervalRef.current) {
+			clearInterval(bufferingIntervalRef.current);
+			bufferingIntervalRef.current = null;
+		}
+		getPlayer()?.playVideo();
+	}, [getPlayer, isPlaying]);
+
 	const { destroy, ensureContext } = useAudioSync({
-		chunks,
 		isPlaying,
+		chunkMetas,
+		chunks: chunksRef,
 		youtubeTimeRef: playerTimeRef,
+		onBuffered,
+		onBuffering,
 	});
 
 	const handleStart = useCallback(() => {
@@ -111,12 +163,14 @@ export const Player = ({
 		() => () => {
 			destroy();
 			stopHeartbeat();
+			if (bufferingIntervalRef.current)
+				clearInterval(bufferingIntervalRef.current);
 		},
 		[],
 	);
 
 	return (
-		<div className='relative flex h-[76dvh] min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'>
+		<div className='relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'>
 			<Suspense
 				fallback={
 					<div className='absolute top-0 left-0 h-full w-full bg-red' />
@@ -131,24 +185,28 @@ export const Player = ({
 				/>
 			</Suspense>
 
-			{/* Overlay пока не стартовали */}
 			{isReady && !isStarted && (
 				<>
 					<div className='absolute inset-0 z-10 bg-black/80 backdrop-blur-sm' />
 
 					<div className='-translate-y-1/2 -translate-x-1/2 absolute top-1/2 left-1/2 z-20 flex flex-col items-center gap-4'>
-						{progress && progress.stage !== 'done' ? (
+						{chunks.size === 0 ? (
 							<div className='flex flex-col items-center gap-2 text-center text-white'>
 								<div className='h-10 w-10 animate-spin rounded-full border-4 border-white/20 border-t-white' />
-								<span className='font-medium text-sm'>{progress.message}</span>
-								<div className='h-1 w-48 overflow-hidden rounded-full bg-white/20'>
-									<div
-										className='h-full rounded-full bg-white transition-all duration-500'
-										style={{ width: `${progress.percent}%` }}
-									/>
-								</div>
+								<span className='font-medium text-sm'>
+									{progress?.message ?? 'Preparing translation...'}
+								</span>
+								{progress && (
+									<div className='h-1 w-48 overflow-hidden rounded-full bg-white/20'>
+										<div
+											className='h-full rounded-full bg-white transition-all duration-500'
+											style={{ width: `${progress.percent}%` }}
+										/>
+									</div>
+								)}
 							</div>
 						) : (
+							// первый чанк готов — показываем Play
 							<Button
 								variant='outline'
 								onClick={handleStart}
@@ -159,7 +217,7 @@ export const Player = ({
 					</div>
 				</>
 			)}
-
+			{/* 
 			{error && (
 				<>
 					<div className='absolute inset-0 z-10 bg-black/80 backdrop-blur-sm' />
@@ -168,7 +226,7 @@ export const Player = ({
 						<span className='font-medium text-sm'>{error}</span>
 					</div>
 				</>
-			)}
+			)} */}
 		</div>
 	);
 };

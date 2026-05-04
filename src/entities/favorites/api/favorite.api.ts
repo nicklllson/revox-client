@@ -1,7 +1,7 @@
 import { infiniteQueryOptions } from '@tanstack/react-query';
 import { privateApi } from '@/shared/lib/api';
 import type { TPaginatedResult } from '@/shared/types/queries';
-import type { TFavoriteVideo } from '../model/types';
+import type { TFavoriteVideo, TFavoriteVideoResponse } from '../model/types';
 
 const DEFAULT_TAKE = 20;
 
@@ -9,13 +9,13 @@ export const favoriteApi = {
 	BASE_KEY: 'favorites',
 
 	addToFavorites: (videoId: string) => {
-		return privateApi(`/favorites/${videoId}`, {
+		return privateApi<void, TFavoriteVideoResponse>(`/favorites/${videoId}`, {
 			method: 'POST',
 		});
 	},
 
 	removeFromFavorites: (videoId: string) => {
-		return privateApi(`/favorites/${videoId}`, {
+		return privateApi<void, TFavoriteVideoResponse>(`/favorites/${videoId}`, {
 			method: 'DELETE',
 		});
 	},

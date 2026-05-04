@@ -1,20 +1,26 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <Explicit> */
 import { type RefObject, useCallback, useEffect, useRef } from 'react';
 
 const CHUNK_DURATION = 30; // секунд, должно совпадать с TTS сервером
 const SYNC_INTERVAL = 500; // мс, как часто корректируем drift
 const MAX_DRIFT = 0.3; // секунд, допустимое расхождение
 
-interface UseAudioSyncOptions {
+type UseAudioSyncOptions = {
 	isPlaying: boolean;
-	chunks: Map<number, ArrayBuffer>;
+	chunks: RefObject<Map<number, ArrayBuffer>>;
+	chunkMetas: Map<number, { segments: { start: number }[] }>;
 	youtubeTimeRef: RefObject<number>;
-}
+	onBuffering: () => void;
+	onBuffered: () => void;
+};
 
 export const useAudioSync = ({
 	chunks,
 	isPlaying,
+	chunkMetas,
 	youtubeTimeRef,
+	onBuffered,
+	onBuffering,
 }: UseAudioSyncOptions) => {
 	const ctxRef = useRef<AudioContext | null>(null);
 	const decodedRef = useRef<Map<number, AudioBuffer>>(new Map());
@@ -35,74 +41,100 @@ export const useAudioSync = ({
 		return ctxRef.current;
 	}, []);
 
-	useEffect(() => {
-		chunks.forEach((buffer, chunkId) => {
-			if (decodedRef.current.has(chunkId)) return;
+	const playChunk = useCallback(
+		(chunkId: number, offsetInChunk: number) => {
 			const ctx = ensureContext();
 
-			const toArrayBuffer =
-				buffer instanceof Blob
-					? buffer.arrayBuffer()
-					: Promise.resolve(buffer as ArrayBuffer);
+			if (decodedRef.current.has(chunkId)) {
+				const decoded = decodedRef.current.get(chunkId)!;
+				_startSource(ctx, decoded, offsetInChunk, chunkId);
+				return;
+			}
 
-			void toArrayBuffer.then(ab => {
-				void ctx.decodeAudioData(ab.slice(0)).then(decoded => {
-					decodedRef.current.set(chunkId, decoded);
-				});
+			const buffer = chunks.current.get(chunkId);
+			if (!buffer) return;
+
+			void ctx.decodeAudioData(buffer.slice(0)).then(decoded => {
+				decodedRef.current.set(chunkId, decoded);
+				_startSource(ctx, decoded, offsetInChunk, chunkId);
 			});
-		});
-	}, [chunks]);
+		},
+		[ensureContext],
+	);
 
-	const playChunk = useCallback((chunkId: number, offsetInChunk: number) => {
-		const ctx = ensureContext();
-		const decoded = decodedRef.current.get(chunkId);
-		if (!decoded) return;
-
-		if (sourceRef.current) {
-			const oldSource = sourceRef.current;
-			const gainNode = gainRef.current;
-			if (gainNode) {
-				gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
-				setTimeout(() => {
+	const _startSource = useCallback(
+		(
+			ctx: AudioContext,
+			decoded: AudioBuffer,
+			offsetInChunk: number,
+			chunkId: number,
+		) => {
+			if (sourceRef.current) {
+				const oldSource = sourceRef.current;
+				const gainNode = gainRef.current;
+				if (gainNode) {
+					gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
+					setTimeout(() => {
+						try {
+							oldSource.stop();
+						} catch {}
+						oldSource.disconnect();
+					}, 200);
+				} else {
 					try {
 						oldSource.stop();
 					} catch {}
 					oldSource.disconnect();
-				}, 200);
-			} else {
-				try {
-					oldSource.stop();
-				} catch {}
-				oldSource.disconnect();
+				}
 			}
-		}
 
-		const gain = ctx.createGain();
-		gain.gain.setValueAtTime(0, ctx.currentTime);
-		gain.gain.setTargetAtTime(1, ctx.currentTime, 0.05);
-		gain.connect(ctx.destination);
+			const gain = ctx.createGain();
+			gain.gain.setValueAtTime(0, ctx.currentTime);
+			gain.gain.setTargetAtTime(1, ctx.currentTime, 0.05);
+			gain.connect(ctx.destination);
 
-		const source = ctx.createBufferSource();
-		source.buffer = decoded;
-		source.connect(gain);
-		source.start(0, Math.max(0, offsetInChunk));
+			const source = ctx.createBufferSource();
+			source.buffer = decoded;
+			source.connect(gain);
+			source.start(0, Math.max(0, offsetInChunk));
 
-		sourceRef.current = source;
-		gainRef.current = gain;
-		currentChunkRef.current = chunkId;
-		chunkStartedAtRef.current = ctx.currentTime;
-	}, []);
+			source.onended = () => {
+				if (currentChunkRef.current === chunkId) {
+					currentChunkRef.current = -1;
+				}
+			};
+
+			sourceRef.current = source;
+			gainRef.current = gain;
+			currentChunkRef.current = chunkId;
+			chunkStartedAtRef.current = ctx.currentTime;
+		},
+		[],
+	);
 
 	const sync = useCallback(() => {
 		const ytTime = youtubeTimeRef.current;
-
 		const targetChunk = Math.floor(ytTime / CHUNK_DURATION);
-		const offsetInChunk = ytTime % CHUNK_DURATION;
 
 		if (targetChunk !== currentChunkRef.current) {
-			if (decodedRef.current.has(targetChunk)) {
-				playChunk(targetChunk, offsetInChunk);
+			const hasBuffer =
+				decodedRef.current.has(targetChunk) || chunks.current.has(targetChunk);
+
+			if (!hasBuffer) {
+				onBuffering();
+				return;
 			}
+
+			onBuffered();
+
+			const meta = chunkMetas.get(targetChunk);
+			const chunkStartTime =
+				meta?.segments[0]?.start ?? targetChunk * CHUNK_DURATION;
+
+			if (ytTime < chunkStartTime) return;
+
+			const audioOffset = ytTime - chunkStartTime;
+			playChunk(targetChunk, Math.max(0, audioOffset));
 			return;
 		}
 
@@ -110,14 +142,16 @@ export const useAudioSync = ({
 		if (!ctx || !sourceRef.current) return;
 
 		const chunkStartedAt = chunkStartedAtRef.current;
-		const chunkOffset = currentChunkRef.current * CHUNK_DURATION;
-		const audioPosition =
-			ctx.currentTime - chunkStartedAt + (chunkOffset % CHUNK_DURATION);
+		const audioPosition = ctx.currentTime - chunkStartedAt;
+		const meta = chunkMetas.get(targetChunk);
+		const chunkStartTime =
+			meta?.segments[0]?.start ?? targetChunk * CHUNK_DURATION;
+		const expectedAudioPosition = ytTime - chunkStartTime;
 
-		if (Math.abs(audioPosition - offsetInChunk) > MAX_DRIFT) {
-			playChunk(targetChunk, offsetInChunk);
+		if (Math.abs(audioPosition - expectedAudioPosition) > MAX_DRIFT) {
+			playChunk(targetChunk, Math.max(0, expectedAudioPosition));
 		}
-	}, [playChunk]);
+	}, [playChunk, chunkMetas, onBuffering, onBuffered]);
 
 	const handleSeek = useCallback(() => {
 		sync();
