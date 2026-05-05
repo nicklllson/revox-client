@@ -55,8 +55,6 @@ export const useTranslationWs = ({
 		const ws = wsRef.current;
 		const meta = metadataRef.current;
 
-		console.log('requestChunk check:', { chunkId, total: meta?.total_chunks });
-
 		if (!ws || ws.readyState !== WebSocket.OPEN || !meta) return;
 		if (chunkId < 0 || chunkId >= meta.total_chunks) return;
 		if (requestedChunksRef.current.has(chunkId)) return;
@@ -188,6 +186,12 @@ export const useTranslationWs = ({
 		},
 		[chunks, chunkMetas],
 	);
+
+	useEffect(() => {
+		return () => {
+			wsRef.current?.close();
+		};
+	}, []);
 
 	return {
 		progress,

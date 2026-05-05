@@ -30,6 +30,7 @@ export const useAudioSync = ({
 	const chunkStartedAtRef = useRef<number>(0);
 	const pausedAtRef = useRef<number>(0);
 	const gainRef = useRef<GainNode | null>(null);
+	const startOffsetRef = useRef<number>(0);
 
 	const ensureContext = useCallback(() => {
 		if (!ctxRef.current) {
@@ -97,6 +98,8 @@ export const useAudioSync = ({
 			source.buffer = decoded;
 			source.connect(gain);
 			source.start(0, Math.max(0, offsetInChunk));
+
+			startOffsetRef.current = Math.max(0, offsetInChunk);
 
 			source.onended = () => {
 				if (currentChunkRef.current === chunkId) {
