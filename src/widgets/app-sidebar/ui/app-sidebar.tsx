@@ -13,6 +13,7 @@ import {
 	SidebarRail,
 	SidebarTrigger,
 } from '@/shared/ui/sidebar';
+import { Skeleton } from '@/shared/ui/skeleton';
 import { ProfileMenu } from '@/widgets/profile-menu';
 import { useUsersVideos } from '../lib/use-users-videos';
 import { MENU_ITEMS } from '../model/constants';
@@ -49,26 +50,20 @@ export const AppSidebar = () => {
 					<SidebarGroupLabel>History</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{isFetching && !videos ? (
-								<HistoryItem
-									id=''
-									thumbnail=''
-									language='none'
-									title='Loading'
-									isFavorite={false}
-								/>
-							) : (
-								videos?.map(video => (
-									<HistoryItem
-										id={video.id}
-										key={video.id}
-										title={video.title}
-										language={video.language}
-										thumbnail={video.thumbnail}
-										isFavorite={video.isFavorite}
-									/>
-								))
-							)}
+							{isFetching && !videos
+								? [...Array(6)].map((_, index) => (
+										<Skeleton key={index} className='h-15' />
+									))
+								: videos?.map(video => (
+										<HistoryItem
+											id={video.id}
+											key={video.id}
+											title={video.title}
+											language={video.language}
+											thumbnail={video.thumbnail}
+											isFavorite={video.isFavorite}
+										/>
+									))}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>

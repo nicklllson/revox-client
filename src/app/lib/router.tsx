@@ -66,12 +66,19 @@ export const router = createBrowserRouter([
 										lazy: () => import('@/pages/private/video.page'),
 									},
 									{
+										path: ROUTES.PRIVATE.SETTINGS,
+										lazy: () => import('@/pages/private/settings.page'),
+									},
+									{
+										path: ROUTES.PRIVATE.SINGLE_PLAYLIST,
+										lazy: () =>
+											import(
+												'@/pages/private/playlists.page/single-playlist.page'
+											),
+									},
+									{
 										element: <BannerLayout />,
 										children: [
-											{
-												path: ROUTES.PRIVATE.SETTINGS,
-												lazy: () => import('@/pages/private/settings.page'),
-											},
 											{
 												path: ROUTES.PRIVATE.FAVORITES,
 												lazy: () => import('@/pages/private/favorites.page'),
