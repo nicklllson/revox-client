@@ -33,7 +33,7 @@ const buttonVariants = cva(
 			},
 			accent: {
 				primary: 'bg-white text-black hover:bg-white/80',
-				secondary: 'bg-blue-800 hover:bg-blue-800/80',
+				secondary: 'bg-blue-800 text-white hover:bg-blue-800/80',
 			},
 		},
 		defaultVariants: {

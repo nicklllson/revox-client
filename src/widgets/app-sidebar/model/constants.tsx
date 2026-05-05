@@ -22,7 +22,7 @@ export const MENU_ITEMS = [
 		href: ROUTES.PRIVATE.FAVORITES,
 		icon: (
 			<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent text-primary-foreground'>
-				<Star className='text-white' size={20} />
+				<Star className='text-black dark:text-white' size={20} />
 			</div>
 		),
 	},
@@ -31,7 +31,7 @@ export const MENU_ITEMS = [
 		href: ROUTES.PRIVATE.PLAYLISTS,
 		icon: (
 			<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent text-primary-foreground'>
-				<ListVideo className='text-white' size={20} />
+				<ListVideo className='text-black dark:text-white' size={20} />
 			</div>
 		),
 	},

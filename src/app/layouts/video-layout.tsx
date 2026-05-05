@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useLayoutEffect, useMemo } from 'react';
 import { useParams } from 'react-router';
 import { useUpdateVideo, useVideo } from '@/entities/video';
 import { Player } from '@/features/player';
@@ -20,19 +20,19 @@ export const VideoLayout = () => {
 		return video.youtubeVideoId;
 	}, [video?.youtubeVideoId]);
 
-	useEffect(() => {
+	useLayoutEffect(() => {
 		if (video?.title && video?.thumbnail) {
 			return;
 		}
 
 		if (state.title && state.thumbnail) {
 			handleUpdateVideo({
-				videoId,
+				videoId: video?.id,
 				title: state.title,
 				thumbnail: state.thumbnail,
 			});
 		}
-	}, [state.title, state.thumbnail, video?.title, video?.thumbnail, videoId]);
+	}, [state]);
 
 	return (
 		<div className='relative z-10 mx-auto flex w-full max-w-[70vw] flex-1 flex-col gap-2 px-5 pt-22.5'>
