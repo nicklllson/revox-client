@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router';
 import { useFavoriteVideos } from '@/entities/favorites';
 import { AVAILABLE_LANGUAGES, VideoCard } from '@/entities/video';
 import { useDebounce } from '@/shared/hooks';
+import { useIntersect } from '@/shared/hooks/use-intersect';
 import { ROUTES } from '@/shared/model/routes';
 import { Button } from '@/shared/ui/button';
 import {
@@ -30,10 +31,13 @@ export const FavoritesPage = () => {
 	const navigate = useNavigate();
 
 	const debouncedValue = useDebounce(search, 300);
-	const { favoriteVideos, isFetching } = useFavoriteVideos({
-		search: debouncedValue,
-		lang,
-	});
+	const { favoriteVideos, isFetching, fetchNextPage, hasNextPage } =
+		useFavoriteVideos({
+			search: debouncedValue,
+			lang,
+		});
+
+	const cursorRef = useIntersect<HTMLDivElement>(fetchNextPage);
 
 	const handleNavigate = () => navigate(ROUTES.PUBLIC.HOME);
 
@@ -77,6 +81,9 @@ export const FavoritesPage = () => {
 							/>
 						);
 					})}
+					{hasNextPage && (
+						<div ref={cursorRef} className='absolute bottom-20 h-1 w-full' />
+					)}
 				</div>
 			)}
 

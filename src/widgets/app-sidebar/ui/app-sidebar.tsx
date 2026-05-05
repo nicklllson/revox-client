@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router';
+import { useIntersect } from '@/shared/hooks/use-intersect';
 import {
 	Sidebar,
 	SidebarContent,
@@ -20,8 +21,9 @@ import { MENU_ITEMS } from '../model/constants';
 import { HistoryItem } from './history-item';
 
 export const AppSidebar = () => {
-	const { videos, isFetching } = useUsersVideos();
+	const { videos, isFetching, fetchNextPage, hasNextPage } = useUsersVideos();
 	const { pathname } = useLocation();
+	const cursorRef = useIntersect<HTMLDivElement>(fetchNextPage);
 
 	return (
 		<Sidebar collapsible='icon'>
@@ -64,6 +66,9 @@ export const AppSidebar = () => {
 											isFavorite={video.isFavorite}
 										/>
 									))}
+							{hasNextPage && (
+								<div ref={cursorRef} className='h-1 w-full bg-red-500' />
+							)}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>

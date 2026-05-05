@@ -38,17 +38,24 @@ import {
 	type TCreatePlaylistForm,
 } from '../model/schemes';
 
-interface PlaylistsModalProps {
+export const PlaylistsModal = ({
+	trigger,
+	videoId,
+	onClose,
+	isOpen: externalOpen,
+}: {
 	trigger?: React.ReactNode;
 	videoId?: string;
-}
-
-export const PlaylistsModal = ({ trigger, videoId }: PlaylistsModalProps) => {
-	const [open, setOpen] = useState<boolean>(false);
+	isOpen?: boolean;
+	onClose?: () => void;
+}) => {
+	const [internalOpen, setInternalOpen] = useState<boolean>(false);
 	const [view, setView] = useState<'list' | 'create'>('list');
 	const [search, setSearch] = useState<string>('');
 	const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 	const debouncedSearch = useDebounce(search, 300);
+
+	const open = externalOpen || internalOpen;
 
 	const { playlists, isFetching } = usePlaylists({
 		search: debouncedSearch || undefined,
@@ -71,12 +78,13 @@ export const PlaylistsModal = ({ trigger, videoId }: PlaylistsModalProps) => {
 	});
 
 	const handleOpenChange = (next: boolean) => {
-		setOpen(next);
+		setInternalOpen(next);
 		if (!next) {
 			setView('list');
 			setSearch('');
 			setConfirmDeleteId(null);
 			reset();
+			onClose?.();
 		}
 	};
 
@@ -96,7 +104,9 @@ export const PlaylistsModal = ({ trigger, videoId }: PlaylistsModalProps) => {
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogTrigger asChild>
-				{trigger ?? <Button variant='outline'>Playlists</Button>}
+				{typeof trigger === 'undefined' ? null : (
+					<Button variant='outline'>Playlists</Button>
+				)}
 			</DialogTrigger>
 			<DialogContent className='flex max-h-[70dvh] flex-col gap-4'>
 				<DialogHeader>

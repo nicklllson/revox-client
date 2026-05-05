@@ -1,3 +1,6 @@
+/** biome-ignore-all lint/a11y/noStaticElementInteractions: <explanation> */
+/** biome-ignore-all lint/a11y/useKeyWithClickEvents: <explanation> */
+
 import { useMemo, useState } from 'react';
 import { Link } from 'react-router';
 import { AVAILABLE_LANGUAGES } from '@/entities/video';
@@ -54,8 +57,7 @@ export const HistoryItem = ({
 					</div>
 
 					{isVisible && (
-						<button
-							type='button'
+						<div
 							onClick={e => {
 								e.preventDefault();
 								e.stopPropagation();
@@ -65,7 +67,7 @@ export const HistoryItem = ({
 								isFavorite={isFavorite}
 								onOpenChange={setMenuOpen}
 							/>
-						</button>
+						</div>
 					)}
 				</Link>
 			</SidebarMenuButton>

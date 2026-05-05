@@ -10,6 +10,7 @@ import {
 	usePlaylists,
 } from '@/entities/playlists';
 import { useDebounce } from '@/shared/hooks';
+import { useIntersect } from '@/shared/hooks/use-intersect';
 import { Button } from '@/shared/ui/button';
 import {
 	Dialog,
@@ -42,11 +43,12 @@ export const PlaylistsPage = () => {
 	const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 	const debouncedSearch = useDebounce(search, 300);
 
-	const { playlists, isFetching } = usePlaylists({
+	const { playlists, isFetching, fetchNextPage, hasNextPage } = usePlaylists({
 		search: debouncedSearch || undefined,
 	});
 	const { createPlaylist, isCreating } = useCreatePlaylist();
 	const { deletePlaylist, isDeleting } = useDeletePlaylist();
+	const cursorRef = useIntersect<HTMLDivElement>(fetchNextPage);
 
 	const {
 		register,
@@ -192,6 +194,9 @@ export const PlaylistsPage = () => {
 							</div>
 						);
 					})}
+					{hasNextPage && (
+						<div ref={cursorRef} className='absolute bottom-20 h-1 w-full' />
+					)}
 				</div>
 			)}
 

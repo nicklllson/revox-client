@@ -8,7 +8,7 @@ import type {
 	TVideosParams,
 } from '../model/types';
 
-const DEFAULT_TAKE = 20;
+const DEFAULT_TAKE = 10;
 
 export const videosApi = {
 	BASE_KEY: 'videos',
