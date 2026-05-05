@@ -14,12 +14,12 @@ import { usePlayer } from '@/app/providers/player-provider/player-provider';
 import { useAudioSync, useTranslationWs } from '@/features/translations';
 import { craftVideoThumbnail } from '@/shared/model/videos.service';
 import { Button } from '@/shared/ui/button';
+import { getChunkIdAtTime } from '../model/serivices';
 
-const YouTubePlayer = lazy(() => import('react-youtube'));
-
-const CHUNK_DURATION = 30;
 const HEARTBEAT_INTERVAL = 1000;
 const PREFETCH_AHEAD = 3;
+
+const YouTubePlayer = lazy(() => import('react-youtube'));
 
 export const Player = ({
 	youtubeVideoId,
@@ -67,17 +67,26 @@ export const Player = ({
 		if (isBuffering) return;
 		setIsBuffering(true);
 
-		bufferingIntervalRef.current = setInterval(() => {
-			const time = playerTimeRef.current;
-			const chunkId = Math.floor(time / CHUNK_DURATION);
+		const time = playerTimeRef.current;
+		const chunkId = getChunkIdAtTime(chunkMetas, time);
+		for (let i = chunkId; i <= chunkId + PREFETCH_AHEAD; i++) {
+			if (!chunksRef.current.has(i)) {
+				requestedChunksRef.current.delete(i);
+			}
+		}
+		sendHeartbeat(chunkId, time);
 
-			for (let i = chunkId; i <= chunkId + PREFETCH_AHEAD; i++) {
+		bufferingIntervalRef.current = setInterval(() => {
+			const t = playerTimeRef.current;
+			const cid = getChunkIdAtTime(chunkMetas, t);
+
+			for (let i = cid; i <= cid + PREFETCH_AHEAD; i++) {
 				if (!chunksRef.current.has(i)) {
 					requestedChunksRef.current.delete(i);
 				}
 			}
 
-			sendHeartbeat(chunkId, time);
+			sendHeartbeat(cid, t);
 		}, 1000);
 
 		getPlayer()?.pauseVideo();
@@ -86,18 +95,20 @@ export const Player = ({
 		getPlayer,
 		sendHeartbeat,
 		playerTimeRef,
+		chunkMetas,
 		chunksRef,
 		requestedChunksRef,
 	]);
 
 	const onBuffered = useCallback(() => {
+		if (!isBuffering) return;
 		setIsBuffering(false);
 		if (bufferingIntervalRef.current) {
 			clearInterval(bufferingIntervalRef.current);
 			bufferingIntervalRef.current = null;
 		}
 		getPlayer()?.playVideo();
-	}, [getPlayer, isPlaying]);
+	}, [isBuffering, getPlayer]);
 
 	const { destroy, ensureContext } = useAudioSync({
 		isPlaying,
@@ -115,16 +126,16 @@ export const Player = ({
 		ensureContext();
 		player.playVideo();
 		setIsStarted(true);
-	}, [getPlayer]);
+	}, [getPlayer, ensureContext]);
 
 	const startHeartbeat = useCallback(() => {
 		if (heartbeatRef.current) return;
 		heartbeatRef.current = setInterval(() => {
 			const time = playerTimeRef.current;
-			const chunkId = Math.floor(time / CHUNK_DURATION);
+			const chunkId = getChunkIdAtTime(chunkMetas, time);
 			sendHeartbeat(chunkId, time);
 		}, HEARTBEAT_INTERVAL);
-	}, [getPlayer, sendHeartbeat]);
+	}, [chunkMetas, sendHeartbeat, playerTimeRef]);
 
 	const stopHeartbeat = useCallback(() => {
 		if (heartbeatRef.current) {
@@ -149,11 +160,9 @@ export const Player = ({
 		const state = e.data;
 
 		if (state === 1) {
-			// playing
 			dispatch({ type: 'SET_PLAYING', payload: true });
 			startHeartbeat();
 		} else if (state === 2 || state === 0) {
-			// paused or ended
 			dispatch({ type: 'SET_PLAYING', payload: false });
 			stopHeartbeat();
 		}
@@ -206,7 +215,6 @@ export const Player = ({
 								)}
 							</div>
 						) : (
-							// первый чанк готов — показываем Play
 							<Button
 								variant='outline'
 								onClick={handleStart}
@@ -217,16 +225,6 @@ export const Player = ({
 					</div>
 				</>
 			)}
-			{/* 
-			{error && (
-				<>
-					<div className='absolute inset-0 z-10 bg-black/80 backdrop-blur-sm' />
-					<div className='-translate-y-1/2 -translate-x-1/2 absolute top-1/2 left-1/2 z-20 flex flex-col items-center gap-3 text-center text-white'>
-						<span className='text-4xl'>⚠️</span>
-						<span className='font-medium text-sm'>{error}</span>
-					</div>
-				</>
-			)} */}
 		</div>
 	);
 };
