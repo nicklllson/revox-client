@@ -18,11 +18,13 @@ type UseAudioSyncOptions = {
 	youtubeTimeRef: RefObject<number>;
 	onBuffering: () => void;
 	onBuffered: () => void;
+	volumeRef: RefObject<number>;
 };
 
 export const useAudioSync = ({
 	chunks,
 	isPlaying,
+	volumeRef,
 	chunkMetasRef,
 	youtubeTimeRef,
 	onBuffered,
@@ -36,11 +38,17 @@ export const useAudioSync = ({
 	const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const chunkStartedAtRef = useRef<number>(0);
 	const startOffsetRef = useRef<number>(0);
+
 	const gainRef = useRef<GainNode | null>(null);
+	const masterGainRef = useRef<GainNode | null>(null);
 
 	const ensureContext = useCallback(() => {
 		if (!ctxRef.current) {
 			ctxRef.current = new AudioContext();
+			const masterGain = ctxRef.current.createGain();
+			masterGain.gain.value = (volumeRef.current ?? 100) / 100;
+			masterGain.connect(ctxRef.current.destination);
+			masterGainRef.current = masterGain;
 		}
 		if (ctxRef.current.state === 'suspended') {
 			void ctxRef.current.resume();
@@ -102,7 +110,7 @@ export const useAudioSync = ({
 			const gain = ctx.createGain();
 			gain.gain.setValueAtTime(0, ctx.currentTime);
 			gain.gain.setTargetAtTime(1, ctx.currentTime, 0.05);
-			gain.connect(ctx.destination);
+			gain.connect(masterGainRef.current!);
 
 			const source = ctx.createBufferSource();
 			source.buffer = decoded;
@@ -258,5 +266,15 @@ export const useAudioSync = ({
 		};
 	}, [isPlaying]);
 
-	return { handleSeek, destroy, ensureContext };
+	const setVolume = useCallback((value: number) => {
+		if (masterGainRef.current && ctxRef.current) {
+			masterGainRef.current.gain.setTargetAtTime(
+				value / 100,
+				ctxRef.current.currentTime,
+				0.02,
+			);
+		}
+	}, []);
+
+	return { handleSeek, destroy, ensureContext, setVolume };
 };

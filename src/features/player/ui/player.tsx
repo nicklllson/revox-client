@@ -11,6 +11,7 @@ import {
 } from 'react';
 import type { YouTubeEvent } from 'react-youtube';
 import { usePlayer } from '@/app/providers/player-provider/player-provider';
+import { useVolume } from '@/app/providers/volume-provider';
 import { useAudioSync, useTranslationWs } from '@/features/translations';
 import { craftVideoThumbnail } from '@/shared/model/videos.service';
 import { Button } from '@/shared/ui/button';
@@ -48,6 +49,12 @@ export const Player = ({
 		playerTimeRef,
 		state: { isPlaying },
 	} = usePlayer();
+
+	const {
+		state: { dubbingVolume },
+	} = useVolume();
+	const dubbingVolumeRef = useRef(dubbingVolume);
+	dubbingVolumeRef.current = dubbingVolume;
 
 	const {
 		chunks,
@@ -111,14 +118,19 @@ export const Player = ({
 		getPlayer()?.playVideo();
 	}, [isBuffering, getPlayer]);
 
-	const { destroy, ensureContext } = useAudioSync({
+	const { destroy, ensureContext, setVolume } = useAudioSync({
 		isPlaying,
 		chunkMetasRef,
 		chunks: chunksRef,
 		youtubeTimeRef: playerTimeRef,
+		volumeRef: dubbingVolumeRef,
 		onBuffered,
 		onBuffering,
 	});
+
+	useEffect(() => {
+		setVolume(dubbingVolume);
+	}, [dubbingVolume, setVolume]);
 
 	const handleStart = useCallback(() => {
 		const player = getPlayer();

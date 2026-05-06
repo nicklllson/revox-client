@@ -33,17 +33,38 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
 	const playerRef = useRef<YouTube | null>(null);
 	const playerTimeRef = useRef<number>(0);
 
-	const { state: volumeState } = useVolume();
+	const { state: volumeState, dispatch: volumeDispatch } = useVolume();
 
 	const getPlayer = useCallback(
 		() => playerRef.current?.getInternalPlayer(),
 		[],
 	);
 
+	const playerVolumeRef = useRef(volumeState.playerVolume);
+	playerVolumeRef.current = volumeState.playerVolume;
+
+	const localChangeAtRef = useRef(0);
+
 	useEffect(() => {
+		localChangeAtRef.current = Date.now();
 		const player: YT.Player = getPlayer();
 		player?.setVolume(volumeState.playerVolume);
 	}, [volumeState.playerVolume]);
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			if (Date.now() - localChangeAtRef.current < 1500) return;
+			const player: YT.Player = getPlayer();
+			if (!player) return;
+			const raw = player.getVolume();
+			if (typeof raw !== 'number' || !Number.isFinite(raw)) return;
+			const vol = Math.round(Math.max(0, Math.min(100, raw)));
+			if (vol !== playerVolumeRef.current) {
+				volumeDispatch({ type: 'SET_PLAYER_VOLUME', payload: vol });
+			}
+		}, 1000);
+		return () => clearInterval(interval);
+	}, [getPlayer, volumeDispatch]);
 
 	useGetPlayerTime(playerRef, playerTimeRef, {
 		isEnabled: state.isPlaying,

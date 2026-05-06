@@ -104,9 +104,7 @@ export const PlaylistsModal = ({
 	return (
 		<Dialog open={open} onOpenChange={handleOpenChange}>
 			<DialogTrigger asChild>
-				{typeof trigger === 'undefined' ? null : (
-					<Button variant='outline'>Playlists</Button>
-				)}
+				{typeof trigger === 'undefined' ? null : trigger}
 			</DialogTrigger>
 			<DialogContent className='flex max-h-[70dvh] flex-col gap-4'>
 				<DialogHeader>
