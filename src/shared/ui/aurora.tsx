@@ -132,22 +132,29 @@ const THEME_COLORS: Record<
 		colors: ['#DDF0FA', '#9DC2E0', '#BDD8EC', '#DDF0FA'],
 		blend: 1,
 	},
+	system: {
+		colors: ['#0F2854', '#1C4D8D', '#4988C4', '#BDE8F5'],
+		blend: 0.5,
+	},
 };
 
 export function Aurora(props: AuroraProps) {
 	const { theme } = useTheme();
 
 	const {
-		colorStops = THEME_COLORS[theme].colors,
 		amplitude = 1.0,
 		blend = THEME_COLORS[theme].blend,
+		colorStops = THEME_COLORS[theme].colors,
 	} = props;
+
 	const propsRef = useRef<AuroraProps>(props);
 	propsRef.current = props;
 
 	const ctnDom = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
+		if (theme === 'system') return;
+
 		const ctn = ctnDom.current;
 		if (!ctn) return;
 
@@ -228,7 +235,7 @@ export function Aurora(props: AuroraProps) {
 			}
 			gl.getExtension('WEBGL_lose_context')?.loseContext();
 		};
-	}, [amplitude]);
+	}, [amplitude, theme]);
 
 	return (
 		<div

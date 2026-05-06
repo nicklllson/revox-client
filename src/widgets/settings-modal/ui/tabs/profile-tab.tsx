@@ -18,13 +18,13 @@ export const ProfileTab = () => {
 	};
 
 	return (
-		<div className='space-y-5'>
+		<div className='flex min-h-90 flex-col space-y-5'>
 			<div className='space-y-1.5'>
 				<Label>Nickname</Label>
 				<Input value={nickname} onChange={e => setNickname(e.target.value)} />
 			</div>
 
-			<div className='space-y-1.5'>
+			<div className='flex-1 space-y-1.5'>
 				<Label>Email</Label>
 				<Input value={user?.email} disabled />
 			</div>

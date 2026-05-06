@@ -1,18 +1,17 @@
-import { Link } from 'react-router';
+import { href, Link } from 'react-router';
 import { useSession } from '@/entities/auth';
 import { ROUTES } from '@/shared/model/routes';
 import { Button } from '@/shared/ui/button';
-import { LoggedInActions } from './logged-in-actions';
 
 export const HeaderActions = () => {
 	const { session } = useSession();
 
-	if (session) return <LoggedInActions />;
+	if (session) return null;
 
 	return (
 		<div className='flex gap-1'>
-			<Button size='lg' variant='secondary'>
-				Pricing
+			<Button asChild size='lg' variant='secondary'>
+				<Link to={href(ROUTES.PUBLIC.PRICING)}>Pricing</Link>
 			</Button>
 			<Button asChild size='lg' variant='secondary'>
 				<Link to={ROUTES.PUBLIC.SIGNIN}>Sign In</Link>

@@ -29,7 +29,7 @@ export const NotificationsTab = () => {
 	);
 
 	return (
-		<div className='p-5'>
+		<div className='flex min-h-90 flex-col space-y-5'>
 			<div className='space-y-1'>
 				{NOTIFICATIONS.map(n => (
 					<div

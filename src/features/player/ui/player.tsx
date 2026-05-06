@@ -56,6 +56,7 @@ export const Player = ({
 		chunkMetas,
 		chunksRef,
 		requestedChunksRef,
+		chunkMetasRef,
 	} = useTranslationWs({
 		videoId,
 		targetLang,
@@ -112,7 +113,7 @@ export const Player = ({
 
 	const { destroy, ensureContext } = useAudioSync({
 		isPlaying,
-		chunkMetas,
+		chunkMetasRef,
 		chunks: chunksRef,
 		youtubeTimeRef: playerTimeRef,
 		onBuffered,

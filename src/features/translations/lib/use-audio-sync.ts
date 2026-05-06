@@ -14,7 +14,7 @@ type ChunkMeta = {
 type UseAudioSyncOptions = {
 	isPlaying: boolean;
 	chunks: RefObject<Map<number, ArrayBuffer>>;
-	chunkMetas: Map<number, ChunkMeta>;
+	chunkMetasRef: RefObject<Map<number, ChunkMeta>>;
 	youtubeTimeRef: RefObject<number>;
 	onBuffering: () => void;
 	onBuffered: () => void;
@@ -23,7 +23,7 @@ type UseAudioSyncOptions = {
 export const useAudioSync = ({
 	chunks,
 	isPlaying,
-	chunkMetas,
+	chunkMetasRef,
 	youtubeTimeRef,
 	onBuffered,
 	onBuffering,
@@ -48,28 +48,25 @@ export const useAudioSync = ({
 		return ctxRef.current;
 	}, []);
 
-	const findChunkAt = useCallback(
-		(time: number): number | null => {
-			let lastBefore: number | null = null;
-			for (const [chunkId, meta] of chunkMetas.entries()) {
-				const segs = meta.segments;
+	const findChunkAt = useCallback((time: number): number | null => {
+		let lastBefore: number | null = null;
+		for (const [chunkId, meta] of chunkMetasRef.current.entries()) {
+			const segs = meta.segments;
 
-				if (segs.length === 0) continue;
+			if (segs.length === 0) continue;
 
-				const start = segs[0].start;
-				const end = segs[segs.length - 1].end;
+			const start = segs[0].start;
+			const end = segs[segs.length - 1].end;
 
-				if (time >= start && time < end) {
-					return chunkId;
-				}
-				if (time >= end && (lastBefore === null || chunkId > lastBefore)) {
-					lastBefore = chunkId;
-				}
+			if (time >= start && time < end) {
+				return chunkId;
 			}
-			return lastBefore;
-		},
-		[chunkMetas],
-	);
+			if (time >= end && (lastBefore === null || chunkId > lastBefore)) {
+				lastBefore = chunkId;
+			}
+		}
+		return lastBefore;
+	}, []);
 
 	const _startSource = useCallback(
 		(
@@ -160,13 +157,14 @@ export const useAudioSync = ({
 	const sync = useCallback(() => {
 		const ytTime = youtubeTimeRef.current;
 		const targetChunk = findChunkAt(ytTime);
+		const ctx = ctxRef.current;
 
 		if (targetChunk === null) {
 			onBuffering();
 			return;
 		}
 
-		const meta = chunkMetas.get(targetChunk);
+		const meta = chunkMetasRef.current.get(targetChunk);
 		if (!meta || meta.segments.length === 0) {
 			onBuffering();
 			return;
@@ -174,13 +172,23 @@ export const useAudioSync = ({
 
 		const chunkStartTime = meta.segments[0].start;
 
-		// === случай 1: текущий чанк = тот что играет ===
 		if (targetChunk === currentChunkRef.current) {
 			if (finishedChunksRef.current.has(targetChunk)) {
+				const nextId = targetChunk + 1;
+				const nextMeta = chunkMetasRef.current.get(nextId);
+				const hasNextBuffer =
+					decodedRef.current.has(nextId) || chunks.current.has(nextId);
+
+				if (nextMeta && hasNextBuffer && nextMeta.segments.length > 0) {
+					const nextStart = nextMeta.segments[0].start;
+					if (ytTime >= nextStart) {
+						const audioOffset = ytTime - nextStart;
+						playChunk(nextId, Math.max(0, audioOffset));
+					}
+				}
 				return;
 			}
 
-			const ctx = ctxRef.current;
 			if (!ctx || !sourceRef.current) return;
 
 			const audioPosition =
@@ -207,7 +215,7 @@ export const useAudioSync = ({
 
 		const audioOffset = ytTime - chunkStartTime;
 		playChunk(targetChunk, Math.max(0, audioOffset));
-	}, [findChunkAt, chunkMetas, playChunk, onBuffering, onBuffered]);
+	}, [findChunkAt, playChunk, onBuffering, onBuffered, chunks]);
 
 	const handleSeek = useCallback(() => {
 		finishedChunksRef.current.clear();

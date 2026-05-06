@@ -1,4 +1,5 @@
 import { Link, useLocation } from 'react-router';
+import { useSession } from '@/entities/auth';
 import { useIntersect } from '@/shared/hooks/use-intersect';
 import {
 	Sidebar,
@@ -24,6 +25,7 @@ export const AppSidebar = () => {
 	const { videos, isFetching, fetchNextPage, hasNextPage } = useUsersVideos();
 	const { pathname } = useLocation();
 	const cursorRef = useIntersect<HTMLDivElement>(fetchNextPage);
+	const { session } = useSession();
 
 	return (
 		<Sidebar collapsible='icon'>
@@ -52,7 +54,7 @@ export const AppSidebar = () => {
 					<SidebarGroupLabel>History</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
-							{isFetching && !videos
+							{isFetching && !videos && session
 								? [...Array(6)].map((_, index) => (
 										<Skeleton key={index} className='h-15' />
 									))
@@ -74,9 +76,11 @@ export const AppSidebar = () => {
 				</SidebarGroup>
 			</SidebarContent>
 
-			<SidebarFooter>
-				<ProfileMenu />
-			</SidebarFooter>
+			{session && (
+				<SidebarFooter>
+					<ProfileMenu />
+				</SidebarFooter>
+			)}
 
 			<SidebarRail />
 		</Sidebar>

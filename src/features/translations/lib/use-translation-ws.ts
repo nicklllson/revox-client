@@ -44,9 +44,13 @@ export const useTranslationWs = ({
 	const chunksRef = useRef<Map<number, ArrayBuffer>>(new Map());
 	const [chunks, setChunks] = useState<Map<number, ArrayBuffer>>(new Map());
 
+	const chunkMetasRef = useRef<
+		Map<number, Extract<TTranslationMessage, { type: 'chunk_meta' }>>
+	>(new Map());
 	const [chunkMetas, setChunkMetas] = useState<
 		Map<number, Extract<TTranslationMessage, { type: 'chunk_meta' }>>
 	>(new Map());
+
 	const [error, setError] = useState<string | null>(null);
 
 	const { token } = useSession();
@@ -112,21 +116,28 @@ export const useTranslationWs = ({
 
 				if (msg.type === 'chunk_meta') {
 					pendingMetaQueueRef.current.set(msg.chunk_id, msg);
-					setChunkMetas(prev => new Map(prev).set(msg.chunk_id, msg));
+					chunkMetasRef.current.set(msg.chunk_id, msg);
+					setChunkMetas(prev => {
+						const next = new Map(prev).set(msg.chunk_id, msg);
+						return next;
+					});
 				}
 
 				if (msg.type === 'error') setError(msg.message);
 			} else {
-				const pendingEntry = [...pendingMetaQueueRef.current.entries()].find(
-					([chunkId]) => !chunksRef.current.has(chunkId),
-				);
-
-				if (pendingEntry) {
-					const [chunkId, _] = pendingEntry;
-					pendingMetaQueueRef.current.delete(chunkId);
-					chunksRef.current.set(chunkId, e.data as ArrayBuffer);
-					setChunks(new Map(chunksRef.current));
+				const buffer = e.data as ArrayBuffer;
+				if (buffer.byteLength < 4) {
+					console.warn('Binary frame too small to contain chunk_id header');
+					return;
 				}
+
+				const view = new DataView(buffer);
+				const chunkId = view.getUint32(0, false);
+				const audioBuffer = buffer.slice(4);
+
+				pendingMetaQueueRef.current.delete(chunkId);
+				chunksRef.current.set(chunkId, audioBuffer);
+				setChunks(new Map(chunksRef.current));
 			}
 		};
 
@@ -198,6 +209,7 @@ export const useTranslationWs = ({
 		metadata,
 		chunks,
 		chunkMetas,
+		chunkMetasRef,
 		error,
 		sendHeartbeat,
 		sendSeek,
