@@ -13,6 +13,8 @@ type DatePickerProps = {
 	placeholder?: string;
 	className?: string;
 	defaultMonth?: Date;
+	fromDate?: Date;
+	endDate?: Date;
 };
 
 export function DatePicker({

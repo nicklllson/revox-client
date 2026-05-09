@@ -36,6 +36,22 @@ export const MetaPage = () => {
 		});
 	};
 
+	const today = new Date();
+
+	// минимум 100 лет назад
+	const minDate = new Date(
+		today.getFullYear() - 100,
+		today.getMonth(),
+		today.getDate(),
+	);
+
+	// минимум 13 лет
+	const maxDate = new Date(
+		today.getFullYear() - 13,
+		today.getMonth(),
+		today.getDate(),
+	);
+
 	return (
 		<div className='flex min-h-screen items-center justify-center p-4'>
 			<Card className='w-full max-w-md'>
@@ -57,7 +73,12 @@ export const MetaPage = () => {
 
 						<Field>
 							<FieldLabel>Birthdate</FieldLabel>
-							<DatePicker value={birthDate} onChange={setBirthDate} />
+							<DatePicker
+								endDate={maxDate}
+								value={birthDate}
+								fromDate={minDate}
+								onChange={setBirthDate}
+							/>
 						</Field>
 
 						<Field>

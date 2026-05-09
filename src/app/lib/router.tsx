@@ -2,10 +2,11 @@ import { createBrowserRouter } from 'react-router';
 import { ROUTES } from '@/shared/model/routes';
 
 import { AuthLayout } from '../layouts/auth-layout';
+import { BannerLayout } from '../layouts/banner-layout';
 import { HistoryLayout } from '../layouts/history-layout';
 import { MainLayout } from '../layouts/main-layout';
 import { App } from '../ui/app';
-// import { ProtectedRoute, protectedLoader } from './protected-route';
+import { ProtectedRoute, protectedLoader } from './protected-route';
 
 export const router = createBrowserRouter([
 	{
@@ -57,12 +58,36 @@ export const router = createBrowserRouter([
 								lazy: () => import('@/pages/public/home.page'),
 							},
 							{
-								// Component: ProtectedRoute,
-								// loader: protectedLoader,
+								Component: ProtectedRoute,
+								loader: protectedLoader,
 								children: [
 									{
 										path: ROUTES.PRIVATE.VIDEO,
 										lazy: () => import('@/pages/private/video.page'),
+									},
+									{
+										path: ROUTES.PRIVATE.SETTINGS,
+										lazy: () => import('@/pages/private/settings.page'),
+									},
+									{
+										path: ROUTES.PRIVATE.SINGLE_PLAYLIST,
+										lazy: () =>
+											import(
+												'@/pages/private/playlists.page/single-playlist.page'
+											),
+									},
+									{
+										element: <BannerLayout />,
+										children: [
+											{
+												path: ROUTES.PRIVATE.FAVORITES,
+												lazy: () => import('@/pages/private/favorites.page'),
+											},
+											{
+												path: ROUTES.PRIVATE.PLAYLISTS,
+												lazy: () => import('@/pages/private/playlists.page'),
+											},
+										],
 									},
 								],
 							},
@@ -71,8 +96,8 @@ export const router = createBrowserRouter([
 				],
 			},
 			{
-				// Component: ProtectedRoute,
-				// loader: protectedLoader,
+				Component: ProtectedRoute,
+				loader: protectedLoader,
 				path: ROUTES.PRIVATE.META,
 				lazy: () => import('@/pages/private/meta.page'),
 			},

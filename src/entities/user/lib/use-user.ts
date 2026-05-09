@@ -16,8 +16,7 @@ export const useUser = () => {
 	});
 
 	const { data, isFetching } = useQuery({
-		queryKey: [usersApi.BASE_KEY],
-		queryFn: () => usersApi.getSingleUser(session?.userId ?? ''),
+		...usersApi.getSingleUser(session?.sub ?? ''),
 		enabled: !!session,
 	});
 

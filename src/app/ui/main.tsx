@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router';
 import { queryClient } from '@/shared/lib/api';
 import { ErrorBound } from '@/shared/model/error';
 import { router } from '../lib/router';
+import { ThemeProvider } from '../providers/theme-provider';
 
 import './index.css';
 
@@ -16,9 +17,11 @@ if (!rootElement) {
 
 createRoot(rootElement).render(
 	<ErrorBound>
-		<Suspense fallback={null}>
+		<Suspense fallback={<div>Loading...</div>}>
 			<QueryClientProvider client={queryClient}>
-				<RouterProvider router={router} />
+				<ThemeProvider defaultTheme='dark' storageKey='vite-ui-theme'>
+					<RouterProvider router={router} />
+				</ThemeProvider>
 			</QueryClientProvider>
 		</Suspense>
 	</ErrorBound>,

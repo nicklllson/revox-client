@@ -1,16 +1,16 @@
 import type { PropsWithChildren } from 'react';
 import { Outlet } from 'react-router';
-import { Header } from '@/widgets/header';
+import { Aurora } from '@/shared/ui/aurora';
 import { ModelProvider } from '../providers/model-provider';
 
 export const MainLayout = ({ children }: PropsWithChildren) => {
 	return (
 		<ModelProvider>
-			<Header />
-			<main className='mt-22.5 flex h-full flex-1 flex-col px-5'>
+			<div className='flex h-full flex-1 flex-col'>
 				<Outlet />
+				<Aurora speed={1} amplitude={1.0} />
 				{children}
-			</main>
+			</div>
 		</ModelProvider>
 	);
 };

@@ -17,7 +17,6 @@ export const useResendCode = () => {
 	}, [canResend]);
 
 	const handleResend = () => {
-		console.log('Resend code');
 		setSeconds(RESEND_TIMEOUT);
 	};
 

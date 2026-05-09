@@ -16,12 +16,18 @@ export const ROUTES = {
 		VIDEO: '/videos/:videoId',
 		SETTINGS: '/settings',
 		META: '/meta',
+		FAVORITES: '/favorites',
+		PLAYLISTS: '/playlists',
+		SINGLE_PLAYLIST: '/playlist/:playlistId',
 	},
 } as const;
 
 export type TPathParams = {
 	[ROUTES.PRIVATE.VIDEO]: {
 		videoId: string;
+	};
+	[ROUTES.PRIVATE.SINGLE_PLAYLIST]: {
+		playlistId: string;
 	};
 };
 

@@ -1,5 +1,0 @@
-{
-	"hello": "Hello, {{name}}!",
-	"description": "This is a React app with i18n support",
-	"changeLanguage": "Change Language"
-}

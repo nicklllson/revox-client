@@ -8,7 +8,7 @@ export const Logo = ({ className }: { className?: string }) => {
 		<Link
 			to={ROUTES.PUBLIC.HOME}
 			className={clsx('font-bold text-xl', className)}>
-			<ShinyText spread={100} text='ReVOX' />
+			<ShinyText spread={100} text='Revox' />
 		</Link>
 	);
 };

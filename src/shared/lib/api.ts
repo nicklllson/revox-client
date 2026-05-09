@@ -1,4 +1,5 @@
-import { QueryClient } from '@tanstack/react-query';
+import { MutationCache, QueryCache, QueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 import { useSession } from '@/entities/auth';
 
 export const queryClient = new QueryClient({
@@ -8,15 +9,42 @@ export const queryClient = new QueryClient({
 			gcTime: 120000,
 		},
 	},
+	queryCache: new QueryCache({
+		onError: (error, _) => {
+			const message =
+				error instanceof Error ? error.message : 'Something went wrong';
+			toast.error(message);
+		},
+	}),
+	mutationCache: new MutationCache({
+		onError: (error, _) => {
+			const message =
+				error instanceof Error ? error.message : 'Error in mutating';
+			toast.error(message);
+		},
+	}),
 });
 
 const SERVER_API = import.meta.env.VITE_PUBLIC_SERVER_API;
 
 export const api = async <ReqData, ResData>(
 	route: string,
-	init?: RequestInit & { json?: ReqData },
+	init?: RequestInit & { json?: ReqData; params?: Record<string, unknown> },
 ): Promise<ResData> => {
-	const serverRoute = `${SERVER_API}${route}`;
+	let serverRoute = `${SERVER_API}${route}`;
+
+	if (init?.params) {
+		const searchParams = new URLSearchParams();
+		Object.entries(init.params).forEach(([key, value]) => {
+			if (value !== undefined && value !== null && value !== '') {
+				searchParams.set(key, String(value));
+			}
+		});
+		const queryString = searchParams.toString();
+		if (queryString) {
+			serverRoute = `${serverRoute}?${queryString}`;
+		}
+	}
 
 	const baseHeaders = new Headers(init?.headers as HeadersInit);
 
@@ -34,9 +62,8 @@ export const api = async <ReqData, ResData>(
 	try {
 		const res = await fetch(serverRoute, initParams);
 
-		if (!res.ok) {
-			throw new Error(`API Error ${res.status}: ${res.statusText}`);
-		}
+		if (!res.ok) throw await res.json();
+
 		return (await res.json()) as ResData;
 	} catch (error) {
 		if (error instanceof Error) {
@@ -49,14 +76,14 @@ export const api = async <ReqData, ResData>(
 
 export const publicApi = async <ReqData, ResData>(
 	route: string,
-	init?: RequestInit & { json?: ReqData },
+	init?: RequestInit & { json?: ReqData; params?: Record<string, unknown> },
 ) => {
 	return await api<ReqData, ResData>(route, init);
 };
 
 export const privateApi = async <ReqData, ResData>(
 	route: string,
-	init?: RequestInit & { json?: ReqData },
+	init?: RequestInit & { json?: ReqData; params?: Record<string, unknown> },
 ) => {
 	const token = await useSession.getState().refreshToken();
 
