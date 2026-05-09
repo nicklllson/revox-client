@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useSession } from '@/entities/auth';
+import type { TCreateVideoVoice } from '@/entities/video';
 import type { TTranslationMessage } from '../models/types';
 
-interface Options {
+type Options = {
 	videoId: string;
 	youtubeUrl: string;
 	targetLang: string;
 	enabled: boolean;
-}
+	voice?: TCreateVideoVoice;
+};
 
 const WS_API_URL = import.meta.env.VITE_PUBLIC_SERVER_WS;
 const CHUNK_DURATION = 30; // должно совпадать с сервером
@@ -18,6 +20,7 @@ export const useTranslationWs = ({
 	youtubeUrl,
 	targetLang,
 	enabled,
+	voice,
 }: Options) => {
 	const wsRef = useRef<WebSocket | null>(null);
 
@@ -72,7 +75,6 @@ export const useTranslationWs = ({
 		);
 	}, []);
 
-	// Заполнить буфер от текущего чанка вперёд
 	const fillBuffer = useCallback(
 		(currentChunkId: number) => {
 			for (let i = 0; i <= PREFETCH_AHEAD; i++) {
@@ -83,7 +85,7 @@ export const useTranslationWs = ({
 	);
 
 	useEffect(() => {
-		if (!enabled || !youtubeUrl) return;
+		if (!enabled || !youtubeUrl || !voice) return;
 		requestedChunksRef.current = new Set();
 		const ws = new WebSocket(`${WS_API_URL}/translations?token=${token}`);
 		ws.binaryType = 'arraybuffer';
@@ -94,7 +96,12 @@ export const useTranslationWs = ({
 			ws.send(
 				JSON.stringify({
 					event: 'start',
-					data: { videoId, youtube_url: youtubeUrl, target_lang: targetLang },
+					data: {
+						videoId,
+						youtube_url: youtubeUrl,
+						target_lang: targetLang,
+						voice,
+					},
 				}),
 			);
 		};
@@ -150,7 +157,7 @@ export const useTranslationWs = ({
 			ws.close();
 			metadataRef.current = null;
 		};
-	}, [enabled, youtubeUrl, token, targetLang, videoId]);
+	}, [enabled, youtubeUrl, token, targetLang, videoId, voice]);
 
 	const sendHeartbeat = useCallback(
 		(chunkId: number, currentTime: number) => {

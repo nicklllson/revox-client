@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router';
 import { useSession } from '@/entities/auth';
 import { useIntersect } from '@/shared/hooks/use-intersect';
+import { Logo } from '@/shared/ui/logo';
 import {
 	Sidebar,
 	SidebarContent,
@@ -30,7 +31,17 @@ export const AppSidebar = () => {
 	return (
 		<Sidebar collapsible='icon'>
 			<SidebarHeader>
-				<SidebarTrigger className='my-3.5 p-5 group-data-[collapsible=icon]:p-0' />
+				<div className='my-3.5 flex items-center justify-between'>
+					<div className='flex items-center transition-opacity delay-150 duration-200 group-data-[collapsible=icon]:pointer-events-none group-data-[collapsible=icon]:absolute group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0'>
+						<img
+							src='/images/revox-logo.webp'
+							alt='Revox logo'
+							className='mr-1 size-10 rounded-lg'
+						/>
+						<Logo />
+					</div>
+					<SidebarTrigger className='p-5 group-data-[collapsible=icon]:p-0' />
+				</div>
 				<SidebarMenu>
 					{MENU_ITEMS.map(item => (
 						<SidebarMenuItem key={item.label}>

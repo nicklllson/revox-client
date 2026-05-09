@@ -1,124 +1,176 @@
-import { AnimatePresence, motion } from 'motion/react';
+import { Check, ChevronDown, Lock } from 'lucide-react';
 import { useRef, useState } from 'react';
-import { AVAILABLE_MODELS } from '@/entities/translation-models';
+import { VOICES_REGISTRY } from '@/entities/translation';
 import { useClickOutside } from '@/shared/hooks';
-import { useMouseAnimations } from '../model/use-mouse-animations';
-import { useSelectTranslation } from '../model/use-select-translation';
-import { ModelCard } from './model-card';
+import { cn } from '@/shared/lib/utils';
+import { Badge } from '@/shared/ui/badge';
+import { Button } from '@/shared/ui/button';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu';
+import { useSelectTranslation } from '../lib/use-select-translation';
+import { MeterDots } from './meter-dots';
+import { ModelDot } from './model-dot';
 
 export const TranslationModelSelect = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [open, setOpen] = useState<boolean>(false);
-	const [hoveredId, setHoveredId] = useState<string | null>(null);
 
 	const { activeModel, handleSelectModel } = useSelectTranslation();
-	const { rotateX, rotateY, ...mouseController } = useMouseAnimations();
 
 	useClickOutside(containerRef, () => setOpen(false), open);
 
 	return (
-		<div
-			ref={containerRef}
-			className='-translate-x-1/2 absolute bottom-5 left-1/2 z-50 flex flex-col items-center gap-3'>
-			{/* ── Floating model cards (open state) ──────────────────────── */}
-			<AnimatePresence>
-				{open && (
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						className='flex items-end gap-2'>
-						{AVAILABLE_MODELS.map((model, i) => {
-							const isActive = model.id === activeModel.id;
-							const isHov = hoveredId === model.id;
-
-							return (
-								<ModelCard
-									index={i}
-									key={model.id}
-									model={model}
-									isHovered={isHov}
-									isActive={isActive}
-									onSelect={handleSelectModel}
-									isEnabled={model.isEnabled}
-									onModelHover={setHoveredId}
-								/>
-							);
-						})}
-					</motion.div>
-				)}
-			</AnimatePresence>
-
-			<motion.div style={{ perspective: 600 }}>
-				<motion.button
-					ref={mouseController.pillRef}
-					onMouseMove={mouseController.handleMouseMove}
-					onMouseLeave={mouseController.handleMouseLeave}
-					whileTap={{ scale: 0.95 }}
-					onClick={() => setOpen(!open)}
-					className='group relative flex w-50 items-center justify-center gap-3 overflow-hidden rounded-2xl py-4 outline-none'
-					style={{
-						rotateX,
-						rotateY,
-						transformStyle: 'preserve-3d',
-						background: open
-							? 'linear-gradient(120deg, #1a1a1a, #111)'
-							: '#ffffff',
-						boxShadow: open
-							? `0 0 0 1px rgba(255,255,255,0.08), 0 8px 32px rgba(0,0,0,0.6), 0 0 60px ${activeModel.accent}20`
-							: '0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1)',
-						transition: 'background 0.4s ease, box-shadow 0.4s ease',
-					}}>
-					{/* ── Bottom glow line when open ──────────────────────── */}
-					<AnimatePresence>
-						{open && (
-							<motion.div
-								initial={{ scaleX: 0 }}
-								animate={{ scaleX: 1 }}
-								exit={{ scaleX: 0 }}
-								className='absolute right-6 bottom-0 left-6 h-px origin-left'
-								style={{
-									background: `linear-gradient(90deg, transparent, ${activeModel.accent}, transparent)`,
-								}}
-							/>
+		<DropdownMenu open={open} onOpenChange={setOpen}>
+			<DropdownMenuTrigger asChild>
+				<Button
+					variant='outline'
+					className={cn(
+						'group h-auto gap-2.5 rounded-xl border-white/10 bg-zinc-900/85 py-2 pr-3 pl-2.5',
+						'hover:border-white/20 hover:bg-zinc-900/90',
+						'shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_4px_12px_rgba(0,0,0,0.3)]',
+					)}>
+					<ModelDot accent={activeModel.accent} size={22} />
+					<div className='flex flex-col items-start leading-tight'>
+						<span className='font-medium text-[12.5px] text-zinc-100'>
+							{activeModel.name}
+						</span>
+						<span className='text-[10.5px] text-zinc-500'>
+							{activeModel.tagline}
+						</span>
+					</div>
+					<ChevronDown
+						size={13}
+						className={cn(
+							'ml-1 text-zinc-500 transition-transform duration-200',
+							open && 'rotate-180',
 						)}
-					</AnimatePresence>
-
-					{/* ── Glitch model name ──────────────────────── */}
-					<motion.span
-						animate={{ color: open ? '#ffffff' : '#000000' }}
-						transition={{ duration: 0.3 }}
-						className='font-semibold text-base tracking-tight'>
-						{activeModel.name}
-					</motion.span>
-
-					{/* ── Pulsing accent dot ──────────────────────── */}
-					<motion.div
-						animate={{
-							scale: open ? [1, 1.4, 1] : 1,
-							backgroundColor: open ? activeModel.accent : '#00000040',
-						}}
-						transition={{
-							duration: 0.6,
-							repeat: open ? Number.POSITIVE_INFINITY : 0,
-							repeatDelay: 1.2,
-						}}
-						className='h-2 w-2 rounded-full'
 					/>
-				</motion.button>
-			</motion.div>
+				</Button>
+			</DropdownMenuTrigger>
 
-			<AnimatePresence>
-				{open && (
-					<motion.div
-						initial={{ opacity: 0 }}
-						animate={{ opacity: 1 }}
-						exit={{ opacity: 0 }}
-						onClick={() => setOpen(false)}
-						className='-z-10 fixed inset-0'
-					/>
-				)}
-			</AnimatePresence>
-		</div>
+			<DropdownMenuContent
+				align='start'
+				className={cn(
+					'w-[360px] border-white/10 bg-zinc-950/95 p-1.5',
+					'shadow-[0_24px_60px_-12px_rgba(0,0,0,0.7),inset_0_0_0_1px_rgba(255,255,255,0.02)]',
+				)}>
+				{/* Header */}
+				<div className='flex items-baseline justify-between px-3 pt-2.5 pb-2'>
+					<span className='font-mono text-[10.5px] text-zinc-500 uppercase tracking-[1px]'>
+						Translation model
+					</span>
+					<button
+						type='button'
+						className='cursor-pointer text-[11px] text-sky-500 hover:text-sky-400'>
+						Compare →
+					</button>
+				</div>
+
+				{/* Model list */}
+				<div className='flex flex-col gap-0.5'>
+					{Object.values(VOICES_REGISTRY).map(model => {
+						const isSelected = model.modelId === activeModel.modelId;
+						const locked = model.tier === 'pro';
+
+						return (
+							<button
+								type='button'
+								key={model.modelId}
+								disabled={!model.isEnabled}
+								onClick={() => handleSelectModel(model, locked)}
+								className={cn(
+									'flex gap-3 rounded-[10px] border border-transparent p-3 text-left transition-colors',
+									'disabled:cursor-not-allowed disabled:opacity-40',
+									isSelected
+										? 'border-sky-500/40 bg-sky-500/10'
+										: 'hover:bg-white/3',
+									locked && !isSelected && 'cursor-not-allowed opacity-50',
+								)}>
+								<div className='min-w-0 flex-1'>
+									{/* Title row */}
+									<div className='mb-1 flex items-center gap-2'>
+										<span className='font-semibold text-[13.5px] text-zinc-100'>
+											{model.name}
+										</span>
+
+										{model.badge && (
+											<Badge
+												variant='outline'
+												className='border-sky-500/30 bg-sky-500/20 px-1.5 py-0 font-semibold text-[9.5px] text-sky-300 uppercase tracking-[0.6px]'>
+												{model.badge}
+											</Badge>
+										)}
+
+										{locked && (
+											<Badge
+												variant='outline'
+												className='ml-auto flex items-center gap-1 border-white/10 bg-white/10 px-1.5 py-0 font-mono font-semibold text-[9.5px] text-zinc-300 uppercase tracking-[0.6px]'>
+												<Lock size={9} />
+												PRO
+											</Badge>
+										)}
+
+										{isSelected && (
+											<Check
+												size={14}
+												className={cn('text-sky-400', !locked && 'ml-auto')}
+											/>
+										)}
+									</div>
+
+									{/* Description */}
+									<p className='mb-2 text-[11.5px] text-zinc-400 leading-relaxed'>
+										{model.description}
+									</p>
+
+									{/* Meters */}
+									<div className='mb-2 flex items-center gap-3.5'>
+										<div className='flex items-center gap-1.5'>
+											<span className='font-mono text-[10px] text-zinc-500 uppercase tracking-[0.6px]'>
+												Speed
+											</span>
+											<MeterDots value={model.speed} color={model.accent} />
+										</div>
+										<div className='flex items-center gap-1.5'>
+											<span className='font-mono text-[10px] text-zinc-500 uppercase tracking-[0.6px]'>
+												Quality
+											</span>
+											<MeterDots value={model.quality} color={model.accent} />
+										</div>
+									</div>
+
+									{/* Features */}
+									<div className='flex flex-wrap gap-1'>
+										{model.features.map(feature => (
+											<span
+												key={feature}
+												className='rounded border border-white/4 bg-zinc-900 px-[7px] py-0.5 text-[10.5px] text-zinc-400'>
+												{feature}
+											</span>
+										))}
+									</div>
+								</div>
+							</button>
+						);
+					})}
+				</div>
+
+				{/* Footer */}
+				<div className='mt-1 flex items-center justify-between border-white/5 border-t px-3 pt-2 pb-2.5'>
+					<span className='text-[11px] text-zinc-500'>
+						ETA:{' '}
+						<span className='font-mono text-zinc-300'>{activeModel.eta}</span>
+					</span>
+					<button
+						type='button'
+						className='cursor-pointer text-[11px] text-sky-500 hover:text-sky-400'>
+						Manage models
+					</button>
+				</div>
+			</DropdownMenuContent>
+		</DropdownMenu>
 	);
 };

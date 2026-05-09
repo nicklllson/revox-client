@@ -1,13 +1,8 @@
 import { href, Link } from 'react-router';
-import { useSession } from '@/entities/auth';
 import { ROUTES } from '@/shared/model/routes';
 import { Button } from '@/shared/ui/button';
 
 export const HeaderActions = () => {
-	const { session } = useSession();
-
-	if (session) return null;
-
 	return (
 		<div className='flex gap-1'>
 			<Button asChild size='lg' variant='secondary'>

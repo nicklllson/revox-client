@@ -5,9 +5,9 @@ import {
 	useState,
 } from 'react';
 import {
-	AVAILABLE_MODELS,
 	type TTranslationModel,
-} from '@/entities/translation-models';
+	VOICES_REGISTRY,
+} from '@/entities/translation';
 
 type TModelContext = {
 	setActiveModel: (model: TTranslationModel) => void;
@@ -18,7 +18,7 @@ export const ModelContext = createContext<TModelContext | null>(null);
 
 export const ModelProvider = ({ children }: PropsWithChildren) => {
 	const [activeModel, setActiveModel] = useState<TTranslationModel>(
-		AVAILABLE_MODELS[0],
+		Object.values(VOICES_REGISTRY)[0],
 	);
 
 	return (

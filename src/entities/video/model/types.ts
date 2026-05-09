@@ -10,12 +10,29 @@ export type TVideo = {
 	createdAt?: string | Date;
 	youtubeVideoId: string;
 	isFavorite: boolean;
+	voiceGender: 'male' | 'female';
+	voiceName: string;
+	voiceStyle: 'neutral' | 'narration';
+};
+
+export type TCreateVideoVoice = {
+	gender: string;
+	voice_name: string;
+	style: string;
 };
 
 export type TCreateVideoDto = Omit<
 	TVideo,
-	'id' | 'title' | 'externalJobId' | 'thumbnail' | 'createdAt'
->;
+	| 'id'
+	| 'title'
+	| 'externalJobId'
+	| 'thumbnail'
+	| 'createdAt'
+	| 'isFavorite'
+	| 'youtubeVideoId'
+> & {
+	voice: TCreateVideoVoice;
+};
 
 export type TUpdateVideoDto = Partial<
 	Omit<TVideo, 'id' | 'externalJobId' | 'createdAt' | 'videoUrl'> & {

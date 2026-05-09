@@ -16,6 +16,7 @@ export const promptSchema = z.object({
 			'URL must be YouTube video format (https://www.youtube.com/watch?v=...)',
 		),
 	language: z.enum(languageValues),
+	params: z.record(z.string(), z.unknown()).default({}),
 });
 
 export type TPromptField = z.infer<typeof promptSchema>;

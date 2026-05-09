@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo } from 'react';
+import { useLayoutEffect } from 'react';
 import { useParams } from 'react-router';
 import { useUpdateVideo, useVideo } from '@/entities/video';
 import { Player } from '@/features/player';
@@ -14,11 +14,6 @@ export const VideoLayout = () => {
 	const { videoId } = useParams<{ videoId: string }>();
 	const { video } = useVideo(videoId);
 	const { handleUpdateVideo } = useUpdateVideo();
-
-	const youtubeVideoId = useMemo(() => {
-		if (!video || !video?.youtubeVideoId) return '';
-		return video.youtubeVideoId;
-	}, [video?.youtubeVideoId]);
 
 	useLayoutEffect(() => {
 		if (video?.title && video?.thumbnail) {
@@ -36,13 +31,7 @@ export const VideoLayout = () => {
 
 	return (
 		<div className='relative z-10 mx-auto flex w-full max-w-[70vw] flex-1 flex-col gap-2 px-5 pt-22.5'>
-			<Player
-				videoId={videoId!}
-				key={video?.externalJobId}
-				youtubeVideoId={youtubeVideoId}
-				videoUrl={video?.videoUrl ?? ''}
-				targetLang={video?.language ?? 'en'}
-			/>
+			<Player videoId={videoId!} key={video?.externalJobId} />
 			<VideoBottomBar>
 				<VideoTitle title={video?.title} />
 				<VideoSettings isFavorite={video?.isFavorite} videoId={videoId} />

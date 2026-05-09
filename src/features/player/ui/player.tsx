@@ -6,33 +6,28 @@ import {
 	Suspense,
 	useCallback,
 	useEffect,
+	useMemo,
 	useRef,
 	useState,
 } from 'react';
 import type { YouTubeEvent } from 'react-youtube';
 import { usePlayer } from '@/app/providers/player-provider/player-provider';
 import { useVolume } from '@/app/providers/volume-provider';
+import { DEFAULT_VOICE_SETTINGS } from '@/entities/translation';
+import { type TCreateVideoVoice, useVideo } from '@/entities/video';
 import { useAudioSync, useTranslationWs } from '@/features/translations';
 import { craftVideoThumbnail } from '@/shared/model/videos.service';
 import { Button } from '@/shared/ui/button';
-import { getChunkIdAtTime } from '../model/serivices';
+import { getChunkIdAtTime } from '../model/service';
 
 const HEARTBEAT_INTERVAL = 1000;
 const PREFETCH_AHEAD = 3;
 
 const YouTubePlayer = lazy(() => import('react-youtube'));
 
-export const Player = ({
-	youtubeVideoId,
-	targetLang,
-	videoId,
-	videoUrl,
-}: {
-	youtubeVideoId: string;
-	videoId: string;
-	videoUrl: string;
-	targetLang: string;
-}) => {
+export const Player = ({ videoId }: { videoId: string }) => {
+	const { video } = useVideo(videoId);
+
 	const [isReady, setIsReady] = useState<boolean>(false);
 	const [isStarted, setIsStarted] = useState<boolean>(false);
 	const [isBuffering, setIsBuffering] = useState<boolean>(false);
@@ -56,6 +51,19 @@ export const Player = ({
 	const dubbingVolumeRef = useRef(dubbingVolume);
 	dubbingVolumeRef.current = dubbingVolume;
 
+	const voice = useMemo<TCreateVideoVoice>(
+		() => ({
+			gender:
+				(video?.voiceGender as 'female' | 'male') ??
+				DEFAULT_VOICE_SETTINGS.gender,
+			voice_name: video?.voiceName ?? DEFAULT_VOICE_SETTINGS.voice_name,
+			style:
+				(video?.voiceStyle as 'neutral' | 'narrator') ??
+				DEFAULT_VOICE_SETTINGS.style,
+		}),
+		[video?.voiceGender, video?.voiceName, video?.voiceStyle],
+	);
+
 	const {
 		chunks,
 		sendHeartbeat,
@@ -66,9 +74,10 @@ export const Player = ({
 		chunkMetasRef,
 	} = useTranslationWs({
 		videoId,
-		targetLang,
-		youtubeUrl: videoUrl,
-		enabled: !!videoUrl,
+		targetLang: video?.language ?? '',
+		youtubeUrl: video?.videoUrl ?? '',
+		voice,
+		enabled: !!video,
 	});
 
 	const onBuffering = useCallback(() => {
@@ -162,7 +171,7 @@ export const Player = ({
 		dispatch({ type: 'SET_TITLE', payload: data?.title ?? '' });
 		dispatch({
 			type: 'SET_THUMBNAIL',
-			payload: craftVideoThumbnail(youtubeVideoId),
+			payload: craftVideoThumbnail(video?.youtubeVideoId ?? ''),
 		});
 		setIsReady(true);
 	};
@@ -200,7 +209,7 @@ export const Player = ({
 				<YouTubePlayer
 					ref={playerRef}
 					loading='eager'
-					videoId={youtubeVideoId}
+					videoId={video?.youtubeVideoId}
 					iframeClassName='absolute top-0 left-0 h-full w-full'
 					onReady={handleOnReady}
 					onStateChange={handleStateChange}
@@ -209,7 +218,7 @@ export const Player = ({
 
 			{isReady && !isStarted && (
 				<>
-					<div className='absolute inset-0 z-10 bg-black/80 backdrop-blur-sm' />
+					<div className='absolute inset-0 z-10 bg-black/80' />
 
 					<div className='-translate-y-1/2 -translate-x-1/2 absolute top-1/2 left-1/2 z-20 flex flex-col items-center gap-4'>
 						{chunks.size === 0 ? (
