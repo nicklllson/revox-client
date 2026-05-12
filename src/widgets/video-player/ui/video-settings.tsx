@@ -1,7 +1,8 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: Not important dependencies */
 
-import { Bookmark, Star } from 'lucide-react';
+import { Bookmark, Captions, Star } from 'lucide-react';
 import { useCallback } from 'react';
+import { useSubtitles } from '@/app/providers/subtitles-provider';
 import { useFavorites } from '@/entities/favorites';
 import { PlayerVolumeChanger } from '@/features/change-player-volume';
 import { Button } from '@/shared/ui/button';
@@ -15,6 +16,7 @@ export const VideoSettings = ({
 	isFavorite: boolean | undefined;
 }) => {
 	const { toggleFavorite } = useFavorites(isFavorite || false);
+	const { isOpen, toggle } = useSubtitles();
 
 	const handleToggleFavorite = useCallback(() => {
 		if (!videoId) return;
@@ -37,6 +39,11 @@ export const VideoSettings = ({
 					</Button>
 				}
 			/>
+
+			<Button variant='outline' onClick={toggle}>
+				<Captions fill={isOpen ? 'currentColor' : 'none'} />
+				Subtitles
+			</Button>
 
 			<PlayerVolumeChanger />
 		</div>

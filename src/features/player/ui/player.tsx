@@ -42,6 +42,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		dispatch,
 		getPlayer,
 		playerTimeRef,
+		setChunkMetas,
 		state: { isPlaying },
 	} = usePlayer();
 
@@ -79,6 +80,10 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		voice,
 		enabled: !!video,
 	});
+
+	useEffect(() => {
+		setChunkMetas(chunkMetas);
+	}, [chunkMetas, setChunkMetas]);
 
 	const onBuffering = useCallback(() => {
 		if (isBuffering) return;

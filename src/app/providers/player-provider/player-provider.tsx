@@ -1,14 +1,18 @@
 import {
 	createContext,
+	type Dispatch,
 	type ReactNode,
+	type SetStateAction,
 	useCallback,
 	useContext,
 	useEffect,
 	useReducer,
 	useRef,
+	useState,
 } from 'react';
 import type YouTube from 'react-youtube';
 import { useGetPlayerTime } from '@/entities/player';
+import type { TTranslationMessage } from '@/features/translations';
 import { useVolume } from '../volume-provider';
 import {
 	initialState,
@@ -17,18 +21,25 @@ import {
 	type TPlayerState,
 } from './reducer';
 
+type TChunkMeta = Extract<TTranslationMessage, { type: 'chunk_meta' }>;
+
 type PlayerContextValue = {
 	state: TPlayerState;
 	dispatch: React.Dispatch<TPlayerAction>;
 	playerRef: React.RefObject<YouTube | null>;
 	getPlayer: () => YT.Player;
 	playerTimeRef: React.RefObject<number>;
+	chunkMetas: Map<number, TChunkMeta>;
+	setChunkMetas: Dispatch<SetStateAction<Map<number, TChunkMeta>>>;
 };
 
 const PlayerContext = createContext<PlayerContextValue | null>(null);
 
 export const PlayerProvider = ({ children }: { children: ReactNode }) => {
 	const [state, dispatch] = useReducer(playerReducer, initialState);
+	const [chunkMetas, setChunkMetas] = useState<Map<number, TChunkMeta>>(
+		new Map(),
+	);
 
 	const playerRef = useRef<YouTube | null>(null);
 	const playerTimeRef = useRef<number>(0);
@@ -72,7 +83,15 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
 
 	return (
 		<PlayerContext.Provider
-			value={{ state, dispatch, playerRef, playerTimeRef, getPlayer }}>
+			value={{
+				state,
+				dispatch,
+				playerRef,
+				playerTimeRef,
+				getPlayer,
+				chunkMetas,
+				setChunkMetas,
+			}}>
 			{children}
 		</PlayerContext.Provider>
 	);
