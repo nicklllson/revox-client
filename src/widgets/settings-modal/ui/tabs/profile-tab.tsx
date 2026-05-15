@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useUser } from '@/entities/user';
+import { ThemeToggle } from '@/features/toggle-theme';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
@@ -24,9 +25,14 @@ export const ProfileTab = () => {
 				<Input value={nickname} onChange={e => setNickname(e.target.value)} />
 			</div>
 
-			<div className='flex-1 space-y-1.5'>
+			<div className='space-y-1.5'>
 				<Label>Email</Label>
 				<Input value={user?.email} disabled />
+			</div>
+
+			<div className='flex w-full flex-1 items-start justify-between'>
+				<span>Appearance</span>
+				<ThemeToggle />
 			</div>
 
 			<div className='flex justify-end'>

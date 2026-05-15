@@ -1,5 +1,8 @@
+import { X } from 'lucide-react';
 import { Link, Outlet } from 'react-router';
+import { ROUTES } from '@/shared/model/routes';
 import { Aurora } from '@/shared/ui/aurora';
+import { Button } from '@/shared/ui/button';
 import { Card, CardContent } from '@/shared/ui/card';
 import { FieldDescription } from '@/shared/ui/field';
 import { Logo } from '@/shared/ui/logo';
@@ -7,7 +10,12 @@ import { Logo } from '@/shared/ui/logo';
 export const AuthLayout = () => {
 	return (
 		<div className='flex min-h-svh flex-col items-center justify-center bg-background p-6 md:p-10'>
-			<Logo className='absolute top-5 left-5' />
+			<Logo className='absolute top-5 left-5 z-10' />
+			<Button asChild size='icon' className='absolute top-5 right-5 z-10'>
+				<Link to={ROUTES.PUBLIC.HOME}>
+					<X />
+				</Link>
+			</Button>
 			<div className='relative z-10 w-full max-w-sm md:max-w-4xl'>
 				<div className='flex flex-col gap-6'>
 					<Card className='overflow-hidden p-0'>

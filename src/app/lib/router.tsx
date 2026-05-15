@@ -44,6 +44,10 @@ export const router = createBrowserRouter([
 				lazy: () => import('@/pages/public/new-password.page'),
 			},
 			{
+				path: ROUTES.PUBLIC.AUTH_CALLBACK,
+				lazy: () => import('@/pages/public/auth-callback.page'),
+			},
+			{
 				element: <MainLayout />,
 				children: [
 					{

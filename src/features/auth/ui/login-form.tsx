@@ -51,7 +51,7 @@ export const LoginForm = ({
 				<div className='flex flex-col items-center gap-2 text-center'>
 					<h1 className='font-bold text-2xl!'>Welcome back</h1>
 					<p className='text-balance! text-muted-foreground'>
-						Login to your Acme Inc account
+						Login to your Revox account
 					</p>
 				</div>
 				<FieldGroup>
@@ -99,7 +99,12 @@ export const LoginForm = ({
 					Or continue with
 				</div>
 				<Field className='grid grid-cols-1 gap-4'>
-					<Button variant='outline' type='button'>
+					<Button
+						variant='outline'
+						type='button'
+						onClick={() => {
+							window.location.href = `${import.meta.env.VITE_PUBLIC_SERVER_ADDRESS}/auth/google`;
+						}}>
 						<IconGoogle />
 						<span className='sr-only'>Login with Google</span>
 					</Button>

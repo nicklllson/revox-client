@@ -11,6 +11,7 @@ export const ROUTES = {
 		NEW_PASSWORD: '/new-password',
 		HOME: '/',
 		PRICING: 'pricing',
+		AUTH_CALLBACK: '/auth/callback',
 	},
 	PRIVATE: {
 		VIDEO: '/videos/:videoId',
