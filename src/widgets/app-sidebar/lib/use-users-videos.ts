@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { videosApi } from '@/entities/video';
 
-export const useUsersVideos = () => {
+export const useUsersVideos = (search = '') => {
 	const {
 		data,
 		isFetching,
@@ -11,7 +11,7 @@ export const useUsersVideos = () => {
 		fetchPreviousPage,
 		isFetchingNextPage,
 	} = useInfiniteQuery({
-		...videosApi.getVideosFromUser(),
+		...videosApi.getVideosFromUser(search ? { search } : {}),
 	});
 
 	return {

@@ -15,7 +15,7 @@ export const videosApi = {
 
 	getVideosFromUser: (params: TVideosParams = {}) =>
 		infiniteQueryOptions({
-			queryKey: [videosApi.BASE_KEY],
+			queryKey: [videosApi.BASE_KEY, params],
 			queryFn: ({ pageParam }) =>
 				privateApi<void, TPaginatedResult<TVideo>>('/videos', {
 					params: {

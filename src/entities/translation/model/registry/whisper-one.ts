@@ -14,6 +14,7 @@ export const WHISPER_ONE: TTranslationModel = {
 	features: ['28 languages', 'Subtitles', 'Single voice'],
 	accent: 'oklch(0.65 0.16 230)',
 	isEnabled: true,
+	maxDurationMinutes: 30,
 	params: [
 		{ id: 'whisper-one-voice', required: false },
 		{ id: 'whisper-one-voice-type', required: false },

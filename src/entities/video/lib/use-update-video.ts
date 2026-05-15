@@ -7,7 +7,7 @@ export const useUpdateVideo = () => {
 		mutationFn: videosApi.updateVideo,
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: videosApi.getVideosFromUser().queryKey,
+				queryKey: [videosApi.BASE_KEY],
 			});
 		},
 	});

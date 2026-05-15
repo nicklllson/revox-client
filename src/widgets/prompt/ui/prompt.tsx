@@ -11,17 +11,15 @@ import {
 } from '@/shared/ui/input-group';
 import { useCreateVideo } from '../lib/use-create-video';
 import { usePrompt } from '../lib/use-prompt';
+import { handleShowError } from '../model/errors';
 import { mapPromptToPayload } from '../model/map-prompt-to-payload';
 import type { TPromptField } from '../model/schema';
 
 export const Prompt = () => {
 	const methods = usePrompt();
-	const {
-		handleSubmit,
-		register,
-		control,
-		formState: { errors },
-	} = methods;
+
+	const { handleSubmit, register, control, formState } = methods;
+	const { errors } = formState;
 
 	const { handleCreateVideo, isVideoCreating } = useCreateVideo();
 	const navigate = useNavigate();
@@ -37,7 +35,7 @@ export const Prompt = () => {
 	return (
 		<FormProvider {...methods}>
 			<form
-				onSubmit={handleSubmit(onSubmit)}
+				onSubmit={handleSubmit(onSubmit, error => handleShowError(error))}
 				className='grid w-full max-w-2xl gap-6'>
 				<InputGroup className='shadow-2xl'>
 					<TextareaAutosize

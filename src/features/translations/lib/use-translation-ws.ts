@@ -183,8 +183,6 @@ export const useTranslationWs = ({
 
 			const chunkId = Math.floor(time / CHUNK_DURATION);
 
-			// При seek — сбрасываем буфер вперёд и запрашиваем новую позицию
-			// Не сбрасываем уже полученные чанки — они могут пригодиться
 			fillBuffer(chunkId);
 
 			ws.send(
@@ -197,7 +195,6 @@ export const useTranslationWs = ({
 		[fillBuffer],
 	);
 
-	// Проверка — готов ли чанк к воспроизведению
 	const isChunkReady = useCallback(
 		(chunkId: number) => {
 			return chunks.has(chunkId) && chunkMetas.has(chunkId);

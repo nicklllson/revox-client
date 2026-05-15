@@ -8,7 +8,7 @@ type SubtitlesContextValue = {
 const SubtitlesContext = createContext<SubtitlesContextValue | null>(null);
 
 export const SubtitlesProvider = ({ children }: { children: ReactNode }) => {
-	const [isOpen, setIsOpen] = useState(true);
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const toggle = () => setIsOpen(prev => !prev);
 
 	return (

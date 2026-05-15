@@ -14,6 +14,7 @@ export const WHISPER_TWO: TTranslationModel = {
 	features: ['48 languages', 'Lip-sync', 'Multi-voice', 'Tone matching'],
 	accent: 'oklch(0.7 0.16 250)',
 	isEnabled: true,
+	maxDurationMinutes: 75,
 	params: [
 		{ id: 'whisper-two-voice', required: false },
 		{ id: 'whisper-two-voice-type', required: false },

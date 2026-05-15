@@ -1,3 +1,4 @@
+import { Search } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import { useSession } from '@/entities/auth';
 import { useIntersect } from '@/shared/hooks/use-intersect';
@@ -8,7 +9,6 @@ import {
 	SidebarFooter,
 	SidebarGroup,
 	SidebarGroupContent,
-	SidebarGroupLabel,
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuButton,
@@ -18,11 +18,14 @@ import {
 } from '@/shared/ui/sidebar';
 import { Skeleton } from '@/shared/ui/skeleton';
 import { ProfileMenu } from '@/widgets/profile-menu';
+import { SearchMenu, useSearchMenu } from '@/widgets/search-menu';
 import { useUsersVideos } from '../lib/use-users-videos';
 import { MENU_ITEMS } from '../model/constants';
 import { HistoryItem } from './history-item';
 
 export const AppSidebar = () => {
+	const { open: searchOpen, setOpen: setSearchOpen } = useSearchMenu();
+
 	const { videos, isFetching, fetchNextPage, hasNextPage } = useUsersVideos();
 	const { pathname } = useLocation();
 	const cursorRef = useIntersect<HTMLDivElement>(fetchNextPage);
@@ -62,9 +65,28 @@ export const AppSidebar = () => {
 
 			<SidebarContent>
 				<SidebarGroup>
-					<SidebarGroupLabel>History</SidebarGroupLabel>
 					<SidebarGroupContent>
 						<SidebarMenu>
+							<SidebarMenuItem className='group-data-[collapsible=icon]:hidden'>
+								<SidebarMenuButton
+									asChild
+									size='default'
+									className='cursor-default select-none'>
+									<div className='group/history-row'>
+										<span className='flex-1 font-medium text-muted-foreground text-sm'>
+											History
+										</span>
+										<button
+											type='button'
+											aria-label='Search history'
+											onClick={() => setSearchOpen(true)}
+											className='rounded-md p-0.5 text-muted-foreground opacity-0 transition-opacity hover:text-foreground group-hover/history-row:opacity-100'>
+											<Search className='size-3.5' />
+										</button>
+									</div>
+								</SidebarMenuButton>
+							</SidebarMenuItem>
+
 							{isFetching && !videos && session
 								? [...Array(6)].map((_, index) => (
 										<Skeleton key={index} className='h-15' />
@@ -92,6 +114,8 @@ export const AppSidebar = () => {
 					<ProfileMenu />
 				</SidebarFooter>
 			)}
+
+			<SearchMenu open={searchOpen} onOpenChange={setSearchOpen} />
 
 			<SidebarRail />
 		</Sidebar>

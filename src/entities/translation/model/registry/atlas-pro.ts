@@ -14,6 +14,7 @@ export const ATLAS_PRO: TTranslationModel = {
 	features: ['62 languages', 'Voice cloning', 'Lip-sync', 'Studio mix'],
 	accent: 'oklch(0.7 0.14 290)',
 	isEnabled: true,
+	maxDurationMinutes: 75,
 	params: [
 		{ id: 'atlas-pro-voice', required: false },
 		{ id: 'atlas-pro-voice-type', required: false },

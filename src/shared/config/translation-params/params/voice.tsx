@@ -49,6 +49,6 @@ const VoiceControl = ({ value, onChange }: TParamControlProps<VoiceValue>) => {
 export const WHISPER_ONE_VOICE_TYPE_PARAM: TParamDefinition<VoiceValue> = {
 	id: 'whisper-one-voice',
 	label: 'Voice',
-	defaultValue: { voice_name: 'anna', gender: 'female' },
+	defaultValue: { voice_name: 'dmitry', gender: 'male' },
 	Control: VoiceControl,
 };

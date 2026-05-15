@@ -1,6 +1,6 @@
-/** biome-ignore-all lint/correctness/useExhaustiveDependencies: <explanation> */
+/** biome-ignore-all lint/correctness/useExhaustiveDependencies: Exception */
 
-import { Play } from 'lucide-react';
+import { Loader2, Play } from 'lucide-react';
 import {
 	lazy,
 	Suspense,
@@ -18,6 +18,7 @@ import { type TCreateVideoVoice, useVideo } from '@/entities/video';
 import { useAudioSync, useTranslationWs } from '@/features/translations';
 import { craftVideoThumbnail } from '@/shared/model/videos.service';
 import { Button } from '@/shared/ui/button';
+import { useSeekObserver } from '../lib/use-seek-observer';
 import { getChunkIdAtTime } from '../model/service';
 
 const HEARTBEAT_INTERVAL = 1000;
@@ -31,11 +32,14 @@ export const Player = ({ videoId }: { videoId: string }) => {
 	const [isReady, setIsReady] = useState<boolean>(false);
 	const [isStarted, setIsStarted] = useState<boolean>(false);
 	const [isBuffering, setIsBuffering] = useState<boolean>(false);
+	const [isWaitingForChunk, setIsWaitingForChunk] = useState<boolean>(false);
 
 	const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const bufferingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
 		null,
 	);
+
+	const waitingChunkIdRef = useRef<number | null>(null);
 
 	const {
 		playerRef,
@@ -68,6 +72,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 	const {
 		chunks,
 		sendHeartbeat,
+		sendSeek,
 		progress,
 		chunkMetas,
 		chunksRef,
@@ -132,7 +137,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		getPlayer()?.playVideo();
 	}, [isBuffering, getPlayer]);
 
-	const { destroy, ensureContext, setVolume } = useAudioSync({
+	const { destroy, ensureContext, setVolume, handleSeek } = useAudioSync({
 		isPlaying,
 		chunkMetasRef,
 		chunks: chunksRef,
@@ -171,6 +176,71 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		}
 	}, []);
 
+	const handleUserSeek = useCallback(
+		(time: number) => {
+			if (!isStarted) return;
+
+			const targetChunkId = getChunkIdAtTime(chunkMetas, time);
+			const isReady =
+				chunksRef.current.has(targetChunkId) &&
+				chunkMetasRef.current.has(targetChunkId);
+
+			sendSeek(time);
+
+			if (isReady) {
+				waitingChunkIdRef.current = null;
+				setIsWaitingForChunk(false);
+				handleSeek();
+				return;
+			}
+
+			waitingChunkIdRef.current = targetChunkId;
+			setIsWaitingForChunk(true);
+			getPlayer()?.pauseVideo();
+		},
+		[
+			isStarted,
+			chunkMetas,
+			chunksRef,
+			chunkMetasRef,
+			handleSeek,
+			sendSeek,
+			getPlayer,
+		],
+	);
+
+	useEffect(() => {
+		if (!isWaitingForChunk) return;
+
+		const targetChunkId = waitingChunkIdRef.current;
+		if (targetChunkId === null) return;
+
+		// чанк, на который пользователь перемотал, ещё не пришёл
+		if (!chunksRef.current.has(targetChunkId)) return;
+		if (!chunkMetasRef.current.has(targetChunkId)) return;
+
+		// дополнительная защита: пользователь не успел перемотать ещё раз
+		const currentChunkAtTime = getChunkIdAtTime(
+			chunkMetas,
+			playerTimeRef.current,
+		);
+		if (currentChunkAtTime !== targetChunkId) return;
+
+		waitingChunkIdRef.current = null;
+		setIsWaitingForChunk(false);
+		handleSeek();
+		getPlayer()?.playVideo();
+	}, [
+		chunks,
+		chunkMetas,
+		isWaitingForChunk,
+		handleSeek,
+		getPlayer,
+		playerTimeRef,
+		chunksRef,
+		chunkMetasRef,
+	]);
+
 	const handleOnReady = (e: YouTubeEvent) => {
 		const data = e.target.getVideoData();
 		dispatch({ type: 'SET_TITLE', payload: data?.title ?? '' });
@@ -205,6 +275,10 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		[],
 	);
 
+	useSeekObserver(playerTimeRef, handleUserSeek, {
+		isStarted,
+	});
+
 	return (
 		<div className='relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'>
 			<Suspense
@@ -220,6 +294,18 @@ export const Player = ({ videoId }: { videoId: string }) => {
 					onStateChange={handleStateChange}
 				/>
 			</Suspense>
+
+			{isWaitingForChunk && (
+				<div className='absolute inset-0 z-30 flex items-center justify-center bg-black/70 backdrop-blur-sm'>
+					<div className='flex flex-col items-center gap-3 text-white'>
+						<Loader2 className='size-10 animate-spin' />
+						<span className='font-medium text-sm'>
+							Translating this part...
+						</span>
+						<span className='text-white/60 text-xs'>Almost ready</span>
+					</div>
+				</div>
+			)}
 
 			{isReady && !isStarted && (
 				<>

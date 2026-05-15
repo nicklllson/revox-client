@@ -41,4 +41,5 @@ export type TTranslationModel = {
 	accent: string;
 	isEnabled: boolean;
 	params: TTranslationModelParam[];
+	maxDurationMinutes: number | null;
 };

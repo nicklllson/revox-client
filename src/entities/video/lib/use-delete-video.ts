@@ -7,7 +7,7 @@ export const useDeleteVideo = () => {
 		mutationFn: videosApi.deleteVideo,
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: videosApi.getVideosFromUser().queryKey,
+				queryKey: [videosApi.BASE_KEY],
 			});
 		},
 	});

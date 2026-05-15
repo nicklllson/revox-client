@@ -1,7 +1,8 @@
 import z from 'zod';
 import { AVAILABLE_LANGUAGES } from '@/entities/video';
 
-const youtubeUrlRegex = /^https:\/\/www\.youtube\.com\/watch\?v=[\w-]+/;
+const YOUTUBE_URL_REGEX = /^https:\/\/www\.youtube\.com\/watch\?v=[\w-]+/;
+const YOUTUBE_SHORTS_URL_REGEX = /^https:\/\/www\.youtube\.com\/shorts\/[\w-]+/;
 
 const languageValues = AVAILABLE_LANGUAGES.map(l => l.value) as [
 	string,
@@ -11,9 +12,10 @@ const languageValues = AVAILABLE_LANGUAGES.map(l => l.value) as [
 export const promptSchema = z.object({
 	videoUrl: z
 		.string()
-		.regex(
-			youtubeUrlRegex,
-			'URL must be YouTube video format (https://www.youtube.com/watch?v=...)',
+		.refine(
+			value =>
+				YOUTUBE_URL_REGEX.test(value) || YOUTUBE_SHORTS_URL_REGEX.test(value),
+			'URL must be YouTube video or Shorts format',
 		),
 	language: z.enum(languageValues),
 	params: z.record(z.string(), z.unknown()).default({}),

@@ -15,12 +15,7 @@ export const usePrompt = () => {
 		TPromptField['language'] | undefined
 	>(LANGUAGE_STORAGE_KEY, undefined);
 
-	const { register, control, formState, ...rest } = useForm<
-		TPromptInput,
-		TPromptField,
-		TPromptOutput
-	>({
-		mode: 'onBlur',
+	const form = useForm<TPromptInput, TPromptField, TPromptOutput>({
 		resolver: zodResolver(promptSchema),
 		defaultValues: {
 			language: storedLanguage,
@@ -29,7 +24,7 @@ export const usePrompt = () => {
 		},
 	});
 
-	const language = useWatch({ control, name: 'language' });
+	const language = useWatch({ control: form.control, name: 'language' });
 
 	useEffect(() => {
 		if (language && language !== storedLanguage) {
@@ -37,5 +32,5 @@ export const usePrompt = () => {
 		}
 	}, [language, storedLanguage, setStoredLanguage]);
 
-	return { register, control, formState, ...rest };
+	return form;
 };

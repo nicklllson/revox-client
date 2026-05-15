@@ -62,7 +62,24 @@ export const api = async <ReqData, ResData>(
 	try {
 		const res = await fetch(serverRoute, initParams);
 
-		if (!res.ok) throw await res.json();
+		if (!res.ok) {
+			let errData: any = null;
+			try {
+				errData = await res.json();
+			} catch {
+				errData = { message: res.statusText };
+			}
+
+			const error = new Error(
+				errData?.message ?? `HTTP ${res.status}`,
+			) as Error & {
+				response: { status: number; data: any };
+				status: number;
+			};
+			error.response = { status: res.status, data: errData };
+			error.status = res.status;
+			throw error;
+		}
 
 		return (await res.json()) as ResData;
 	} catch (error) {
