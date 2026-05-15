@@ -157,19 +157,6 @@ export const TranslationModelSelect = () => {
 						);
 					})}
 				</div>
-
-				{/* Footer */}
-				<div className='mt-1 flex items-center justify-between border-white/5 border-t px-3 pt-2 pb-2.5'>
-					<span className='text-[11px] text-zinc-500'>
-						ETA:{' '}
-						<span className='font-mono text-zinc-300'>{activeModel.eta}</span>
-					</span>
-					<button
-						type='button'
-						className='cursor-pointer text-[11px] text-sky-500 hover:text-sky-400'>
-						Manage models
-					</button>
-				</div>
 			</DropdownMenuContent>
 		</DropdownMenu>
 	);

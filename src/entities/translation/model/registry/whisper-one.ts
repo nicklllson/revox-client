@@ -3,9 +3,9 @@ import type { TTranslationModel } from '../types';
 export const WHISPER_ONE: TTranslationModel = {
 	modelId: 'whisper-one',
 	name: 'Whisper 1.0',
-	tagline: 'Fast · Standard quality',
+	tagline: 'Fast · Low quality',
 	description:
-		'Quick translations with a single neutral voice. Best for short clips and previews.',
+		'Quick translations with a neutral and narrator voice. Best for short videos and single voice videos',
 	speed: 5,
 	quality: 3,
 	tier: 'free',

@@ -1,5 +1,7 @@
-import { Outlet } from 'react-router';
+import { Link, Outlet } from 'react-router';
 import { Aurora } from '@/shared/ui/aurora';
+import { Card, CardContent } from '@/shared/ui/card';
+import { FieldDescription } from '@/shared/ui/field';
 import { Logo } from '@/shared/ui/logo';
 
 export const AuthLayout = () => {
@@ -7,7 +9,28 @@ export const AuthLayout = () => {
 		<div className='flex min-h-svh flex-col items-center justify-center bg-background p-6 md:p-10'>
 			<Logo className='absolute top-5 left-5' />
 			<div className='relative z-10 w-full max-w-sm md:max-w-4xl'>
-				<Outlet />
+				<div className='flex flex-col gap-6'>
+					<Card className='overflow-hidden p-0'>
+						<CardContent className='grid p-0 md:grid-cols-2'>
+							<Outlet />
+							<div className='relative hidden bg-muted md:block'>
+								<video
+									loop
+									playsInline
+									muted
+									autoPlay
+									className='absolute inset-0 h-full w-full object-cover'
+									src='/videos/preview.mp4'
+								/>
+							</div>
+						</CardContent>
+					</Card>
+					<FieldDescription className='px-6 text-center'>
+						By clicking continue, you agree to our{' '}
+						<Link to={'#change-link'}>Terms of Service</Link> and{' '}
+						<Link to={'#change-link'}>Privacy Policy</Link>.
+					</FieldDescription>
+				</div>
 			</div>
 			<Aurora speed={1} amplitude={1.0} />
 		</div>

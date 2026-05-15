@@ -3,6 +3,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useSession } from '@/entities/auth';
 import { AVAILABLE_LANGUAGES, videosApi } from '@/entities/video';
 import { useDebounce } from '@/shared/hooks/use-debounce';
 import { useIntersect } from '@/shared/hooks/use-intersect';
@@ -30,12 +31,20 @@ export const SearchMenu = ({ open, onOpenChange }: Props) => {
 	const [query, setQuery] = useState('');
 	const debouncedQuery = useDebounce(query, 400);
 	const navigate = useNavigate();
+	const { session } = useSession();
 
-	const { data: videos, isFetching, isFetchingNextPage, fetchNextPage, hasNextPage } =
-		useInfiniteQuery({
-			...videosApi.getVideosFromUser(debouncedQuery ? { search: debouncedQuery } : {}),
-			enabled: open,
-		});
+	const {
+		data: videos,
+		isFetching,
+		isFetchingNextPage,
+		fetchNextPage,
+		hasNextPage,
+	} = useInfiniteQuery({
+		...videosApi.getVideosFromUser(
+			debouncedQuery ? { search: debouncedQuery } : {},
+		),
+		enabled: open && !!session,
+	});
 
 	const cursorRef = useIntersect<HTMLDivElement>(fetchNextPage);
 
@@ -48,12 +57,15 @@ export const SearchMenu = ({ open, onOpenChange }: Props) => {
 		onOpenChange(false);
 	};
 
-	const isInitialLoad = isFetching && !isFetchingNextPage && (!videos || videos.length === 0);
+	const isInitialLoad =
+		isFetching && !isFetchingNextPage && (!videos || videos.length === 0);
 	const isEmpty = !isFetching && (!videos || videos.length === 0);
 
 	return (
 		<Dialog open={open} onOpenChange={onOpenChange}>
-			<DialogContent className='overflow-hidden p-0 sm:max-w-xl' showCloseButton={false}>
+			<DialogContent
+				className='overflow-hidden p-0 sm:max-w-xl'
+				showCloseButton={false}>
 				<DialogTitle className='sr-only'>Search videos</DialogTitle>
 				<DialogDescription className='sr-only'>
 					Search your video history
@@ -71,7 +83,9 @@ export const SearchMenu = ({ open, onOpenChange }: Props) => {
 						{isInitialLoad && (
 							<div className='space-y-0.5 p-2'>
 								{[...Array(5)].map((_, i) => (
-									<div key={i} className='flex items-center gap-3 rounded-sm px-2 py-2.5'>
+									<div
+										key={i}
+										className='flex items-center gap-3 rounded-sm px-2 py-2.5'>
 										<Skeleton className='size-10 shrink-0 rounded-md' />
 										<div className='flex flex-1 flex-col gap-2'>
 											<Skeleton className='h-3.5 w-3/4' />
@@ -125,7 +139,9 @@ export const SearchMenu = ({ open, onOpenChange }: Props) => {
 						)}
 
 						{hasNextPage && (
-							<div ref={cursorRef} className='flex items-center justify-center py-3'>
+							<div
+								ref={cursorRef}
+								className='flex items-center justify-center py-3'>
 								{isFetchingNextPage && (
 									<div className='size-4 animate-spin rounded-full border-2 border-border border-t-foreground' />
 								)}
