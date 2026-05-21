@@ -51,6 +51,7 @@ export const AppSidebar = () => {
 							<SidebarMenuButton
 								asChild
 								size='lg'
+								tooltip={item.label}
 								isActive={pathname === item.href}
 								className='data-[state=open]:bg-sidebar-accent'>
 								<Link to={item.href}>
@@ -101,9 +102,13 @@ export const AppSidebar = () => {
 											isFavorite={video.isFavorite}
 										/>
 									))}
-							{hasNextPage && (
-								<div ref={cursorRef} className='h-1 w-full bg-red-500' />
-							)}
+							{hasNextPage && <div ref={cursorRef} className='h-1 w-full' />}
+							{isFetching &&
+								videos &&
+								session &&
+								[...Array(3)].map((_, index) => (
+									<Skeleton key={`loading-more-${index}`} className='h-15' />
+								))}
 						</SidebarMenu>
 					</SidebarGroupContent>
 				</SidebarGroup>

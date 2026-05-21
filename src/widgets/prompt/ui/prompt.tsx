@@ -2,8 +2,10 @@ import { ArrowUp } from 'lucide-react';
 import { Controller, FormProvider } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import TextareaAutosize from 'react-textarea-autosize';
+import { useSession } from '@/entities/auth';
 import { VideoLangSelector } from '@/features/select-video-lang';
 import { TranslationParams } from '@/features/translation-params/';
+import { ROUTES } from '@/shared/model/routes';
 import {
 	InputGroup,
 	InputGroupAddon,
@@ -17,6 +19,7 @@ import type { TPromptField } from '../model/schema';
 
 export const Prompt = () => {
 	const methods = usePrompt();
+	const { session } = useSession();
 
 	const { handleSubmit, register, control, formState } = methods;
 	const { errors } = formState;
@@ -25,6 +28,10 @@ export const Prompt = () => {
 	const navigate = useNavigate();
 
 	const onSubmit = (fields: TPromptField) => {
+		if (!session) {
+			return navigate(ROUTES.PUBLIC.SIGNIN);
+		}
+
 		const payload = mapPromptToPayload(fields);
 
 		handleCreateVideo(payload).then(res => {

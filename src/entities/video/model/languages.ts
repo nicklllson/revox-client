@@ -9,7 +9,7 @@ export const AVAILABLE_LANGUAGES = [
 	},
 	{
 		label: 'Spanish',
-		value: 'sp',
+		value: 'es',
 	},
 	{
 		label: 'French',

@@ -1,30 +1,48 @@
 import { type RefObject, useEffect, useRef } from 'react';
+import type YouTube from 'react-youtube';
 
 const SEEK_DELTA_THRESHOLD = 1.5;
+const POLL_INTERVAL = 250;
 
 export const useSeekObserver = (
-	playerTimeRef: RefObject<number>,
+	playerRef: RefObject<YouTube | null>,
 	onSeek: (time: number) => void,
 	opt?: { isStarted: boolean },
 ) => {
 	const { isStarted } = opt || {};
-	const lastTimeRef = useRef(0);
+	const lastTimeRef = useRef<number | null>(null);
+	const onSeekRef = useRef(onSeek);
+	onSeekRef.current = onSeek;
 
-	return useEffect(() => {
+	useEffect(() => {
 		if (!isStarted) return;
+		lastTimeRef.current = null;
 
-		const interval = setInterval(() => {
-			const currentTime = playerTimeRef.current;
+		const interval = setInterval(async () => {
+			const player = playerRef.current?.getInternalPlayer();
+			if (!player) return;
+
+			let currentTime: number;
+			try {
+				currentTime = await player.getCurrentTime();
+			} catch {
+				return;
+			}
+			if (typeof currentTime !== 'number') return;
+
+			if (lastTimeRef.current === null) {
+				lastTimeRef.current = currentTime;
+				return;
+			}
+
 			const delta = currentTime - lastTimeRef.current;
 			lastTimeRef.current = currentTime;
 
-			// нормальное проигрывание: delta ~ 0.5 если интервал 500ms
-			// перемотка: delta сильно больше или отрицательная
 			if (Math.abs(delta) > SEEK_DELTA_THRESHOLD) {
-				onSeek(currentTime);
+				onSeekRef.current(currentTime);
 			}
-		}, 500);
+		}, POLL_INTERVAL);
 
 		return () => clearInterval(interval);
-	}, [isStarted, onSeek]);
+	}, [isStarted, playerRef]);
 };

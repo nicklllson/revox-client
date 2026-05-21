@@ -62,11 +62,6 @@ export const TranslationModelSelect = () => {
 					<span className='font-mono text-[10.5px] text-zinc-500 uppercase tracking-[1px]'>
 						Translation model
 					</span>
-					<button
-						type='button'
-						className='cursor-pointer text-[11px] text-sky-500 hover:text-sky-400'>
-						Compare →
-					</button>
 				</div>
 
 				{/* Model list */}

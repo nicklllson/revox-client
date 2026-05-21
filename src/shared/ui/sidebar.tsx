@@ -4,6 +4,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { PanelLeftIcon } from 'lucide-react';
 import { Slot } from 'radix-ui';
 import * as React from 'react';
+import { useSession } from '@/entities/auth';
 import { Button } from '@/shared//ui/button';
 import { Input } from '@/shared//ui/input';
 import { Separator } from '@/shared//ui/separator';
@@ -65,16 +66,20 @@ function SidebarProvider({
 	open?: boolean;
 	onOpenChange?: (open: boolean) => void;
 }) {
+	const { session } = useSession();
 	const isMobile = useIsMobile();
 	const [openMobile, setOpenMobile] = React.useState(false);
 
 	// This is the internal state of the sidebar.
 	// We use openProp and setOpenProp for control from outside the component.
-	const [_open, _setOpen] = React.useState(defaultOpen);
+	const [_open, _setOpen] = React.useState(session ? defaultOpen : false);
 	const open = openProp ?? _open;
 	const setOpen = React.useCallback(
 		(value: boolean | ((value: boolean) => boolean)) => {
+			if (!session) return;
+
 			const openState = typeof value === 'function' ? value(open) : value;
+
 			if (setOpenProp) {
 				setOpenProp(openState);
 			} else {
@@ -84,7 +89,7 @@ function SidebarProvider({
 			// This sets the cookie to keep the sidebar state.
 			document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
 		},
-		[setOpenProp, open],
+		[setOpenProp, open, session],
 	);
 
 	// Helper to toggle the sidebar.

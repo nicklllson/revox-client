@@ -5,12 +5,10 @@ import { Aurora } from '@/shared/ui/aurora';
 import { Button } from '@/shared/ui/button';
 import { Card, CardContent } from '@/shared/ui/card';
 import { FieldDescription } from '@/shared/ui/field';
-import { Logo } from '@/shared/ui/logo';
 
 export const AuthLayout = () => {
 	return (
 		<div className='flex min-h-svh flex-col items-center justify-center bg-background p-6 md:p-10'>
-			<Logo className='absolute top-5 left-5 z-10' />
 			<Button asChild size='icon' className='absolute top-5 right-5 z-10'>
 				<Link to={ROUTES.PUBLIC.HOME}>
 					<X />

@@ -275,9 +275,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		[],
 	);
 
-	useSeekObserver(playerTimeRef, handleUserSeek, {
-		isStarted,
-	});
+	useSeekObserver(playerRef, handleUserSeek, { isStarted });
 
 	return (
 		<div className='relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'>
