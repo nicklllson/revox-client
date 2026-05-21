@@ -20,6 +20,7 @@ export const ROUTES = {
 		FAVORITES: '/favorites',
 		PLAYLISTS: '/playlists',
 		SINGLE_PLAYLIST: '/playlist/:playlistId',
+		PAYMENT: '/payment/return',
 	},
 } as const;
 

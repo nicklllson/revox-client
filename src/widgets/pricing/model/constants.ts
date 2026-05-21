@@ -1,53 +1,17 @@
-export const MOCK_TARIFFS = [
-	{
-		id: 'tariff-1',
-		name: 'Basic',
-		description: 'Access our most popular features',
-		price: 9,
-		billing: 'monthly',
-		computeUnits: 5000,
-		features: [
-			'Commercial license',
-			'Full access to image, 3D, and lipsync models',
-			'Full access to LoRA training',
-			'Upscale images up to 4k resolution',
-			'Access to selected video models',
-		],
-		isActive: true,
-	},
-	{
-		id: 'tariff-2',
-		name: 'Pro',
-		description: 'Advanced features and discounts on compute units',
-		price: 35,
-		billing: 'monthly',
-		computeUnits: 20000,
-		features: [
-			'Everything in Basic plus',
-			'Access to all video models',
-			'Higher concurrency',
-			'Full access to Krea Nodes and Apps',
-			'Bulk discounts on extra compute units',
-			'Early access to new features',
-		],
-		isActive: false,
-	},
-	{
-		id: 'tariff-3',
-		name: 'Max',
-		description: 'Full access with higher discounts on compute units',
-		price: 105,
-		billing: 'monthly',
-		computeUnits: 60000,
-		computeUnitsRange: { min: 40000, max: 100000 },
-		features: [
-			'Everything in Pro plus',
-			'Unlimited LoRA trainings',
-			'Unlimited Concurrency',
-			'Upscale videos and images to 22k resolution',
-			'Unlimited relaxed generations on selected models',
-			'High priority queues',
-		],
-		isActive: false,
-	},
-] as const;
+import type { TTierFeatures } from '@/entities/subscription';
+
+export const FEATURE_LABELS: Record<keyof TTierFeatures, string> = {
+	multiSpeaker: 'Multi-speaker voice detection',
+	voiceSelection: 'Voice selection',
+	watermark: 'No watermark',
+	priorityQueue: 'Priority processing queue',
+};
+
+export const PROVIDER_LABELS: Record<string, string> = {
+	google: 'Google Translate',
+	deepseek: 'DeepSeek (context-aware translation)',
+	'edge-tts': 'Edge TTS',
+	elevenlabs: 'ElevenLabs (premium voiceover)',
+	base: 'Whisper Base',
+	'large-v3': 'Whisper Large v3 (accurate transcription)',
+};

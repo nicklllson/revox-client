@@ -1,4 +1,10 @@
-import { ArrowUpRight, Check, Diamond } from 'lucide-react';
+import { ArrowUpRight, Check, Diamond, Loader2 } from 'lucide-react';
+import {
+	type TTier,
+	useCreatePayment,
+	usePricingTiers,
+	useSubscription,
+} from '@/entities/subscription';
 import { Button } from '@/shared/ui/button';
 import {
 	Card,
@@ -7,57 +13,97 @@ import {
 	CardHeader,
 	CardTitle,
 } from '@/shared/ui/card';
-import { MOCK_TARIFFS } from '../model/constants';
+import { buildFeaturesList, formatUsd } from '../model/services';
 
 export const PricingCards = () => {
+	const { isFetching, tiers } = usePricingTiers();
+	const { isFetchingSubscription, subscription } = useSubscription();
+	const { createPayment } = useCreatePayment();
+
+	if (isFetching) {
+		return (
+			<div className='flex w-full items-center justify-center py-20'>
+				<Loader2 className='h-8 w-8 animate-spin text-muted-foreground' />
+			</div>
+		);
+	}
+
+	if (!tiers || tiers.length === 0) return null;
+
+	const freeTier = tiers.find((t: TTier) => t.tier === 'FREE');
+
 	return (
-		<div className='mx-auto mb-10 flex w-full max-w-[1400px] items-start justify-between gap-10'>
-			{MOCK_TARIFFS.map(tariff => (
-				<Card key={tariff.id} className='min-h-[610px] w-full'>
-					<CardHeader>
-						<CardTitle className='text-3xl'>{tariff.name}</CardTitle>
-						<CardDescription>{tariff.description}</CardDescription>
-					</CardHeader>
-					<CardContent className='flex flex-1 flex-col gap-8'>
-						<div>
-							<p className='mb-3 font-medium'>
-								<span className='text-5xl'>{tariff.price} $</span>
-								<span className='text-muted-foreground'>/mo</span>
-							</p>
-							<span className='text-muted-foreground text-sm'>
-								billed monthly
-							</span>
-						</div>
-						<div className='flex flex-col items-center gap-8'>
-							<Button
-								disabled
-								className='w-full'
-								variant='secondary'
-								accent={tariff.isActive ? 'secondary' : 'primary'}>
-								<ArrowUpRight />
-								{tariff.name !== 'Basic' ? 'Coming soon}' : 'Active plan'}
-							</Button>
-							<span className='text-sm'>
-								{tariff.computeUnits} compute units / month
-							</span>
-						</div>
-						<div>
-							<ul className='flex flex-col gap-3 text-sm'>
-								<li className='flex items-center gap-5'>
-									<Diamond size={16} />
-									Everything in {tariff.name} plus:
-								</li>
-								{tariff.features.map((feat, index) => (
-									<li className='flex items-center gap-5' key={index}>
-										<Check size={16} />
-										{feat}
-									</li>
-								))}
-							</ul>
-						</div>
-					</CardContent>
-				</Card>
-			))}
+		<div className='mx-auto mb-10 flex w-full max-w-[1200px] items-stretch justify-between gap-2.5'>
+			{tiers.map(tier => {
+				const isActive = tier.tier === subscription?.tier;
+				const featuresList = buildFeaturesList(tier, freeTier);
+
+				const previousProName = tier.tier === 'PRO' ? 'Free' : null;
+				const previousPremiumName = tier.tier === 'PREMIUM' ? 'Pro' : null;
+
+				const previousTierName = previousProName || previousPremiumName;
+
+				return (
+					<Card key={tier.tier} className='min-h-[610px] w-full'>
+						<CardHeader>
+							<CardTitle className='text-3xl'>{tier.name}</CardTitle>
+							<CardDescription>{tier.description}</CardDescription>
+						</CardHeader>
+						<CardContent className='flex flex-1 flex-col gap-8'>
+							<div>
+								<p className='mb-3 font-medium'>
+									<span className='text-5xl'>${formatUsd(tier.priceUsd)}</span>
+									<span className='text-muted-foreground'>/mo</span>
+								</p>
+								<span className='text-muted-foreground text-sm'>
+									billed monthly
+								</span>
+							</div>
+							<div className='flex flex-col items-center gap-8'>
+								{isFetchingSubscription ? (
+									<Button
+										disabled={true}
+										className='w-full'
+										variant='secondary'
+										isLoading>
+										loading
+									</Button>
+								) : (
+									<Button
+										disabled={isActive}
+										className='w-full'
+										variant='secondary'
+										onClick={() => createPayment(tier.tier)}
+										accent={isActive ? 'secondary' : 'primary'}>
+										<ArrowUpRight />
+										{isActive ? 'Current plan' : 'Choose plan'}
+									</Button>
+								)}
+
+								<span className='text-sm'>
+									{tier.minutesPerMonth} minutes of translation per month
+								</span>
+							</div>
+							<div>
+								<ul className='flex flex-col gap-3 text-sm'>
+									{previousTierName && (
+										<li className='flex items-center gap-5'>
+											<Diamond size={16} />
+											Everything in {previousTierName}, plus:
+										</li>
+									)}
+									{featuresList.map((feat, index) => (
+										<li className='flex items-center gap-5' key={index}>
+											<Check size={16} />
+											{feat}
+										</li>
+									))}
+								</ul>
+							</div>
+						</CardContent>
+					</Card>
+				);
+			})}
 		</div>
 	);
 };

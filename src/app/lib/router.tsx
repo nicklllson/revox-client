@@ -48,6 +48,12 @@ export const router = createBrowserRouter([
 				lazy: () => import('@/pages/public/auth-callback.page'),
 			},
 			{
+				Component: ProtectedRoute,
+				loader: protectedLoader,
+				path: ROUTES.PRIVATE.PAYMENT,
+				lazy: () => import('@/pages/private/payment.page'),
+			},
+			{
 				element: <MainLayout />,
 				children: [
 					{
@@ -73,6 +79,7 @@ export const router = createBrowserRouter([
 										path: ROUTES.PRIVATE.SETTINGS,
 										lazy: () => import('@/pages/private/settings.page'),
 									},
+
 									{
 										path: ROUTES.PRIVATE.SINGLE_PLAYLIST,
 										lazy: () =>

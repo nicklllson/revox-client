@@ -34,7 +34,7 @@ export const AppSidebar = () => {
 	return (
 		<Sidebar collapsible='icon'>
 			<SidebarHeader>
-				<div className='my-3.5 flex items-center justify-between'>
+				<div className='my-3.5 flex items-center justify-between group-data-[collapsible=icon]:justify-center'>
 					<div className='flex items-center transition-opacity delay-150 duration-200 group-data-[collapsible=icon]:pointer-events-none group-data-[collapsible=icon]:absolute group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0'>
 						<img
 							src='/images/revox-logo.webp'
