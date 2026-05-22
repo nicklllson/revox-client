@@ -1,6 +1,8 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect } from 'react';
-import { privateApi } from '@/shared/lib/api';
+import { useSession } from '@/entities/auth';
+import { subscriptionApi } from '../api/subscription.api';
+import type { TSubscriptionTier } from '../model/types';
 
 export type TPaymentStatus =
 	| 'PENDING'
@@ -11,26 +13,19 @@ export type TPaymentStatus =
 export type TPaymentStatusResponse = {
 	id: string;
 	status: TPaymentStatus;
-	tier: 'FREE' | 'PRO' | 'PREMIUM';
+	tier: TSubscriptionTier;
 	amount: number;
 	currency: string;
 };
 
-const FINAL_STATUSES: TPaymentStatus[] = ['SUCCEEDED', 'CANCELED'];
-
 export const usePaymentStatus = (paymentId: string | null) => {
 	const queryClient = useQueryClient();
+	const { session } = useSession();
 
 	const query = useQuery<TPaymentStatusResponse>({
-		queryKey: ['payment', paymentId],
-		queryFn: () => privateApi(`/payments/${paymentId}`),
-		enabled: !!paymentId,
-		refetchInterval: query => {
-			const status = query.state.data?.status;
-			if (status && FINAL_STATUSES.includes(status)) return false;
-			return 2000;
-		},
+		...subscriptionApi.getPaymentStatus(paymentId),
 		retry: false,
+		enabled: !!paymentId && !!session,
 	});
 
 	useEffect(() => {

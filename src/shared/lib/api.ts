@@ -13,6 +13,7 @@ export const queryClient = new QueryClient({
 		onError: (error, _) => {
 			const message =
 				error instanceof Error ? error.message : 'Something went wrong';
+			console.error(message);
 			toast.error(message);
 		},
 	}),
@@ -20,6 +21,7 @@ export const queryClient = new QueryClient({
 		onError: (error, _) => {
 			const message =
 				error instanceof Error ? error.message : 'Error in mutating';
+			console.error(message);
 			toast.error(message);
 		},
 	}),

@@ -1,10 +1,14 @@
 import { ArrowUpRight, Check, Diamond, Loader2 } from 'lucide-react';
+import { useNavigate } from 'react-router';
+import { useSession } from '@/entities/auth';
 import {
+	type TSubscriptionTier,
 	type TTier,
 	useCreatePayment,
 	usePricingTiers,
 	useSubscription,
 } from '@/entities/subscription';
+import { ROUTES } from '@/shared/model/routes';
 import { Button } from '@/shared/ui/button';
 import {
 	Card,
@@ -16,9 +20,19 @@ import {
 import { buildFeaturesList, formatUsd } from '../model/services';
 
 export const PricingCards = () => {
+	const navigate = useNavigate();
 	const { isFetching, tiers } = usePricingTiers();
 	const { isFetchingSubscription, subscription } = useSubscription();
 	const { createPayment } = useCreatePayment();
+	const { session } = useSession();
+
+	const handleClick = (tier: TSubscriptionTier) => {
+		if (!session) {
+			navigate(ROUTES.PUBLIC.SIGNIN);
+			return;
+		}
+		createPayment(tier);
+	};
 
 	if (isFetching) {
 		return (
@@ -73,7 +87,7 @@ export const PricingCards = () => {
 										disabled={isActive}
 										className='w-full'
 										variant='secondary'
-										onClick={() => createPayment(tier.tier)}
+										onClick={() => handleClick(tier.tier)}
 										accent={isActive ? 'secondary' : 'primary'}>
 										<ArrowUpRight />
 										{isActive ? 'Current plan' : 'Choose plan'}

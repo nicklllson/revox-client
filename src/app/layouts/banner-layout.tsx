@@ -20,6 +20,13 @@ const BANNER_CONTENT = [
 		description: 'Here you can find your playlists for translated videos',
 		actions: null,
 	},
+	{
+		href: '/subscription',
+		title: 'Subscription',
+		description:
+			'Here you can find your subscription limits or subscription data for translated videos',
+		actions: null,
+	},
 ] satisfies TBannerContentItem[];
 
 export const BannerLayout = () => {
@@ -33,7 +40,9 @@ export const BannerLayout = () => {
 				<p className='mb-6'>{content?.description}</p>
 				{content?.actions}
 			</div>
-			<Outlet />
+			<div className='px-5'>
+				<Outlet />
+			</div>
 		</div>
 	);
 };

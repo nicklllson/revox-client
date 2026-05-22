@@ -34,6 +34,9 @@ export const Prompt = () => {
 
 		const payload = mapPromptToPayload(fields);
 
+		console.log({ payload });
+		return;
+
 		handleCreateVideo(payload).then(res => {
 			navigate(`/videos/${res.id}`);
 		});
@@ -53,18 +56,20 @@ export const Prompt = () => {
 						{...register('videoUrl')}
 					/>
 					<InputGroupAddon align='block-end'>
-						<Controller
-							name='language'
-							control={control}
-							render={({ field }) => (
-								<VideoLangSelector
-									isInvalid={!!errors.language}
-									value={field.value}
-									onChange={field.onChange}
-								/>
-							)}
-						/>
-						<TranslationParams />
+						<div className='flex flex-wrap items-center gap-1.5'>
+							<Controller
+								name='language'
+								control={control}
+								render={({ field }) => (
+									<VideoLangSelector
+										isInvalid={!!errors.language}
+										value={field.value}
+										onChange={field.onChange}
+									/>
+								)}
+							/>
+							<TranslationParams />
+						</div>
 						<InputGroupButton
 							type='submit'
 							size='icon-sm'

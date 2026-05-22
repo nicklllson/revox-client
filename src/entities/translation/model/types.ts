@@ -1,4 +1,8 @@
+import type { TSubscriptionTier } from '@/entities/subscription';
+import type { TParamId } from '@/shared/config/translation-params/model/types';
 import type { TVoiceGender, TVoiceStyle } from '@/shared/model/voices';
+
+export type TTranslationModelTTS = 'edge-tts' | 'silero';
 
 export type TSegment = {
 	id: string;
@@ -15,16 +19,15 @@ export type TVoiceSettings = {
 };
 
 export const DEFAULT_VOICE_SETTINGS: TVoiceSettings = {
-	gender: 'female',
-	voice_name: 'anna',
+	gender: 'male',
+	voice_name: 'dmitriy',
 	style: 'neutral',
 };
 
-export type TTranslationModelTier = 'free' | 'pro';
-
 export type TTranslationModelParam = {
-	id: string;
+	id: TParamId;
 	required: boolean;
+	minTier?: TSubscriptionTier;
 };
 
 export type TTranslationModel = {
@@ -34,7 +37,7 @@ export type TTranslationModel = {
 	description: string;
 	speed: number;
 	quality: number;
-	tier: TTranslationModelTier;
+	tier: TSubscriptionTier;
 	badge: string | null;
 	eta: string;
 	features: string[];
@@ -42,4 +45,12 @@ export type TTranslationModel = {
 	isEnabled: boolean;
 	params: TTranslationModelParam[];
 	maxDurationMinutes: number | null;
+	providers: {
+		translator: string; // 'deepseek' | 'google'
+		tts: TTranslationModelTTS; // | 'elevenlabs'
+		whisper: string; // 'base' | 'large-v3'
+	};
+	pipelineFeatures: {
+		multiSpeaker: boolean;
+	};
 };

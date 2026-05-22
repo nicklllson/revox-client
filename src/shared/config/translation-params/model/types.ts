@@ -1,11 +1,6 @@
 import type { ComponentType } from 'react';
 
-export type TParamId =
-	| 'atlas-pro-voice'
-	| 'atlas-pro-voice-type'
-	| 'fast-voice'
-	| 'whisper-one-voice'
-	| 'whisper-one-voice-type';
+export type TParamId = 'voice' | 'voice-type' | 'multitalk';
 
 export type TParamControlProps<T = unknown> = {
 	value: T;

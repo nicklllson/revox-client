@@ -17,8 +17,8 @@ export const mapPromptToPayload = (fields: TPromptField): TCreateVideoDto => {
 	const params: Partial<Record<TParamId, TParamDefinition>> =
 		fields.params ?? {};
 
-	const voice = voiceValueSchema.safeParse(params['whisper-one-voice']);
-	const voiceType = voiceTypeSchema.safeParse(params['whisper-one-voice-type']);
+	const voice = voiceValueSchema.safeParse(params['voice']);
+	const voiceType = voiceTypeSchema.safeParse(params['voice-type']);
 
 	return {
 		videoUrl: fields.videoUrl,

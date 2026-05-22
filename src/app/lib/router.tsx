@@ -79,7 +79,6 @@ export const router = createBrowserRouter([
 										path: ROUTES.PRIVATE.SETTINGS,
 										lazy: () => import('@/pages/private/settings.page'),
 									},
-
 									{
 										path: ROUTES.PRIVATE.SINGLE_PLAYLIST,
 										lazy: () =>
@@ -97,6 +96,10 @@ export const router = createBrowserRouter([
 											{
 												path: ROUTES.PRIVATE.PLAYLISTS,
 												lazy: () => import('@/pages/private/playlists.page'),
+											},
+											{
+												path: ROUTES.PRIVATE.SUBSCRIPTION,
+												lazy: () => import('@/pages/private/subscription.page'),
 											},
 										],
 									},

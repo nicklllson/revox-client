@@ -1,7 +1,10 @@
 import { Check, ChevronDown, Lock } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useSubscription } from '@/entities/subscription';
 import { VOICES_REGISTRY } from '@/entities/translation';
 import { useClickOutside } from '@/shared/hooks';
+import { getRequiredTierLabel, isModelAvailable } from '@/shared/lib/models';
 import { cn } from '@/shared/lib/utils';
 import { Badge } from '@/shared/ui/badge';
 import { Button } from '@/shared/ui/button';
@@ -17,8 +20,12 @@ import { ModelDot } from './model-dot';
 export const TranslationModelSelect = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
 	const [open, setOpen] = useState<boolean>(false);
+	const navigate = useNavigate();
 
 	const { activeModel, handleSelectModel } = useSelectTranslation();
+	const { subscription } = useSubscription();
+
+	const currentTier = subscription?.tier;
 
 	useClickOutside(containerRef, () => setOpen(false), open);
 
@@ -30,7 +37,6 @@ export const TranslationModelSelect = () => {
 					className={cn(
 						'group h-auto gap-2.5 rounded-xl border-white/10 bg-zinc-900/85 py-2 pr-3 pl-2.5',
 						'hover:border-white/20 hover:bg-zinc-900/90',
-						'shadow-[inset_0_1px_0_rgba(255,255,255,0.04),0_4px_12px_rgba(0,0,0,0.3)]',
 					)}>
 					<ModelDot accent={activeModel.accent} size={22} />
 					<div className='flex flex-col items-start leading-tight'>
@@ -68,21 +74,29 @@ export const TranslationModelSelect = () => {
 				<div className='flex flex-col gap-0.5'>
 					{Object.values(VOICES_REGISTRY).map(model => {
 						const isSelected = model.modelId === activeModel.modelId;
-						const locked = model.tier === 'pro';
+						const locked = !isModelAvailable(model, currentTier);
+						const requiredTierLabel = getRequiredTierLabel(model);
+
+						const handleClick = () => {
+							if (locked) {
+								setOpen(false);
+								navigate('/pricing');
+								return;
+							}
+							handleSelectModel(model, false);
+						};
 
 						return (
 							<button
 								type='button'
 								key={model.modelId}
 								disabled={!model.isEnabled}
-								onClick={() => handleSelectModel(model, locked)}
+								onClick={handleClick}
 								className={cn(
 									'flex gap-3 rounded-[10px] border border-transparent p-3 text-left transition-colors',
 									'disabled:cursor-not-allowed disabled:opacity-40',
-									isSelected
-										? 'border-sky-500/40 bg-sky-500/10'
-										: 'hover:bg-white/3',
-									locked && !isSelected && 'cursor-not-allowed opacity-50',
+									isSelected ? 'bg-blue-800/20' : 'hover:bg-white/3',
+									locked && !isSelected && 'opacity-50 hover:bg-amber-500/5',
 								)}>
 								<div className='min-w-0 flex-1'>
 									{/* Title row */}
@@ -91,10 +105,10 @@ export const TranslationModelSelect = () => {
 											{model.name}
 										</span>
 
-										{model.badge && (
+										{model.badge && !locked && (
 											<Badge
 												variant='outline'
-												className='border-sky-500/30 bg-sky-500/20 px-1.5 py-0 font-semibold text-[9.5px] text-sky-300 uppercase tracking-[0.6px]'>
+												className='px-1.5 py-0 font-semibold text-[9.5px] text-white/40 uppercase tracking-[0.6px]'>
 												{model.badge}
 											</Badge>
 										)}
@@ -102,23 +116,22 @@ export const TranslationModelSelect = () => {
 										{locked && (
 											<Badge
 												variant='outline'
-												className='ml-auto flex items-center gap-1 border-white/10 bg-white/10 px-1.5 py-0 font-mono font-semibold text-[9.5px] text-zinc-300 uppercase tracking-[0.6px]'>
+												className='ml-auto flex items-center gap-1 border-amber-500/30 bg-amber-500/15 px-1.5 py-0 font-mono font-semibold text-[9.5px] text-amber-300 uppercase tracking-[0.6px]'>
 												<Lock size={9} />
-												PRO
+												{requiredTierLabel}
 											</Badge>
 										)}
 
-										{isSelected && (
-											<Check
-												size={14}
-												className={cn('text-sky-400', !locked && 'ml-auto')}
-											/>
+										{isSelected && !locked && (
+											<Check size={14} className='ml-auto text-white' />
 										)}
 									</div>
 
 									{/* Description */}
 									<p className='mb-2 text-[11.5px] text-zinc-400 leading-relaxed'>
-										{model.description}
+										{locked
+											? `Upgrade to ${requiredTierLabel} to unlock this model`
+											: model.description}
 									</p>
 
 									{/* Meters */}

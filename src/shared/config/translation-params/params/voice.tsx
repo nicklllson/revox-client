@@ -1,8 +1,7 @@
-// shared/config/translation-params/params/voice.tsx
-
 import { Mic } from 'lucide-react';
 import { useEffect } from 'react';
 import { useWatch } from 'react-hook-form';
+import { useModel } from '@/app/providers/model-provider';
 import { VOICE_OPTIONS } from '@/shared/model/voices';
 import type { TParamControlProps, TParamDefinition } from '../model/types';
 import { ParamPill } from '../ui/param-pill';
@@ -14,16 +13,23 @@ type VoiceValue = {
 
 const VoiceControl = ({ value, onChange }: TParamControlProps<VoiceValue>) => {
 	const language = useWatch({ name: 'language' }) ?? 'ru';
-	const voices = VOICE_OPTIONS[language] ?? VOICE_OPTIONS.en ?? [];
+	const { activeModel } = useModel();
+	const provider = activeModel?.providers?.tts ?? 'edge-tts';
+
+	const allVoicesForLang = VOICE_OPTIONS[language] ?? VOICE_OPTIONS.en ?? [];
+	const voices = allVoicesForLang.filter(v => v.provider === provider);
 
 	useEffect(() => {
-		if (!voices.find(v => v.id === value.voice_name) && voices.length > 0) {
+		if (voices.length === 0) return;
+		if (!voices.find(v => v.id === value.voice_name)) {
 			onChange({
 				voice_name: voices[0].id,
 				gender: voices[0].gender,
 			});
 		}
-	}, [language]);
+	}, [language, provider]);
+
+	if (voices.length === 0) return null;
 
 	return (
 		<ParamPill
@@ -46,9 +52,9 @@ const VoiceControl = ({ value, onChange }: TParamControlProps<VoiceValue>) => {
 	);
 };
 
-export const WHISPER_ONE_VOICE_TYPE_PARAM: TParamDefinition<VoiceValue> = {
-	id: 'whisper-one-voice',
+export const REVOX_VOICE_PARAM: TParamDefinition<VoiceValue> = {
+	id: 'voice',
 	label: 'Voice',
-	defaultValue: { voice_name: 'dmitry', gender: 'male' },
+	defaultValue: { voice_name: 'anna', gender: 'female' },
 	Control: VoiceControl,
 };

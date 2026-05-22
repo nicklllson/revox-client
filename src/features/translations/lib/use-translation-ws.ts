@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useModel } from '@/app/providers/model-provider';
 import { useSession } from '@/entities/auth';
 import type { TCreateVideoVoice } from '@/entities/video';
 import type { TTranslationMessage } from '../models/types';
@@ -12,8 +13,8 @@ type Options = {
 };
 
 const WS_API_URL = import.meta.env.VITE_PUBLIC_SERVER_WS;
-const CHUNK_DURATION = 30; // должно совпадать с сервером
-const PREFETCH_AHEAD = 3; // сколько чанков запрашивать вперёд
+const CHUNK_DURATION = 30;
+const PREFETCH_AHEAD = 3;
 
 export const useTranslationWs = ({
 	videoId,
@@ -22,6 +23,7 @@ export const useTranslationWs = ({
 	enabled,
 	voice,
 }: Options) => {
+	const { activeModel } = useModel();
 	const wsRef = useRef<WebSocket | null>(null);
 
 	const pendingMetaQueueRef = useRef<
@@ -97,10 +99,12 @@ export const useTranslationWs = ({
 				JSON.stringify({
 					event: 'start',
 					data: {
+						voice,
 						videoId,
 						youtube_url: youtubeUrl,
 						target_lang: targetLang,
-						voice,
+						providers: activeModel.providers,
+						pipelineFeatures: activeModel.pipelineFeatures,
 					},
 				}),
 			);

@@ -14,7 +14,7 @@ export type TTierFeatures = {
 };
 
 export type TTier = {
-	tier: 'FREE' | 'PRO' | 'PREMIUM';
+	tier: TSubscriptionTier;
 	name: string;
 	description: string;
 	priceUsd: number;

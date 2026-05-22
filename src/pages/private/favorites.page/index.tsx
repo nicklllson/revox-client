@@ -42,7 +42,7 @@ export const FavoritesPage = () => {
 	const handleNavigate = () => navigate(ROUTES.PUBLIC.HOME);
 
 	return (
-		<div className='flex flex-col gap-4 px-5'>
+		<div className='flex flex-col gap-4'>
 			<div className='flex items-center justify-between gap-3'>
 				<Input
 					placeholder='Search favorites...'

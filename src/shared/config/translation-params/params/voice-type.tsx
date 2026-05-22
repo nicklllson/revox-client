@@ -20,8 +20,8 @@ const VoiceTypeControl = ({
 	/>
 );
 
-export const WHISPER_ONE_VOICE_PARAM: TParamDefinition<VoiceTypeValue> = {
-	id: 'whisper-one-voice-type',
+export const REVOX_VOICE_TYPE_PARAM: TParamDefinition<VoiceTypeValue> = {
+	id: 'voice-type',
 	label: 'Style',
 	defaultValue: 'neutral',
 	Control: VoiceTypeControl,

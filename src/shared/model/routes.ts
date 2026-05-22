@@ -21,6 +21,7 @@ export const ROUTES = {
 		PLAYLISTS: '/playlists',
 		SINGLE_PLAYLIST: '/playlist/:playlistId',
 		PAYMENT: '/payment/return',
+		SUBSCRIPTION: '/subscription',
 	},
 } as const;
 

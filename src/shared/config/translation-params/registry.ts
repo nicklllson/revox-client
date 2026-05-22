@@ -1,10 +1,12 @@
 import type { TParamDefinition, TParamId } from './model/types';
-import { WHISPER_ONE_VOICE_TYPE_PARAM } from './params/voice';
-import { WHISPER_ONE_VOICE_PARAM } from './params/voice-type';
+import { REVOX_MULTITALK } from './params/multitalk';
+import { REVOX_VOICE_PARAM } from './params/voice';
+import { REVOX_VOICE_TYPE_PARAM } from './params/voice-type';
 
 const ALL_PARAMS: TParamDefinition[] = [
-	WHISPER_ONE_VOICE_PARAM as TParamDefinition,
-	WHISPER_ONE_VOICE_TYPE_PARAM as TParamDefinition,
+	REVOX_VOICE_TYPE_PARAM as TParamDefinition,
+	REVOX_VOICE_PARAM as TParamDefinition,
+	REVOX_MULTITALK as TParamDefinition,
 	// new params here
 ];
 

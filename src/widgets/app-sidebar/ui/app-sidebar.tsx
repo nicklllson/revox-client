@@ -19,9 +19,10 @@ import {
 import { Skeleton } from '@/shared/ui/skeleton';
 import { ProfileMenu } from '@/widgets/profile-menu';
 import { SearchMenu, useSearchMenu } from '@/widgets/search-menu';
+import { UsageMinutes } from '@/widgets/usage-minutes';
 import { useUsersVideos } from '../lib/use-users-videos';
 import { MENU_ITEMS } from '../model/constants';
-import { HistoryItem } from './history-item';
+import { VideosList } from './videos-list';
 
 export const AppSidebar = () => {
 	const { open: searchOpen, setOpen: setSearchOpen } = useSearchMenu();
@@ -88,20 +89,8 @@ export const AppSidebar = () => {
 								</SidebarMenuButton>
 							</SidebarMenuItem>
 
-							{isFetching && !videos && session
-								? [...Array(6)].map((_, index) => (
-										<Skeleton key={index} className='h-15' />
-									))
-								: videos?.map(video => (
-										<HistoryItem
-											id={video.id}
-											key={video.id}
-											title={video.title}
-											language={video.language}
-											thumbnail={video.thumbnail}
-											isFavorite={video.isFavorite}
-										/>
-									))}
+							<VideosList isFetching={isFetching} videos={videos} />
+
 							{hasNextPage && <div ref={cursorRef} className='h-1 w-full' />}
 							{isFetching &&
 								videos &&
@@ -116,6 +105,7 @@ export const AppSidebar = () => {
 
 			{session && (
 				<SidebarFooter>
+					<UsageMinutes />
 					<ProfileMenu />
 				</SidebarFooter>
 			)}

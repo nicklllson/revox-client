@@ -1,4 +1,4 @@
-import { ChevronsUpDown, Diamond, LogOut, Settings } from 'lucide-react';
+import { ChevronsUpDown, Diamond, LogOut, Settings, Star } from 'lucide-react';
 import { useNavigate } from 'react-router';
 import { useSession } from '@/entities/auth';
 import { useUser } from '@/entities/user';
@@ -22,17 +22,22 @@ import {
 import { Skeleton } from '@/shared/ui/skeleton';
 
 export const ProfileMenu = () => {
-	const { isMobile } = useSidebar();
+	const { isMobile, setOpen, setOpenMobile } = useSidebar();
 	const navigation = useNavigate();
 	const { logout } = useSession();
 	const { user, isFetching } = useUser();
+
+	const handleLogout = () => {
+		logout();
+		setOpen(false);
+		setOpenMobile(false);
+	};
 
 	if (isFetching) {
 		return <Skeleton className='h-12 w-full' />;
 	}
 
 	const initials = user?.nickname?.slice(0, 2).toUpperCase() ?? '??';
-
 	return (
 		<SidebarMenu>
 			<SidebarMenuItem>
@@ -87,9 +92,14 @@ export const ProfileMenu = () => {
 								<Settings />
 								Settings
 							</DropdownMenuItem>
+							<DropdownMenuItem
+								onClick={() => navigation(ROUTES.PRIVATE.SUBSCRIPTION)}>
+								<Star />
+								Subscription
+							</DropdownMenuItem>
 						</DropdownMenuGroup>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem variant='destructive' onClick={logout}>
+						<DropdownMenuItem variant='destructive' onClick={handleLogout}>
 							<LogOut />
 							Log out
 						</DropdownMenuItem>

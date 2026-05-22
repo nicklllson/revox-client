@@ -12,7 +12,7 @@ export type TVideo = {
 	isFavorite: boolean;
 	voiceGender: 'male' | 'female';
 	voiceName: string;
-	voiceStyle: 'neutral' | 'narration';
+	voiceStyle: 'neutral' | 'narrator';
 };
 
 export type TCreateVideoVoice = {
@@ -30,6 +30,9 @@ export type TCreateVideoDto = Omit<
 	| 'createdAt'
 	| 'isFavorite'
 	| 'youtubeVideoId'
+	| 'voiceGender'
+	| 'voiceName'
+	| 'voiceStyle'
 > & {
 	voice: TCreateVideoVoice;
 };

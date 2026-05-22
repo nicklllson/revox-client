@@ -1,10 +1,10 @@
 import type { TTranslationModel } from '../types';
-import { ATLAS_PRO } from './atlas-pro';
-import { WHISPER_ONE } from './whisper-one';
-import { WHISPER_TWO } from './whisper-two';
+import { REVOX_LITE } from './revox-lite';
+import { REVOX_PRO } from './revox-pro';
+import { REVOX_ULTRA } from './revox-ultra';
 
 export const VOICES_REGISTRY: Record<string, TTranslationModel> = {
-	whisperOne: WHISPER_ONE,
-	whisperTwo: WHISPER_TWO,
-	atlasPro: ATLAS_PRO,
+	revoxLite: REVOX_LITE,
+	revoxPro: REVOX_PRO,
+	revoxUltra: REVOX_ULTRA,
 };
