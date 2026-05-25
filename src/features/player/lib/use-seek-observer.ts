@@ -39,6 +39,7 @@ export const useSeekObserver = (
 			lastTimeRef.current = currentTime;
 
 			if (Math.abs(delta) > SEEK_DELTA_THRESHOLD) {
+				console.log('[seek] observer detected seek', { currentTime });
 				onSeekRef.current(currentTime);
 			}
 		}, POLL_INTERVAL);

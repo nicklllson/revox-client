@@ -167,7 +167,7 @@ export const steps: TStep[] = [
 				content:
 					"The video plays with translated audio synced to the original. Let's see how it works.",
 				selector: '#onboarding-player',
-				side: 'bottom',
+				side: 'left',
 				showControls: true,
 				showSkip: true,
 				pointerPadding: 8,
@@ -179,18 +179,6 @@ export const steps: TStep[] = [
 				content:
 					'Slide between the original audio and the dubbed version. Find the balance that works for you.',
 				selector: '#onboarding-volume',
-				side: 'top',
-				showControls: true,
-				showSkip: true,
-				pointerPadding: 6,
-				pointerRadius: 8,
-			},
-			{
-				icon: '⚡',
-				title: 'Skip around freely',
-				content:
-					"Seek to any moment — we'll generate the dubbed audio for that part on demand.",
-				selector: '#onboarding-player-controls',
 				side: 'top',
 				showControls: true,
 				showSkip: true,

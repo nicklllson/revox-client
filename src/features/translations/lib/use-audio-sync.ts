@@ -38,6 +38,8 @@ export const useAudioSync = ({
 	const syncTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const chunkStartedAtRef = useRef<number>(0);
 	const startOffsetRef = useRef<number>(0);
+	const isLockedRef = useRef<boolean>(false);
+	const activeSourcesRef = useRef<AudioBufferSourceNode[]>([]);
 
 	const gainRef = useRef<GainNode | null>(null);
 	const masterGainRef = useRef<GainNode | null>(null);
@@ -83,23 +85,20 @@ export const useAudioSync = ({
 			offsetInChunk: number,
 			chunkId: number,
 		) => {
-			if (sourceRef.current) {
-				const oldSource = sourceRef.current;
-				const gainNode = gainRef.current;
-				if (gainNode) {
-					gainNode.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
-					setTimeout(() => {
-						try {
-							oldSource.stop();
-						} catch {}
-						oldSource.disconnect();
-					}, 200);
-				} else {
+			const oldSource = sourceRef.current;
+			const oldGain = gainRef.current;
+
+			if (oldSource && oldGain) {
+				oldGain.gain.setTargetAtTime(0, ctx.currentTime, 0.05);
+				setTimeout(() => {
 					try {
 						oldSource.stop();
 					} catch {}
 					oldSource.disconnect();
-				}
+					activeSourcesRef.current = activeSourcesRef.current.filter(
+						s => s !== oldSource,
+					);
+				}, 200);
 			}
 
 			const safeOffset = Math.max(
@@ -121,7 +120,12 @@ export const useAudioSync = ({
 				if (currentChunkRef.current === chunkId) {
 					finishedChunksRef.current.add(chunkId);
 				}
+				activeSourcesRef.current = activeSourcesRef.current.filter(
+					s => s !== source,
+				);
 			};
+
+			activeSourcesRef.current.push(source);
 
 			finishedChunksRef.current.delete(chunkId);
 			sourceRef.current = source;
@@ -163,6 +167,13 @@ export const useAudioSync = ({
 	);
 
 	const sync = useCallback(() => {
+		if (isLockedRef.current) {
+			console.log('[sync] LOCKED, skip');
+			return;
+		}
+
+		console.log('[sync] tick, ytTime:', youtubeTimeRef.current);
+
 		const ytTime = youtubeTimeRef.current;
 		const targetChunk = findChunkAt(ytTime);
 		const ctx = ctxRef.current;
@@ -225,20 +236,117 @@ export const useAudioSync = ({
 		playChunk(targetChunk, Math.max(0, audioOffset));
 	}, [findChunkAt, playChunk, onBuffering, onBuffered, chunks]);
 
-	const handleSeek = useCallback(() => {
-		finishedChunksRef.current.clear();
-		sync();
-	}, [sync]);
+	const syncToTime = useCallback(
+		(ytTime: number) => {
+			if (isLockedRef.current) return;
+
+			const targetChunk = findChunkAt(ytTime);
+
+			if (targetChunk === null) {
+				onBuffering();
+				return;
+			}
+
+			const meta = chunkMetasRef.current.get(targetChunk);
+			if (!meta || meta.segments.length === 0) {
+				onBuffering();
+				return;
+			}
+
+			const chunkStartTime = meta.segments[0].start;
+			const hasBuffer =
+				decodedRef.current.has(targetChunk) || chunks.current.has(targetChunk);
+
+			if (!hasBuffer) {
+				onBuffering();
+				return;
+			}
+
+			onBuffered();
+
+			if (ytTime < chunkStartTime) return;
+
+			const audioOffset = ytTime - chunkStartTime;
+			console.log('[syncToTime]', {
+				ytTime,
+				targetChunk,
+				chunkStartTime,
+				audioOffset,
+			});
+			playChunk(targetChunk, Math.max(0, audioOffset));
+		},
+		[findChunkAt, playChunk, onBuffering, onBuffered, chunks],
+	);
+
+	const handleSeek = useCallback(
+		(targetTime?: number) => {
+			console.log(
+				'[seek] handleSeek called, unlocking, targetTime:',
+				targetTime,
+			);
+			finishedChunksRef.current.clear();
+			currentChunkRef.current = -1;
+			isLockedRef.current = false;
+
+			// Если передали целевое время — используем его, иначе берём из ref
+			if (targetTime !== undefined) {
+				syncToTime(targetTime);
+			} else {
+				sync();
+			}
+		},
+		[sync],
+	);
 
 	const destroy = useCallback(() => {
-		try {
-			sourceRef.current?.stop();
-		} catch {}
+		for (const source of activeSourcesRef.current) {
+			try {
+				source.stop();
+			} catch {}
+		}
+		activeSourcesRef.current = [];
+
 		void ctxRef.current?.close();
 		ctxRef.current = null;
 		decodedRef.current.clear();
 		finishedChunksRef.current.clear();
 		currentChunkRef.current = -1;
+	}, []);
+
+	const setVolume = useCallback((value: number) => {
+		if (masterGainRef.current && ctxRef.current) {
+			masterGainRef.current.gain.setTargetAtTime(
+				value / 100,
+				ctxRef.current.currentTime,
+				0.02,
+			);
+		}
+	}, []);
+
+	const stopPlayback = useCallback(() => {
+		isLockedRef.current = true;
+
+		console.log('[seek] stopPlayback called', {
+			activeSources: activeSourcesRef.current.length,
+		});
+
+		for (const source of activeSourcesRef.current) {
+			try {
+				source.stop(0);
+				source.disconnect();
+			} catch {}
+		}
+		activeSourcesRef.current = [];
+
+		sourceRef.current = null;
+		gainRef.current = null;
+		currentChunkRef.current = -1;
+		finishedChunksRef.current.clear();
+
+		if (syncTimerRef.current) {
+			clearInterval(syncTimerRef.current);
+			syncTimerRef.current = null;
+		}
 	}, []);
 
 	useEffect(() => {
@@ -254,9 +362,12 @@ export const useAudioSync = ({
 			};
 		}
 
-		try {
-			sourceRef.current?.stop();
-		} catch {}
+		for (const source of activeSourcesRef.current) {
+			try {
+				source.stop();
+			} catch {}
+		}
+		activeSourcesRef.current = [];
 		sourceRef.current = null;
 		currentChunkRef.current = -1;
 		if (syncTimerRef.current) clearInterval(syncTimerRef.current);
@@ -266,15 +377,5 @@ export const useAudioSync = ({
 		};
 	}, [isPlaying]);
 
-	const setVolume = useCallback((value: number) => {
-		if (masterGainRef.current && ctxRef.current) {
-			masterGainRef.current.gain.setTargetAtTime(
-				value / 100,
-				ctxRef.current.currentTime,
-				0.02,
-			);
-		}
-	}, []);
-
-	return { handleSeek, destroy, ensureContext, setVolume };
+	return { handleSeek, destroy, ensureContext, setVolume, stopPlayback };
 };

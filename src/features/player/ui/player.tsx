@@ -94,6 +94,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 
 	const onBuffering = useCallback(() => {
 		if (isBuffering) return;
+		if (isWaitingForChunk) return;
 		setIsBuffering(true);
 
 		const time = playerTimeRef.current;
@@ -119,39 +120,30 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		}, 1000);
 
 		getPlayer()?.pauseVideo();
-	}, [
-		isBuffering,
-		getPlayer,
-		sendHeartbeat,
-		playerTimeRef,
-		chunkMetas,
-		chunksRef,
-		requestedChunksRef,
-	]);
+	}, [isBuffering, getPlayer, sendHeartbeat, chunkMetas, isWaitingForChunk]);
 
 	const onBuffered = useCallback(() => {
 		if (!isBuffering) return;
+		if (isWaitingForChunk) return;
+
 		setIsBuffering(false);
 		if (bufferingIntervalRef.current) {
 			clearInterval(bufferingIntervalRef.current);
 			bufferingIntervalRef.current = null;
 		}
 		getPlayer()?.playVideo();
-	}, [isBuffering, getPlayer]);
+	}, [isBuffering, getPlayer, isWaitingForChunk]);
 
-	const { destroy, ensureContext, setVolume, handleSeek } = useAudioSync({
-		isPlaying,
-		chunkMetasRef,
-		chunks: chunksRef,
-		youtubeTimeRef: playerTimeRef,
-		volumeRef: dubbingVolumeRef,
-		onBuffered,
-		onBuffering,
-	});
-
-	useEffect(() => {
-		setVolume(dubbingVolume);
-	}, [dubbingVolume, setVolume]);
+	const { destroy, ensureContext, setVolume, handleSeek, stopPlayback } =
+		useAudioSync({
+			isPlaying,
+			chunkMetasRef,
+			chunks: chunksRef,
+			youtubeTimeRef: playerTimeRef,
+			volumeRef: dubbingVolumeRef,
+			onBuffered,
+			onBuffering,
+		});
 
 	const handleStart = useCallback(() => {
 		const player = getPlayer();
@@ -187,27 +179,23 @@ export const Player = ({ videoId }: { videoId: string }) => {
 				chunksRef.current.has(targetChunkId) &&
 				chunkMetasRef.current.has(targetChunkId);
 
+			getPlayer()?.pauseVideo();
 			sendSeek(time);
+			stopPlayback();
 
 			if (isReady) {
 				waitingChunkIdRef.current = null;
 				setIsWaitingForChunk(false);
-				handleSeek();
+				handleSeek(time); // ← передаём целевое время напрямую
+				setTimeout(() => getPlayer()?.playVideo(), 80);
 				return;
 			}
 
 			waitingChunkIdRef.current = targetChunkId;
 			setIsWaitingForChunk(true);
-			getPlayer()?.pauseVideo();
 		},
 		[
-			isStarted,
-			chunkMetas,
-			chunksRef,
-			chunkMetasRef,
-			handleSeek,
-			sendSeek,
-			getPlayer,
+			/* deps */
 		],
 	);
 
@@ -221,26 +209,40 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		setIsReady(true);
 	};
 
+	// YouTube player states:
+	// -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued
+	const handleStateChange = (e: YouTubeEvent) => {
+		const state = e.data;
+
+		if (state === 1) {
+			dispatch({ type: 'SET_PLAYING', payload: true });
+			startHeartbeat();
+		} else if (state === 2 || state === 0) {
+			dispatch({ type: 'SET_PLAYING', payload: false });
+			stopHeartbeat();
+		}
+	};
+
+	useEffect(() => {
+		setVolume(dubbingVolume);
+	}, [dubbingVolume]);
+
 	useEffect(() => {
 		if (!isWaitingForChunk) return;
 
 		const targetChunkId = waitingChunkIdRef.current;
 		if (targetChunkId === null) return;
 
-		// чанк, на который пользователь перемотал, ещё не пришёл
 		if (!chunksRef.current.has(targetChunkId)) return;
 		if (!chunkMetasRef.current.has(targetChunkId)) return;
 
-		// дополнительная защита: пользователь не успел перемотать ещё раз
-		const currentChunkAtTime = getChunkIdAtTime(
-			chunkMetas,
-			playerTimeRef.current,
-		);
+		const targetTime = playerTimeRef.current;
+		const currentChunkAtTime = getChunkIdAtTime(chunkMetas, targetTime);
 		if (currentChunkAtTime !== targetChunkId) return;
 
 		waitingChunkIdRef.current = null;
 		setIsWaitingForChunk(false);
-		handleSeek();
+		handleSeek(targetTime);
 		getPlayer()?.playVideo();
 	}, [
 		chunks,
@@ -280,20 +282,6 @@ export const Player = ({ videoId }: { videoId: string }) => {
 			});
 		}
 	}, [error]);
-
-	// YouTube player states:
-	// -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued
-	const handleStateChange = (e: YouTubeEvent) => {
-		const state = e.data;
-
-		if (state === 1) {
-			dispatch({ type: 'SET_PLAYING', payload: true });
-			startHeartbeat();
-		} else if (state === 2 || state === 0) {
-			dispatch({ type: 'SET_PLAYING', payload: false });
-			stopHeartbeat();
-		}
-	};
 
 	useEffect(
 		() => () => {
