@@ -34,9 +34,6 @@ export const Prompt = () => {
 
 		const payload = mapPromptToPayload(fields);
 
-		console.log({ payload });
-		return;
-
 		handleCreateVideo(payload).then(res => {
 			navigate(`/videos/${res.id}`);
 		});

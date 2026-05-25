@@ -12,8 +12,8 @@ export const MENU_ITEMS = [
 		label: 'Translate video',
 		href: ROUTES.PUBLIC.HOME,
 		icon: (
-			<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground'>
-				<Plus size={16} />
+			<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground max-2xl:size-5 max-2xl:rounded-sm'>
+				<Plus className='size-4 max-2xl:size-3' />
 			</div>
 		),
 	},
@@ -21,8 +21,8 @@ export const MENU_ITEMS = [
 		label: 'Favorites',
 		href: ROUTES.PRIVATE.FAVORITES,
 		icon: (
-			<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent text-primary-foreground'>
-				<Star className='text-black dark:text-white' size={20} />
+			<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent text-primary-foreground max-2xl:size-5 max-2xl:rounded-sm'>
+				<Star className='size-5 text-black max-2xl:size-3 dark:text-white' />
 			</div>
 		),
 	},
@@ -30,8 +30,8 @@ export const MENU_ITEMS = [
 		label: 'Playlists',
 		href: ROUTES.PRIVATE.PLAYLISTS,
 		icon: (
-			<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent text-primary-foreground'>
-				<ListVideo className='text-black dark:text-white' size={20} />
+			<div className='flex aspect-square size-8 items-center justify-center rounded-lg bg-transparent text-primary-foreground max-2xl:size-5 max-2xl:rounded-sm'>
+				<ListVideo className='size-5 text-black max-2xl:size-3 dark:text-white' />
 			</div>
 		),
 	},

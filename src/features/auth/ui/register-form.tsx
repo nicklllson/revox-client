@@ -38,7 +38,6 @@ export const RegisterForm = ({
 		resolver: zodResolver(registerSchema),
 	});
 
-	// TODO - Add error toaster here
 	const onSubmit = ({ confirmPassword, ...data }: RegisterFormData) => {
 		handleRegister(data).then(() => navigate(ROUTES.PUBLIC.CONFIRM));
 		updateEmail(data.email);
@@ -46,10 +45,10 @@ export const RegisterForm = ({
 
 	return (
 		<form className='p-6 md:p-8' onSubmit={handleSubmit(onSubmit)} {...props}>
-			<FieldGroup>
-				<div className='flex flex-col items-center gap-2 text-center'>
-					<h1 className='font-bold text-2xl!'>Welcome back</h1>
-					<p className='text-balance! text-muted-foreground'>
+			<FieldGroup className='max-2xl:gap-2.5'>
+				<div className='flex flex-col items-center gap-2 text-center max-2xl:gap-1'>
+					<h1 className='font-bold text-2xl! max-2xl:text-xl!'>Welcome back</h1>
+					<p className='text-balance! text-muted-foreground max-2xl:text-sm!'>
 						Login to your Revox account
 					</p>
 				</div>

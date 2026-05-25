@@ -35,8 +35,8 @@ export const BannerLayout = () => {
 
 	return (
 		<div className='relative z-10'>
-			<div className='relative m-5 flex aspect-4.5/1 flex-col items-center justify-center rounded-3xl bg-muted/20'>
-				<h1 className='mb-1'>{content?.title}</h1>
+			<div className='relative m-5 flex aspect-4.5/1 flex-col items-center justify-center rounded-3xl bg-muted/20 max-2xl:aspect-6/1 max-2xl:rounded-xl'>
+				<h1 className='mb-1 max-2xl:text-4xl!'>{content?.title}</h1>
 				<p className='mb-6'>{content?.description}</p>
 				{content?.actions}
 			</div>

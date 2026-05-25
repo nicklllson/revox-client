@@ -42,8 +42,17 @@ export const SinglePlaylistPage = () => {
 		});
 	};
 
+	const handleDeleteVideoFromPlaylist = (
+		event: React.MouseEvent<HTMLButtonElement>,
+		videoId: string,
+	) => {
+		event.stopPropagation();
+		event.preventDefault();
+		removeVideo(videoId);
+	};
+
 	return (
-		<div className='flex flex-col gap-4 px-5 pt-20'>
+		<div className='relative z-10 flex flex-col gap-4 px-5 pt-5'>
 			<div className='flex items-center justify-between gap-3'>
 				<div className='flex flex-col gap-1'>
 					{isLoading ? (
@@ -107,21 +116,24 @@ export const SinglePlaylistPage = () => {
 			{!isLoading && playlist && playlist.items.length > 0 && (
 				<div className='grid grid-cols-4 gap-4'>
 					{playlist.items.map(item => (
-						<div key={item.id} className='group relative'>
-							<VideoCard
-								id={item.video.id}
-								title={item.video.title}
-								lang={item.video.language}
-								thumbnail={item.video.thumbnail}
-							/>
-							<button
-								type='button'
-								disabled={isRemoving}
-								onClick={() => removeVideo(item.video.id)}
-								className='absolute top-5 right-5 hidden size-8 items-center justify-center rounded-full bg-destructive/80 text-white opacity-0 transition-opacity hover:bg-destructive group-hover:flex group-hover:opacity-100'>
-								<Trash2 className='size-4' />
-							</button>
-						</div>
+						<VideoCard
+							key={item.id}
+							id={item.video.id}
+							title={item.video.title}
+							lang={item.video.language}
+							thumbnail={item.video.thumbnail}
+							actions={
+								<button
+									type='button'
+									disabled={isRemoving}
+									onClick={event =>
+										handleDeleteVideoFromPlaylist(event, item.video.id)
+									}
+									className='flex size-8 items-center justify-center rounded-full bg-destructive/80 text-white hover:bg-destructive'>
+									<Trash2 className='size-4' />
+								</button>
+							}
+						/>
 					))}
 				</div>
 			)}

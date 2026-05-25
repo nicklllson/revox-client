@@ -1,6 +1,7 @@
 import { Search } from 'lucide-react';
 import { Link, useLocation } from 'react-router';
 import { useSession } from '@/entities/auth';
+import { useMedia } from '@/shared/hooks';
 import { useIntersect } from '@/shared/hooks/use-intersect';
 import { Logo } from '@/shared/ui/logo';
 import {
@@ -32,17 +33,19 @@ export const AppSidebar = () => {
 	const cursorRef = useIntersect<HTMLDivElement>(fetchNextPage);
 	const { session } = useSession();
 
+	const isNotebook = useMedia(1367);
+
 	return (
 		<Sidebar collapsible='icon'>
 			<SidebarHeader>
-				<div className='my-3.5 flex items-center justify-between group-data-[collapsible=icon]:justify-center'>
+				<div className='my-3.5 flex items-center justify-between group-data-[collapsible=icon]:justify-center max-2xl:my-1.5'>
 					<div className='flex items-center transition-opacity delay-150 duration-200 group-data-[collapsible=icon]:pointer-events-none group-data-[collapsible=icon]:absolute group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:delay-0'>
 						<img
 							src='/images/revox-logo.webp'
 							alt='Revox logo'
-							className='mr-1 size-10 rounded-lg'
+							className='mr-1 size-10 rounded-lg max-2xl:size-6 max-2xl:rounded-sm'
 						/>
-						<Logo />
+						<Logo className='text-sm!' />
 					</div>
 					<SidebarTrigger className='p-5 group-data-[collapsible=icon]:p-0' />
 				</div>
@@ -51,7 +54,7 @@ export const AppSidebar = () => {
 						<SidebarMenuItem key={item.label}>
 							<SidebarMenuButton
 								asChild
-								size='lg'
+								size={isNotebook ? 'sm' : 'lg'}
 								tooltip={item.label}
 								isActive={pathname === item.href}
 								className='data-[state=open]:bg-sidebar-accent'>
@@ -75,7 +78,7 @@ export const AppSidebar = () => {
 									size='default'
 									className='cursor-default select-none'>
 									<div className='group/history-row'>
-										<span className='flex-1 font-medium text-muted-foreground text-sm'>
+										<span className='flex-1 font-medium text-muted-foreground text-sm max-2xl:text-xs'>
 											History
 										</span>
 										<button

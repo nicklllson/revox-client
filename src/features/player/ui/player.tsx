@@ -209,6 +209,16 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		],
 	);
 
+	const handleOnReady = (e: YouTubeEvent) => {
+		const data = e.target.getVideoData();
+		dispatch({ type: 'SET_TITLE', payload: data?.title ?? '' });
+		dispatch({
+			type: 'SET_THUMBNAIL',
+			payload: craftVideoThumbnail(video?.youtubeVideoId ?? ''),
+		});
+		setIsReady(true);
+	};
+
 	useEffect(() => {
 		if (!isWaitingForChunk) return;
 
@@ -269,16 +279,6 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		}
 	}, [error]);
 
-	const handleOnReady = (e: YouTubeEvent) => {
-		const data = e.target.getVideoData();
-		dispatch({ type: 'SET_TITLE', payload: data?.title ?? '' });
-		dispatch({
-			type: 'SET_THUMBNAIL',
-			payload: craftVideoThumbnail(video?.youtubeVideoId ?? ''),
-		});
-		setIsReady(true);
-	};
-
 	// YouTube player states:
 	// -1 unstarted, 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued
 	const handleStateChange = (e: YouTubeEvent) => {
@@ -309,7 +309,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		<div className='relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'>
 			<Suspense
 				fallback={
-					<div className='absolute top-0 left-0 h-full w-full bg-red' />
+					<div className='absolute top-0 left-0 h-full w-full bg-black/70' />
 				}>
 				<YouTubePlayer
 					ref={playerRef}

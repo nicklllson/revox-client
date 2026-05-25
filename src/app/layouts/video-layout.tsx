@@ -31,8 +31,8 @@ export const VideoLayout = () => {
 	}, [state]);
 
 	return (
-		<div className='flex px-5 pt-22.5'>
-			<div className='relative z-10 mx-auto flex w-full max-w-[70vw] flex-1 flex-col gap-2'>
+		<div className='flex px-5 pt-22.5 max-2xl:pt-18'>
+			<div className='relative z-10 mx-auto flex w-full max-w-[70vw] flex-1 flex-col gap-2 max-2xl:max-w-[55vw]'>
 				<Player videoId={videoId!} key={video?.externalJobId} />
 				<VideoBottomBar>
 					<VideoTitle title={video?.title} />

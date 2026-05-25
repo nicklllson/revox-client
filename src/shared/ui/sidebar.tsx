@@ -22,7 +22,7 @@ import {
 	TooltipProvider,
 	TooltipTrigger,
 } from '@/shared//ui/tooltip';
-import { useIsMobile } from '@/shared/hooks/use-mobile';
+import { useMedia } from '@/shared/hooks/use-mobile';
 import { cn } from '@/shared/lib/utils';
 
 const SIDEBAR_COOKIE_NAME = 'sidebar_state';
@@ -67,7 +67,7 @@ function SidebarProvider({
 	onOpenChange?: (open: boolean) => void;
 }) {
 	const { session } = useSession();
-	const isMobile = useIsMobile();
+	const isMobile = useMedia();
 	const [openMobile, setOpenMobile] = React.useState(false);
 
 	// This is the internal state of the sidebar.
