@@ -18,7 +18,7 @@ export type TTier = {
 	name: string;
 	description: string;
 	priceUsd: number;
-	minutesPerMonth: number;
+	creditsPerMonth: number;
 	maxVideoLengthMinutes: number;
 	features: TTierFeatures;
 	availableTranslators: string[];
@@ -29,14 +29,14 @@ export type TTier = {
 export type TCurrentSubscription = {
 	tier: TSubscriptionTier;
 	status: TSubscriptionStatus;
-	minutesUsed: number;
+	creditsUsed: number;
 	periodEnd: string;
 };
 
 export type TCurrentTierInfo = {
 	subscription: TCurrentSubscription;
 	config: TTier;
-	minutesRemaining: number;
+	creditsRemaining: number;
 };
 
 export type TCreatePaymentResponse = {

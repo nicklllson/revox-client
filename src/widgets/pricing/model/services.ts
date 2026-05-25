@@ -12,7 +12,6 @@ export const buildFeaturesList = (
 ): string[] => {
 	const items: string[] = [];
 
-	items.push(`${tier.minutesPerMonth} minutes of video per month`);
 	items.push(`Up to ${tier.maxVideoLengthMinutes} minutes per video`);
 
 	(Object.keys(tier.features) as Array<keyof TTierFeatures>).forEach(key => {

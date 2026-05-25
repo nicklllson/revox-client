@@ -10,7 +10,9 @@ import {
 	useRef,
 	useState,
 } from 'react';
+import { useNavigate } from 'react-router';
 import type { YouTubeEvent } from 'react-youtube';
+import { toast } from 'sonner';
 import { usePlayer } from '@/app/providers/player-provider/player-provider';
 import { useVolume } from '@/app/providers/volume-provider';
 import { DEFAULT_VOICE_SETTINGS } from '@/entities/translation';
@@ -34,12 +36,13 @@ export const Player = ({ videoId }: { videoId: string }) => {
 	const [isBuffering, setIsBuffering] = useState<boolean>(false);
 	const [isWaitingForChunk, setIsWaitingForChunk] = useState<boolean>(false);
 
+	const waitingChunkIdRef = useRef<number | null>(null);
 	const heartbeatRef = useRef<ReturnType<typeof setInterval> | null>(null);
 	const bufferingIntervalRef = useRef<ReturnType<typeof setInterval> | null>(
 		null,
 	);
 
-	const waitingChunkIdRef = useRef<number | null>(null);
+	const navigate = useNavigate();
 
 	const {
 		playerRef,
@@ -78,6 +81,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		chunksRef,
 		requestedChunksRef,
 		chunkMetasRef,
+		error,
 	} = useTranslationWs({
 		videoId,
 		targetLang: video?.language ?? '',
@@ -85,10 +89,6 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		voice,
 		enabled: !!video,
 	});
-
-	useEffect(() => {
-		setChunkMetas(chunkMetas);
-	}, [chunkMetas, setChunkMetas]);
 
 	const onBuffering = useCallback(() => {
 		if (isBuffering) return;
@@ -240,6 +240,34 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		chunksRef,
 		chunkMetasRef,
 	]);
+
+	useEffect(() => {
+		setChunkMetas(chunkMetas);
+	}, [chunkMetas]);
+
+	useEffect(() => {
+		if (!error) return;
+
+		if (error.code === 'credits_exhausted') {
+			toast.error('Credits exhausted', {
+				description:
+					'Your translation was stopped. Upgrade your plan to continue.',
+				duration: Number.POSITIVE_INFINITY,
+				action: {
+					label: 'Upgrade',
+					onClick: () => navigate('/pricing'),
+				},
+			});
+			getPlayer()?.pauseVideo();
+			stopHeartbeat();
+			destroy();
+			dispatch({ type: 'SET_PLAYING', payload: false });
+		} else {
+			toast.error('Translation failed', {
+				description: error.message,
+			});
+		}
+	}, [error]);
 
 	const handleOnReady = (e: YouTubeEvent) => {
 		const data = e.target.getVideoData();

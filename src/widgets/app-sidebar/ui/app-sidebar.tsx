@@ -19,7 +19,7 @@ import {
 import { Skeleton } from '@/shared/ui/skeleton';
 import { ProfileMenu } from '@/widgets/profile-menu';
 import { SearchMenu, useSearchMenu } from '@/widgets/search-menu';
-import { UsageMinutes } from '@/widgets/usage-minutes';
+import { UsageCredits } from '@/widgets/usage-credits';
 import { useUsersVideos } from '../lib/use-users-videos';
 import { MENU_ITEMS } from '../model/constants';
 import { VideosList } from './videos-list';
@@ -105,7 +105,7 @@ export const AppSidebar = () => {
 
 			{session && (
 				<SidebarFooter>
-					<UsageMinutes />
+					<UsageCredits />
 					<ProfileMenu />
 				</SidebarFooter>
 			)}

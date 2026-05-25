@@ -35,12 +35,11 @@ export const TranslationModelSelect = () => {
 				<Button
 					variant='outline'
 					className={cn(
-						'group h-auto gap-2.5 rounded-xl border-white/10 bg-zinc-900/85 py-2 pr-3 pl-2.5',
-						'hover:border-white/20 hover:bg-zinc-900/90',
+						'group h-auto gap-2.5 rounded-xl border-white/10 bg-primary-foreground py-2 pr-3 pl-2.5',
 					)}>
 					<ModelDot accent={activeModel.accent} size={22} />
 					<div className='flex flex-col items-start leading-tight'>
-						<span className='font-medium text-[12.5px] text-zinc-100'>
+						<span className='font-medium text-[12.5px]'>
 							{activeModel.name}
 						</span>
 						<span className='text-[10.5px] text-zinc-500'>
@@ -59,13 +58,10 @@ export const TranslationModelSelect = () => {
 
 			<DropdownMenuContent
 				align='start'
-				className={cn(
-					'w-[360px] border-white/10 bg-zinc-950/95 p-1.5',
-					'shadow-[0_24px_60px_-12px_rgba(0,0,0,0.7),inset_0_0_0_1px_rgba(255,255,255,0.02)]',
-				)}>
+				className={cn('w-[360px] border-white/10 bg-primary-foreground p-1.5')}>
 				{/* Header */}
 				<div className='flex items-baseline justify-between px-3 pt-2.5 pb-2'>
-					<span className='font-mono text-[10.5px] text-zinc-500 uppercase tracking-[1px]'>
+					<span className='font-mono text-[10.5px] uppercase tracking-[1px]'>
 						Translation model
 					</span>
 				</div>
@@ -101,7 +97,7 @@ export const TranslationModelSelect = () => {
 								<div className='min-w-0 flex-1'>
 									{/* Title row */}
 									<div className='mb-1 flex items-center gap-2'>
-										<span className='font-semibold text-[13.5px] text-zinc-100'>
+										<span className='font-semibold text-[13.5px]'>
 											{model.name}
 										</span>
 
@@ -123,7 +119,7 @@ export const TranslationModelSelect = () => {
 										)}
 
 										{isSelected && !locked && (
-											<Check size={14} className='ml-auto text-white' />
+											<Check size={14} className='ml-auto' />
 										)}
 									</div>
 
@@ -155,7 +151,7 @@ export const TranslationModelSelect = () => {
 										{model.features.map(feature => (
 											<span
 												key={feature}
-												className='rounded border border-white/4 bg-zinc-900 px-[7px] py-0.5 text-[10.5px] text-zinc-400'>
+												className='rounded border border-white/4 bg-primary-foreground px-[7px] py-0.5 text-[10.5px]'>
 												{feature}
 											</span>
 										))}

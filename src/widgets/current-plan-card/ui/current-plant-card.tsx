@@ -16,7 +16,7 @@ export const CurrentPlantCard = () => {
 						{config?.name}
 					</div>
 
-					<span className='text-[11px]'>· Active</span>
+					<span className='text-[11px]'>Active</span>
 				</div>
 
 				<div className='font-bold text-[22px] tracking-[-0.4px]'>

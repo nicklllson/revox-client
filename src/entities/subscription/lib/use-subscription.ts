@@ -9,5 +9,5 @@ export const useSubscription = () => {
 		enabled: !!session,
 	});
 
-	return { isFetchingSubscription: isFetching, ...data };
+	return { isFetchingSubscription: isFetching, ...(session ? data : undefined) };
 };

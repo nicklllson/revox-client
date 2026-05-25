@@ -37,6 +37,10 @@ export const useTranslationWs = ({
 
 	const requestedChunksRef = useRef<Set<number>>(new Set());
 
+	const [error, setError] = useState<{
+		message: string;
+		code?: string;
+	} | null>(null);
 	const [progress, setProgress] = useState<Extract<
 		TTranslationMessage,
 		{ type: 'progress' }
@@ -55,8 +59,6 @@ export const useTranslationWs = ({
 	const [chunkMetas, setChunkMetas] = useState<
 		Map<number, Extract<TTranslationMessage, { type: 'chunk_meta' }>>
 	>(new Map());
-
-	const [error, setError] = useState<string | null>(null);
 
 	const { token } = useSession();
 
@@ -134,7 +136,9 @@ export const useTranslationWs = ({
 					});
 				}
 
-				if (msg.type === 'error') setError(msg.message);
+				if (msg.type === 'error') {
+					setError({ message: msg.message, code: msg.code });
+				}
 			} else {
 				const buffer = e.data as ArrayBuffer;
 				if (buffer.byteLength < 4) {
@@ -152,7 +156,7 @@ export const useTranslationWs = ({
 			}
 		};
 
-		ws.onerror = () => setError('WebSocket connection failed');
+		ws.onerror = () => setError({ message: 'WebSocket connection failed' });
 
 		return () => {
 			if (ws.readyState === WebSocket.OPEN) {

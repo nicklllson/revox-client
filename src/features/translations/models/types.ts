@@ -15,4 +15,4 @@ export type TTranslationMessage =
 			segments: TSegment[];
 			is_last: boolean;
 	  }
-	| { type: 'error'; message: string };
+	| { type: 'error'; message: string; code: string };

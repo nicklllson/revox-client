@@ -30,6 +30,7 @@ export const MetaPage = () => {
 			nickname,
 			purpose,
 			birthdate: birthDate ? birthDate.toISOString() : undefined,
+			profileCompleted: true,
 		};
 		handleUpdateUser(payload).then(() => {
 			navigate(ROUTES.PUBLIC.HOME);

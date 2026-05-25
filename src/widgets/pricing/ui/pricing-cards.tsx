@@ -19,6 +19,10 @@ import {
 } from '@/shared/ui/card';
 import { buildFeaturesList, formatUsd } from '../model/services';
 
+const formatCredits = (credits: number): string => {
+	return credits.toLocaleString('en-US');
+};
+
 export const PricingCards = () => {
 	const navigate = useNavigate();
 	const { isFetching, tiers } = usePricingTiers();
@@ -54,7 +58,6 @@ export const PricingCards = () => {
 
 				const previousProName = tier.tier === 'PRO' ? 'Free' : null;
 				const previousPremiumName = tier.tier === 'PREMIUM' ? 'Pro' : null;
-
 				const previousTierName = previousProName || previousPremiumName;
 
 				return (
@@ -95,7 +98,7 @@ export const PricingCards = () => {
 								)}
 
 								<span className='text-sm'>
-									{tier.minutesPerMonth} minutes of translation per month
+									{formatCredits(tier.creditsPerMonth)} credits per month
 								</span>
 							</div>
 							<div>
