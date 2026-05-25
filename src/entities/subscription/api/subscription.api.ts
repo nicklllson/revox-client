@@ -1,5 +1,10 @@
-import { mutationOptions, queryOptions } from '@tanstack/react-query';
+import {
+	infiniteQueryOptions,
+	mutationOptions,
+	queryOptions,
+} from '@tanstack/react-query';
 import { privateApi, publicApi } from '@/shared/lib/api';
+import type { TPaginatedResult } from '@/shared/types/queries';
 import type {
 	TPaymentStatus,
 	TPaymentStatusResponse,
@@ -7,6 +12,7 @@ import type {
 import type {
 	TCreatePaymentResponse,
 	TCurrentTierInfo,
+	TSubscriptionHistoryEntry,
 	TTier,
 } from '../model/types';
 
@@ -29,6 +35,19 @@ export const subscriptionApi = {
 		});
 	},
 
+	getHistory: () => {
+		return infiniteQueryOptions({
+			initialPageParam: 0,
+			getNextPageParam: lastPage => lastPage.meta.nextSkip,
+			queryKey: [subscriptionApi.BASE_KEY, 'history'],
+			queryFn: () => {
+				return privateApi<void, TPaginatedResult<TSubscriptionHistoryEntry>>(
+					'/subscriptions/history',
+				);
+			},
+		});
+	},
+
 	createPayment: () => {
 		return mutationOptions({
 			mutationFn: (tier: TTier['tier']): Promise<TCreatePaymentResponse> => {
@@ -37,6 +56,19 @@ export const subscriptionApi = {
 					json: { tier },
 				});
 			},
+		});
+	},
+
+	cancelSubscription: () => {
+		return mutationOptions({
+			mutationFn: () => privateApi('/subscriptions/cancel', { method: 'POST' }),
+		});
+	},
+
+	reactivateSubscription: () => {
+		return mutationOptions({
+			mutationFn: () =>
+				privateApi('/subscriptions/reactivate', { method: 'POST' }),
 		});
 	},
 

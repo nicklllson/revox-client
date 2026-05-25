@@ -1,1 +1,1 @@
-export { CurrentPlantCard } from './ui/current-plant-card';
+export { CurrentPlanCard } from './ui/current-plant-card';

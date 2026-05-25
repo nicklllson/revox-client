@@ -10,7 +10,7 @@ export const ROUTES = {
 		RESET_PASSWORD: '/reset-password',
 		NEW_PASSWORD: '/new-password',
 		HOME: '/',
-		PRICING: 'pricing',
+		PRICING: '/pricing',
 		AUTH_CALLBACK: '/auth/callback',
 	},
 	PRIVATE: {

@@ -70,7 +70,7 @@ const PaymentReturnPage = () => {
 					details={`Charged ${formatAmount(data.amount, data.currency)}`}
 					action={
 						<Button asChild className='w-full'>
-							<Link to='/'>Go to dashboard</Link>
+							<Link to='/'>Go to home</Link>
 						</Button>
 					}
 				/>

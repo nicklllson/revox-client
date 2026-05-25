@@ -1,9 +1,11 @@
-import { CurrentPlantCard } from '@/widgets/current-plan-card';
+import { CurrentPlanCard } from '@/widgets/current-plan-card';
+import { SubscriptionHistory } from '@/widgets/subscription-history';
 
 export const SubscriptionPage = () => {
 	return (
-		<div className='flex flex-col'>
-			<CurrentPlantCard />
+		<div className='flex flex-col gap-3'>
+			<CurrentPlanCard />
+			<SubscriptionHistory />
 		</div>
 	);
 };

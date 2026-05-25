@@ -45,7 +45,7 @@ export const AppSidebar = () => {
 							alt='Revox logo'
 							className='mr-1 size-10 rounded-lg max-2xl:size-6 max-2xl:rounded-sm'
 						/>
-						<Logo className='text-sm!' />
+						<Logo className='max-2xl:text-sm!' />
 					</div>
 					<SidebarTrigger className='p-5 group-data-[collapsible=icon]:p-0' />
 				</div>

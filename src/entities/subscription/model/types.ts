@@ -6,6 +6,21 @@ export type TSubscriptionStatus =
 	| 'EXPIRED'
 	| 'PENDING';
 
+export type TSubscriptionEventType =
+	| 'CREATED'
+	| 'UPGRADED'
+	| 'DOWNGRADED'
+	| 'RENEWED'
+	| 'CANCELED'
+	| 'REACTIVATED'
+	| 'EXPIRED';
+
+export type TPaymentStatus =
+	| 'PENDING'
+	| 'WAITING_FOR_CAPTURE'
+	| 'SUCCEEDED'
+	| 'CANCELED';
+
 export type TTierFeatures = {
 	multiSpeaker: boolean;
 	voiceSelection: boolean;
@@ -31,6 +46,8 @@ export type TCurrentSubscription = {
 	status: TSubscriptionStatus;
 	creditsUsed: number;
 	periodEnd: string;
+	cancelAtPeriodEnd: boolean;
+	canceledAt: string | null;
 };
 
 export type TCurrentTierInfo = {
@@ -42,4 +59,20 @@ export type TCurrentTierInfo = {
 export type TCreatePaymentResponse = {
 	paymentId: string;
 	confirmationUrl: string;
+};
+
+export type TSubscriptionHistoryEntry = {
+	id: string;
+	eventType: TSubscriptionEventType;
+	tier: TSubscriptionTier;
+	paymentId: string | null;
+	metadata: Record<string, unknown> | null;
+	createdAt: string;
+	payment: {
+		id: string;
+		amount: number;
+		currency: string;
+		status: TPaymentStatus;
+		createdAt: string;
+	} | null;
 };
