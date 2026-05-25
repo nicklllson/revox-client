@@ -25,7 +25,10 @@ export const VideoSettings = ({
 
 	return (
 		<div className='flex gap-2 max-2xl:w-full'>
-			<Button variant='outline' onClick={handleToggleFavorite}>
+			<Button
+				variant='outline'
+				onClick={handleToggleFavorite}
+				id='onboarding-favorite-btn'>
 				<Star fill={isFavorite ? 'white' : 'none'} />
 				{isFavorite ? 'Remove from favorites' : 'Add to favorites'}
 			</Button>

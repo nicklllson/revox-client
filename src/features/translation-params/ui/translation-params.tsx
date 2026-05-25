@@ -9,7 +9,7 @@ export const TranslationParams = () => {
 	if (paramDefs.length === 0) return null;
 
 	return (
-		<>
+		<div id='onboarding-voice' className='flex flex-wrap items-center gap-1.5'>
 			{paramDefs.map(({ slot, def, isLocked }) => {
 				if (isLocked) {
 					return (
@@ -39,6 +39,6 @@ export const TranslationParams = () => {
 					/>
 				);
 			})}
-		</>
+		</div>
 	);
 };

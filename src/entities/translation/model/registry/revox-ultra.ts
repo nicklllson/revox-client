@@ -18,7 +18,6 @@ export const REVOX_ULTRA: TTranslationModel = {
 	],
 	accent: 'oklch(0.7 0.14 290)',
 	isEnabled: true,
-	maxDurationMinutes: 120,
 	params: [
 		{ id: 'voice', required: false },
 		{ id: 'multitalk', required: false },

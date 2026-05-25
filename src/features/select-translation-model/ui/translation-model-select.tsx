@@ -33,6 +33,7 @@ export const TranslationModelSelect = () => {
 		<DropdownMenu open={open} onOpenChange={setOpen}>
 			<DropdownMenuTrigger asChild>
 				<Button
+					id='onboarding-model'
 					variant='outline'
 					className={cn(
 						'group h-auto gap-2.5 rounded-xl border-white/10 bg-primary-foreground py-2 pr-3 pl-2.5',

@@ -13,8 +13,15 @@ export default defineConfig({
     }),
   ],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    alias: [
+      {
+        find: 'next/navigation',
+        replacement: path.join(process.cwd(), 'src/shared/mocks/next-navigation.ts'),
+      },
+      {
+        find: '@',
+        replacement: path.resolve(__dirname, './src'),
+      },
+    ]
   },
 });

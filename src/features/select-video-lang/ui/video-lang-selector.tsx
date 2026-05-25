@@ -27,6 +27,7 @@ export function VideoLangSelector({
 
 	return (
 		<ParamPill
+			id='onboarding-language'
 			icon={Languages}
 			label='Language'
 			isInvalid={isInvalid}

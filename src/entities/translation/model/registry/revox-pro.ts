@@ -13,7 +13,6 @@ export const REVOX_PRO: TTranslationModel = {
 	features: ['Premium voices (Silero)', 'Multi-speaker', 'Up to 60 min videos'],
 	accent: 'oklch(0.7 0.16 250)',
 	isEnabled: true,
-	maxDurationMinutes: 60,
 	params: [
 		{ id: 'voice', required: false },
 		{ id: 'multitalk', required: false },

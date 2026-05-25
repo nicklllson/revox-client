@@ -20,6 +20,7 @@ type Props = {
 	options: Option[];
 	onChange: (value: string) => void;
 	isInvalid?: boolean;
+	id?: string;
 };
 
 export const ParamPill = ({
@@ -29,12 +30,14 @@ export const ParamPill = ({
 	options,
 	onChange,
 	isInvalid,
+	id,
 }: Props) => {
 	const current = options.find(o => o.value === value);
 
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger
+				id={id}
 				aria-invalid={isInvalid}
 				className='group flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs transition-colors hover:bg-white/5'>
 				<Icon className='size-3.5 text-white/40' />

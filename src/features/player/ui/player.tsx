@@ -1,6 +1,7 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: Exception */
 
 import { Loader2, Play } from 'lucide-react';
+import { useNextStep } from 'nextstepjs';
 import {
 	lazy,
 	Suspense,
@@ -30,6 +31,7 @@ const YouTubePlayer = lazy(() => import('react-youtube'));
 
 export const Player = ({ videoId }: { videoId: string }) => {
 	const { video } = useVideo(videoId);
+	const { startNextStep } = useNextStep();
 
 	const [isReady, setIsReady] = useState<boolean>(false);
 	const [isStarted, setIsStarted] = useState<boolean>(false);
@@ -303,10 +305,24 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		[],
 	);
 
+	useEffect(() => {
+		if (!isReady) return;
+		const completed = localStorage.getItem('revox_player_onboarding_completed');
+		if (completed) return;
+
+		const timer = setTimeout(() => {
+			startNextStep('player-onboarding');
+		}, 1500);
+
+		return () => clearTimeout(timer);
+	}, [isReady, startNextStep]);
+
 	useSeekObserver(playerRef, handleUserSeek, { isStarted });
 
 	return (
-		<div className='relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'>
+		<div
+			className='relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'
+			id='onboarding-player'>
 			<Suspense
 				fallback={
 					<div className='absolute top-0 left-0 h-full w-full bg-black/70' />

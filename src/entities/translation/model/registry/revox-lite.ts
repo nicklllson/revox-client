@@ -17,7 +17,6 @@ export const REVOX_LITE: TTranslationModel = {
 	],
 	accent: 'oklch(0.65 0.16 230)',
 	isEnabled: true,
-	maxDurationMinutes: 30,
 	params: [
 		{ id: 'voice', required: false, minTier: 'PRO' },
 		{ id: 'voice-type', required: false, minTier: 'PRO' },

@@ -26,7 +26,7 @@ export const UsageCredits = () => {
 
 	return (
 		<SidebarMenu>
-			<SidebarMenuItem>
+			<SidebarMenuItem id='onboarding-usage-credits'>
 				<div
 					className={cn(
 						'group/usage relative flex flex-col gap-2 overflow-hidden rounded-[10px] border bg-muted transition-all duration-300 ease-out',

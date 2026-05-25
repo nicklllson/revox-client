@@ -44,7 +44,7 @@ export const Prompt = () => {
 			<form
 				onSubmit={handleSubmit(onSubmit, error => handleShowError(error))}
 				className='grid w-full max-w-2xl gap-6'>
-				<InputGroup className='shadow-2xl'>
+				<InputGroup className='shadow-2xl' id='onboarding-url-input'>
 					<TextareaAutosize
 						data-slot='input-group-control'
 						aria-invalid={!!errors.videoUrl}
@@ -68,6 +68,7 @@ export const Prompt = () => {
 							<TranslationParams />
 						</div>
 						<InputGroupButton
+							id='onboarding-submit'
 							type='submit'
 							size='icon-sm'
 							variant='default'

@@ -49,7 +49,7 @@ export const AppSidebar = () => {
 					</div>
 					<SidebarTrigger className='p-5 group-data-[collapsible=icon]:p-0' />
 				</div>
-				<SidebarMenu>
+				<SidebarMenu id='onboarding-sidebar-collections'>
 					{MENU_ITEMS.map(item => (
 						<SidebarMenuItem key={item.label}>
 							<SidebarMenuButton
@@ -69,7 +69,7 @@ export const AppSidebar = () => {
 			</SidebarHeader>
 
 			<SidebarContent>
-				<SidebarGroup>
+				<SidebarGroup id='onboarding-sidebar-history'>
 					<SidebarGroupContent>
 						<SidebarMenu>
 							<SidebarMenuItem className='group-data-[collapsible=icon]:hidden'>
@@ -107,7 +107,7 @@ export const AppSidebar = () => {
 			</SidebarContent>
 
 			{session && (
-				<SidebarFooter>
+				<SidebarFooter id='onboarding-sidebar-settings'>
 					<UsageCredits />
 					<ProfileMenu />
 				</SidebarFooter>
