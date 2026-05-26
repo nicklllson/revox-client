@@ -79,6 +79,19 @@ export const useTranslationWs = ({
 		);
 	}, []);
 
+	const requestFirstMissingChunk = useCallback(() => {
+		const meta = metadataRef.current;
+		if (!meta) return;
+
+		for (let i = 0; i < meta.total_chunks; i++) {
+			if (chunksRef.current.has(i)) continue;
+			if (requestedChunksRef.current.has(i)) continue;
+
+			requestChunk(i);
+			return;
+		}
+	}, [requestChunk]);
+
 	const fillBuffer = useCallback(
 		(currentChunkId: number) => {
 			for (let i = 0; i <= PREFETCH_AHEAD; i++) {
@@ -173,6 +186,8 @@ export const useTranslationWs = ({
 			if (!ws || ws.readyState !== WebSocket.OPEN) return;
 
 			fillBuffer(chunkId);
+
+			requestFirstMissingChunk();
 
 			ws.send(
 				JSON.stringify({

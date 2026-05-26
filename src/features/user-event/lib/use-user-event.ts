@@ -10,16 +10,16 @@ type TUseUserEventParams = {
 
 const useAuthEvent = ({ enabled }: TUseUserEventParams) => {
 	const navigate = useNavigate();
-	const { user } = useUser();
+	const { user, isFetching } = useUser();
 
 	useEffect(() => {
 		if (!enabled) return;
-		if (!user) return;
+		if (!user || isFetching) return;
 
 		if (!user.profileCompleted) {
 			navigate('/meta', { replace: true });
 		}
-	}, [enabled, user, navigate]);
+	}, [enabled, user, isFetching]);
 };
 /**
  * Главный хук — диспатчер пользовательских событий.
