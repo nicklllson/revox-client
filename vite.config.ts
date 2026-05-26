@@ -24,4 +24,20 @@ export default defineConfig({
       },
     ]
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom'],
+          'vendor-router': ['react-router', 'react-router-dom'],
+          'vendor-query': ['@tanstack/react-query'],
+          'vendor-three': ['three', '@react-three/fiber', '@react-three/drei'],
+          'vendor-animation': ['gsap', 'motion'],
+          'vendor-ui': ['radix-ui', 'cmdk', 'input-otp', 'sonner', 'lucide-react', 'nextstepjs'],
+          'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
+          'vendor-utils': ['clsx', 'tailwind-merge', 'class-variance-authority', 'date-fns', 'jwt-decode', 'create-gstore', 'ogl'],
+        },
+      },
+    },
+  },
 });

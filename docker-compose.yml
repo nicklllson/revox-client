@@ -1,0 +1,10 @@
+services:
+  nginx:
+    container_name: nginx
+    restart: always
+    image: workroom-frontend
+    build:
+      context: .
+    ports:
+      - "5500:5500"
+    network_mode: "host"
