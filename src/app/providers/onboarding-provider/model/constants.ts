@@ -51,7 +51,7 @@ export const steps: TStep[] = [
 				icon: '🤖',
 				title: 'Choose a model',
 				content:
-					'Different models offer different quality. Revox Lite is free and fast. Pro and Ultra deliver premium voiceover with Silero TTS.',
+					'Different models offer different quality. Revox Lite is free and fast. Pro and Ultra deliver premium voiceover with coqui TTS.',
 				selector: '#onboarding-model',
 				side: 'bottom',
 				showControls: true,

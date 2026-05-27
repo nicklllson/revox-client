@@ -108,7 +108,7 @@ export const useAudioSync = ({
 
 			const gain = ctx.createGain();
 			gain.gain.setValueAtTime(0, ctx.currentTime);
-			gain.gain.setTargetAtTime(1, ctx.currentTime, 0.05);
+			gain.gain.setTargetAtTime(2, ctx.currentTime, 0.05);
 			gain.connect(masterGainRef.current!);
 
 			const source = ctx.createBufferSource();
@@ -168,11 +168,8 @@ export const useAudioSync = ({
 
 	const sync = useCallback(() => {
 		if (isLockedRef.current) {
-			console.log('[sync] LOCKED, skip');
 			return;
 		}
-
-		console.log('[sync] tick, ytTime:', youtubeTimeRef.current);
 
 		const ytTime = youtubeTimeRef.current;
 		const targetChunk = findChunkAt(ytTime);
@@ -267,12 +264,6 @@ export const useAudioSync = ({
 			if (ytTime < chunkStartTime) return;
 
 			const audioOffset = ytTime - chunkStartTime;
-			console.log('[syncToTime]', {
-				ytTime,
-				targetChunk,
-				chunkStartTime,
-				audioOffset,
-			});
 			playChunk(targetChunk, Math.max(0, audioOffset));
 		},
 		[findChunkAt, playChunk, onBuffering, onBuffered, chunks],

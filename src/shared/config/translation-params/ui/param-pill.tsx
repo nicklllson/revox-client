@@ -47,7 +47,9 @@ export const ParamPill = ({
 				</span>
 				<ChevronDown className='size-3 text-white/30 transition-transform group-data-[state=open]:rotate-180' />
 			</DropdownMenuTrigger>
-			<DropdownMenuContent align='start' className='min-w-[180px]'>
+			<DropdownMenuContent
+				align='start'
+				className='max-h-[270px] min-w-[180px]'>
 				{options.map(opt => (
 					<DropdownMenuItem
 						key={opt.value}

@@ -11,8 +11,9 @@ import {
 import { usePlayer } from '../providers/player-provider';
 
 export const VideoLayout = () => {
-	const { state } = usePlayer();
 	const { videoId } = useParams<{ videoId: string }>();
+
+	const { state } = usePlayer();
 	const { video } = useVideo(videoId);
 	const { handleUpdateVideo } = useUpdateVideo();
 

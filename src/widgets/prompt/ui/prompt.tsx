@@ -1,8 +1,10 @@
 import { ArrowUp } from 'lucide-react';
+import { useCallback } from 'react';
 import { Controller, FormProvider } from 'react-hook-form';
 import { useNavigate } from 'react-router';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useSession } from '@/entities/auth';
+import { useSubscription } from '@/entities/subscription';
 import { VideoLangSelector } from '@/features/select-video-lang';
 import { TranslationParams } from '@/features/translation-params/';
 import { ROUTES } from '@/shared/model/routes';
@@ -27,17 +29,22 @@ export const Prompt = () => {
 	const { handleCreateVideo, isVideoCreating } = useCreateVideo();
 	const navigate = useNavigate();
 
-	const onSubmit = (fields: TPromptField) => {
-		if (!session) {
-			return navigate(ROUTES.PUBLIC.SIGNIN);
-		}
+	const { subscription } = useSubscription();
 
-		const payload = mapPromptToPayload(fields);
+	const onSubmit = useCallback(
+		(fields: TPromptField) => {
+			if (!session) {
+				return navigate(ROUTES.PUBLIC.SIGNIN);
+			}
 
-		handleCreateVideo(payload).then(res => {
-			navigate(`/videos/${res.id}`);
-		});
-	};
+			const payload = mapPromptToPayload(fields, subscription?.tier === 'FREE');
+
+			handleCreateVideo(payload).then(res => {
+				navigate(`/videos/${res.id}`);
+			});
+		},
+		[subscription?.tier],
+	);
 
 	return (
 		<FormProvider {...methods}>

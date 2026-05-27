@@ -13,9 +13,19 @@ const voiceValueSchema = z.object({
 
 const voiceTypeSchema = z.enum(['neutral', 'narrator']);
 
-export const mapPromptToPayload = (fields: TPromptField): TCreateVideoDto => {
+export const mapPromptToPayload = (
+	fields: TPromptField,
+	isFreeUser: boolean,
+): TCreateVideoDto => {
 	const params: Partial<Record<TParamId, TParamDefinition>> =
 		fields.params ?? {};
+
+	if (isFreeUser) {
+		return {
+			videoUrl: fields.videoUrl,
+			language: fields.language,
+		};
+	}
 
 	const voice = voiceValueSchema.safeParse(params['voice']);
 	const voiceType = voiceTypeSchema.safeParse(params['voice-type']);

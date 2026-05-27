@@ -98,7 +98,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		setIsBuffering(true);
 
 		const time = playerTimeRef.current;
-		const chunkId = getChunkIdAtTime(chunkMetas, time);
+		const chunkId = getChunkIdAtTime(chunkMetasRef.current, time);
 		for (let i = chunkId; i <= chunkId + PREFETCH_AHEAD; i++) {
 			if (!chunksRef.current.has(i)) {
 				requestedChunksRef.current.delete(i);
@@ -108,7 +108,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 
 		bufferingIntervalRef.current = setInterval(() => {
 			const t = playerTimeRef.current;
-			const cid = getChunkIdAtTime(chunkMetas, t);
+			const cid = getChunkIdAtTime(chunkMetasRef.current, t);
 
 			for (let i = cid; i <= cid + PREFETCH_AHEAD; i++) {
 				if (!chunksRef.current.has(i)) {
@@ -120,7 +120,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		}, 1000);
 
 		getPlayer()?.pauseVideo();
-	}, [isBuffering, getPlayer, sendHeartbeat, chunkMetas, isWaitingForChunk]);
+	}, [isBuffering, getPlayer, sendHeartbeat, isWaitingForChunk]);
 
 	const onBuffered = useCallback(() => {
 		if (!isBuffering) return;
@@ -158,10 +158,15 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		if (heartbeatRef.current) return;
 		heartbeatRef.current = setInterval(() => {
 			const time = playerTimeRef.current;
-			const chunkId = getChunkIdAtTime(chunkMetas, time);
+			const chunkId = getChunkIdAtTime(chunkMetasRef.current, time); // ← ref!
+			console.log('[heartbeat]', {
+				time,
+				chunkId,
+				metasSize: chunkMetasRef.current.size,
+			});
 			sendHeartbeat(chunkId, time);
 		}, HEARTBEAT_INTERVAL);
-	}, [chunkMetas, sendHeartbeat, playerTimeRef]);
+	}, [sendHeartbeat]);
 
 	const stopHeartbeat = useCallback(() => {
 		if (heartbeatRef.current) {
@@ -174,7 +179,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		(time: number) => {
 			if (!isStarted) return;
 
-			const targetChunkId = getChunkIdAtTime(chunkMetas, time);
+			const targetChunkId = getChunkIdAtTime(chunkMetasRef.current, time);
 			const isReady =
 				chunksRef.current.has(targetChunkId) &&
 				chunkMetasRef.current.has(targetChunkId);
@@ -186,7 +191,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 			if (isReady) {
 				waitingChunkIdRef.current = null;
 				setIsWaitingForChunk(false);
-				handleSeek(time); // ← передаём целевое время напрямую
+				handleSeek(time);
 				setTimeout(() => getPlayer()?.playVideo(), 80);
 				return;
 			}

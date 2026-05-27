@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useModel } from '@/app/providers/model-provider';
 import { useSession } from '@/entities/auth';
+import { useSubscription } from '@/entities/subscription';
 import type { TCreateVideoVoice } from '@/entities/video';
 import type { TTranslationMessage } from '../models/types';
 
@@ -12,9 +13,21 @@ type Options = {
 	voice?: TCreateVideoVoice;
 };
 
+type TOpenMessage = {
+	event: string;
+	data: {
+		voice?: Record<string, string>;
+		videoId: string;
+		youtube_url: string;
+		target_lang: string;
+		providers: Record<string, string>;
+		pipelineFeatures: Record<string, boolean>;
+	};
+};
+
 const WS_API_URL = import.meta.env.VITE_PUBLIC_SERVER_WS;
 const CHUNK_DURATION = 30;
-const PREFETCH_AHEAD = 3;
+const BUFFER_SIZE = 3;
 
 export const useTranslationWs = ({
 	videoId,
@@ -24,6 +37,8 @@ export const useTranslationWs = ({
 	voice,
 }: Options) => {
 	const { activeModel } = useModel();
+	const { subscription } = useSubscription();
+
 	const wsRef = useRef<WebSocket | null>(null);
 
 	const pendingMetaQueueRef = useRef<
@@ -66,9 +81,15 @@ export const useTranslationWs = ({
 		const ws = wsRef.current;
 		const meta = metadataRef.current;
 
-		if (!ws || ws.readyState !== WebSocket.OPEN || !meta) return;
-		if (chunkId < 0 || chunkId >= meta.total_chunks) return;
-		if (requestedChunksRef.current.has(chunkId)) return;
+		if (!ws || ws.readyState !== WebSocket.OPEN || !meta) {
+			return;
+		}
+		if (chunkId < 0 || chunkId >= meta.total_chunks) {
+			return;
+		}
+		if (requestedChunksRef.current.has(chunkId)) {
+			return;
+		}
 
 		requestedChunksRef.current.add(chunkId);
 		ws.send(
@@ -79,22 +100,9 @@ export const useTranslationWs = ({
 		);
 	}, []);
 
-	const requestFirstMissingChunk = useCallback(() => {
-		const meta = metadataRef.current;
-		if (!meta) return;
-
-		for (let i = 0; i < meta.total_chunks; i++) {
-			if (chunksRef.current.has(i)) continue;
-			if (requestedChunksRef.current.has(i)) continue;
-
-			requestChunk(i);
-			return;
-		}
-	}, [requestChunk]);
-
 	const fillBuffer = useCallback(
 		(currentChunkId: number) => {
-			for (let i = 0; i <= PREFETCH_AHEAD; i++) {
+			for (let i = 0; i < BUFFER_SIZE; i++) {
 				requestChunk(currentChunkId + i);
 			}
 		},
@@ -109,20 +117,23 @@ export const useTranslationWs = ({
 
 		wsRef.current = ws;
 
+		const payload: TOpenMessage = {
+			event: 'start',
+			data: {
+				videoId,
+				youtube_url: youtubeUrl,
+				target_lang: targetLang,
+				providers: activeModel.providers,
+				pipelineFeatures: activeModel.pipelineFeatures,
+			},
+		};
+
+		if (subscription?.tier !== 'FREE') {
+			payload.data.voice = voice;
+		}
+
 		ws.onopen = () => {
-			ws.send(
-				JSON.stringify({
-					event: 'start',
-					data: {
-						voice,
-						videoId,
-						youtube_url: youtubeUrl,
-						target_lang: targetLang,
-						providers: activeModel.providers,
-						pipelineFeatures: activeModel.pipelineFeatures,
-					},
-				}),
-			);
+			ws.send(JSON.stringify(payload));
 		};
 
 		ws.onmessage = e => {
@@ -134,10 +145,6 @@ export const useTranslationWs = ({
 				if (msg.type === 'metadata') {
 					metadataRef.current = msg;
 					setMetadata(msg);
-
-					for (let i = 0; i < 2; i++) {
-						requestedChunksRef.current.add(i);
-					}
 				}
 
 				if (msg.type === 'chunk_meta') {
@@ -178,7 +185,7 @@ export const useTranslationWs = ({
 			ws.close();
 			metadataRef.current = null;
 		};
-	}, [enabled, youtubeUrl, token, targetLang, videoId, voice]);
+	}, [enabled, youtubeUrl, token, targetLang, videoId, voice, subscription]);
 
 	const sendHeartbeat = useCallback(
 		(chunkId: number, currentTime: number) => {
@@ -186,8 +193,6 @@ export const useTranslationWs = ({
 			if (!ws || ws.readyState !== WebSocket.OPEN) return;
 
 			fillBuffer(chunkId);
-
-			requestFirstMissingChunk();
 
 			ws.send(
 				JSON.stringify({

@@ -1,12 +1,10 @@
 import type { TParamDefinition, TParamId } from './model/types';
-import { REVOX_MULTITALK } from './params/multitalk';
 import { REVOX_VOICE_PARAM } from './params/voice';
 import { REVOX_VOICE_TYPE_PARAM } from './params/voice-type';
 
 const ALL_PARAMS: TParamDefinition[] = [
 	REVOX_VOICE_TYPE_PARAM as TParamDefinition,
 	REVOX_VOICE_PARAM as TParamDefinition,
-	REVOX_MULTITALK as TParamDefinition,
 	// new params here
 ];
 

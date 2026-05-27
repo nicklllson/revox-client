@@ -1,12 +1,15 @@
 import { Controller, useFormContext } from 'react-hook-form';
+import { useModel } from '@/app/providers/model-provider';
 import { LockedParam } from '@/shared/config/translation-params';
 import { useTranslationParams } from '@/shared/config/translation-params/lib/use-translation-params';
 
 export const TranslationParams = () => {
 	const { paramDefs } = useTranslationParams();
 	const { control, formState } = useFormContext();
+	const { activeModel } = useModel();
 
 	if (paramDefs.length === 0) return null;
+	if (activeModel.modelId === 'revox-lite') return null;
 
 	return (
 		<div id='onboarding-voice' className='flex flex-wrap items-center gap-1.5'>

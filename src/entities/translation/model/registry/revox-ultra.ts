@@ -6,12 +6,12 @@ export const REVOX_ULTRA: TTranslationModel = {
 	tagline: 'Premium voiceover',
 	description: 'Best quality with accurate transcription and premium TTS.',
 	speed: 2,
-	quality: 5,
+	quality: 4,
 	tier: 'PREMIUM',
 	badge: null,
 	eta: '~8 min for 10-min video',
 	features: [
-		'Premium voices (Silero)',
+		'Premium voices (coqui)',
 		'Accurate transcription (Whisper Medium)',
 		'Multi-speaker',
 		'Up to 2-hour videos',
@@ -22,6 +22,6 @@ export const REVOX_ULTRA: TTranslationModel = {
 		{ id: 'voice', required: false },
 		{ id: 'multitalk', required: false },
 	],
-	providers: { translator: 'google', tts: 'silero', whisper: 'medium' },
+	providers: { translator: 'google', tts: 'coqui', whisper: 'medium' },
 	pipelineFeatures: { multiSpeaker: true },
 };

@@ -37,8 +37,8 @@ Revox AI — платформа для автоматического перев
 | Модель | Тир | Переводчик | TTS | Whisper | Макс. длина |
 |---|---|---|---|---|---|
 | Revox Lite | FREE | Google | Edge TTS | base | 30 мин |
-| Revox Pro | PRO | Google | Silero | small | 60 мин |
-| Revox Ultra | PREMIUM | Google | Silero | medium | 2 часа |
+| Revox Pro | PRO | Google | coqui | small | 60 мин |
+| Revox Ultra | PREMIUM | Google | coqui | medium | 2 часа |
 
 ### Subscriptions & Billing
 - Три тира: **Free**, **Pro**, **Premium**

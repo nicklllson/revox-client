@@ -34,7 +34,7 @@ export type TCreateVideoDto = Omit<
 	| 'voiceName'
 	| 'voiceStyle'
 > & {
-	voice: TCreateVideoVoice;
+	voice?: TCreateVideoVoice;
 };
 
 export type TUpdateVideoDto = Partial<

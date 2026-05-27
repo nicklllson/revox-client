@@ -7,6 +7,7 @@ import { useSubtitles } from '@/app/providers/subtitles-provider';
 import type { TSegment } from '@/entities/translation';
 import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
+import { useSidebar } from '@/shared/ui/sidebar';
 import { useDynamicSubtitles } from '../lib/use-dynamic-subtitles';
 
 const formatTime = (seconds: number) => {
@@ -18,6 +19,7 @@ const formatTime = (seconds: number) => {
 export const Subtitles = () => {
 	const { isOpen, toggle } = useSubtitles();
 	const { chunkMetas, playerTimeRef } = usePlayer();
+	const { open } = useSidebar();
 
 	const allSegments = useMemo(() => {
 		const segs: TSegment[] = [];
@@ -35,7 +37,13 @@ export const Subtitles = () => {
 	if (!isOpen) return null;
 
 	return (
-		<div className='relative z-10 ml-2 flex w-full max-w-[14vw] flex-col overflow-hidden rounded-2xl border border-input bg-background max-2xl:max-w-[22vw]'>
+		<div
+			className={cn(
+				'relative z-10 ml-2 flex w-full max-w-[14vw] flex-col overflow-hidden rounded-2xl border border-input bg-background max-2xl:max-w-[22vw]',
+				{
+					'max-w-[25vw]': !open,
+				},
+			)}>
 			<div className='flex shrink-0 items-center justify-between border-border border-b px-4 py-3'>
 				<span className='font-medium text-muted-foreground text-sm'>
 					Subtitles

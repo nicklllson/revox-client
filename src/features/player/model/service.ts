@@ -1,5 +1,7 @@
+import type { TTranslationMessage } from '@/features/translations';
+
 export const getChunkIdAtTime = (
-	chunkMetas: Map<number, { segments: { start: number; end: number }[] }>,
+	chunkMetas: Map<number, Extract<TTranslationMessage, { type: 'chunk_meta' }>>,
 	time: number,
 ): number => {
 	let bestId = 0;
@@ -15,7 +17,7 @@ export const getChunkIdAtTime = (
 		if (time >= start && time < end) {
 			return id;
 		}
-		// если время уже за пределами этого чанка — он кандидат на "ближайший назад"
+
 		if (time >= end && (!found || id > bestId)) {
 			bestId = id;
 			found = true;
