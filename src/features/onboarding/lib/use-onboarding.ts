@@ -11,6 +11,7 @@ export const useOnboarding = () => {
 
 	useEffect(() => {
 		if (!session) return;
+
 		const completed = localStorage.getItem(STORAGE_KEY);
 		if (completed) return;
 
