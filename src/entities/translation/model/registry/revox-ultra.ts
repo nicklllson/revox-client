@@ -11,8 +11,8 @@ export const REVOX_ULTRA: TTranslationModel = {
 	badge: null,
 	eta: '~8 min for 10-min video',
 	features: [
-		'Premium voices (coqui)',
-		'Accurate transcription (Whisper Medium)',
+		'Premium voices (piper)',
+		'Accurate transcription (Whisper large-v3)',
 		'Multi-speaker',
 		'Up to 2-hour videos',
 	],
@@ -22,6 +22,6 @@ export const REVOX_ULTRA: TTranslationModel = {
 		{ id: 'voice', required: false },
 		{ id: 'multitalk', required: false },
 	],
-	providers: { translator: 'google', tts: 'coqui', whisper: 'medium' },
+	providers: { translator: 'google', tts: 'piper', whisper: 'large-v3' },
 	pipelineFeatures: { multiSpeaker: true },
 };

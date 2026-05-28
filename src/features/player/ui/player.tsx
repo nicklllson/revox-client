@@ -264,6 +264,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		setChunkMetas(chunkMetas);
 	}, [chunkMetas]);
 
+	// Refactor this to not rely on error message for control flow
 	useEffect(() => {
 		if (!error) return;
 

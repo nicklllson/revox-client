@@ -40,7 +40,7 @@ export const VideoLayout = () => {
 					<VideoSettings isFavorite={video?.isFavorite} videoId={videoId} />
 				</VideoBottomBar>
 			</div>
-			<Subtitles />
+			<Subtitles sessionId={video?.externalJobId ?? null} />
 		</div>
 	);
 };

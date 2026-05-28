@@ -53,6 +53,7 @@ export const PlayerProvider = ({ children }: { children: ReactNode }) => {
 
 	const playerVolumeRef = useRef(volumeState.playerVolume);
 	playerVolumeRef.current = volumeState.playerVolume;
+	
 
 	const localChangeAtRef = useRef(0);
 

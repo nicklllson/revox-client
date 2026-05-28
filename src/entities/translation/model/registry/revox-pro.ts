@@ -10,13 +10,13 @@ export const REVOX_PRO: TTranslationModel = {
 	tier: 'PRO',
 	badge: 'Recommended',
 	eta: '~3 min for 10-min video',
-	features: ['Premium voices (coqui)', 'Multi-speaker', 'Up to 60 min videos'],
+	features: ['Premium voices', 'Multi-speaker', 'Up to 60 min videos'],
 	accent: 'oklch(0.7 0.16 250)',
 	isEnabled: true,
 	params: [
 		{ id: 'voice', required: false },
 		{ id: 'multitalk', required: false },
 	],
-	providers: { translator: 'google', tts: 'piper', whisper: 'small' },
+	providers: { translator: 'google', tts: 'edge-tts', whisper: 'medium' },
 	pipelineFeatures: { multiSpeaker: true },
 };

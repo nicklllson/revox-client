@@ -103,8 +103,6 @@ export const VOICE_OPTIONS: Record<string, VoiceOption[]> = {
 		...piper('ru', [
 			{ id: 'irina', name: 'Irina', gender: 'female' },
 			{ id: 'dmitri', name: 'Dmitri', gender: 'male' },
-			{ id: 'denis', name: 'Denis', gender: 'male' },
-			{ id: 'ruslan', name: 'Ruslan', gender: 'male' },
 		]),
 		...coqui('ru'),
 	],
@@ -139,9 +137,7 @@ export const VOICE_OPTIONS: Record<string, VoiceOption[]> = {
 		},
 		...piper('en', [
 			{ id: 'amy', name: 'Amy', gender: 'female' },
-			{ id: 'kathleen', name: 'Kathleen', gender: 'female' },
 			{ id: 'ryan', name: 'Ryan', gender: 'male' },
-			{ id: 'joe', name: 'Joe', gender: 'male' },
 		]),
 		...coqui('en'),
 	],
@@ -160,7 +156,10 @@ export const VOICE_OPTIONS: Record<string, VoiceOption[]> = {
 			lang: 'de',
 			provider: 'edge-tts',
 		},
-		...piper('de', [{ id: 'thorsten', name: 'Thorsten', gender: 'male' }]),
+		...piper('de', [			
+			{ id: 'thorsten', name: 'Thorsten', gender: 'male' },
+			{ id: 'eva_k', name: 'Eva', gender: 'female' },
+		]),
 		...coqui('de'),
 	],
 	es: [
@@ -178,7 +177,10 @@ export const VOICE_OPTIONS: Record<string, VoiceOption[]> = {
 			lang: 'es',
 			provider: 'edge-tts',
 		},
-		...piper('es', [{ id: 'davefx', name: 'Davefx', gender: 'male' }]),
+		...piper('es', [
+			{ id: 'davefx', name: 'Davefx', gender: 'male' },
+			{ id: 'mls_9972', name: 'Lucia', gender: 'female' },
+		]),
 		...coqui('es'),
 	],
 	fr: [
@@ -224,7 +226,10 @@ export const VOICE_OPTIONS: Record<string, VoiceOption[]> = {
 			lang: 'it',
 			provider: 'edge-tts',
 		},
-		...piper('it', [{ id: 'paola', name: 'Paola', gender: 'female' }]),
+		...piper('it', [
+			{ id: 'paola', name: 'Paola', gender: 'female' },
+			{ id: 'riccardo', name: 'Riccardo', gender: 'male' },
+		]),
 		...coqui('it'),
 	],
 	pt: [
