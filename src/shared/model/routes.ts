@@ -12,6 +12,7 @@ export const ROUTES = {
 		HOME: '/',
 		PRICING: '/pricing',
 		AUTH_CALLBACK: '/auth/callback',
+		NOT_FOUND: '*',
 	},
 	PRIVATE: {
 		VIDEO: '/videos/:videoId',

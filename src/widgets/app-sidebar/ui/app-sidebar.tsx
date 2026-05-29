@@ -68,7 +68,7 @@ export const AppSidebar = () => {
 				</SidebarMenu>
 			</SidebarHeader>
 
-			<SidebarContent>
+			<SidebarContent className='scrollbar-custom'>
 				<SidebarGroup id='onboarding-sidebar-history'>
 					<SidebarGroupContent>
 						<SidebarMenu>

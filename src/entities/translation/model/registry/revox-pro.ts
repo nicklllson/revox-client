@@ -10,7 +10,7 @@ export const REVOX_PRO: TTranslationModel = {
 	tier: 'PRO',
 	badge: 'Recommended',
 	eta: '~3 min for 10-min video',
-	features: ['Premium voices', 'Multi-speaker', 'Up to 60 min videos'],
+	features: ['Premium voices', 'Up to 60 min videos'],
 	accent: 'oklch(0.7 0.16 250)',
 	isEnabled: true,
 	params: [

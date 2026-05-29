@@ -1,4 +1,4 @@
-import { Check, ChevronDown, Lock } from 'lucide-react';
+import { Check, ChevronDown, Lock, LockKeyhole } from 'lucide-react';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSubscription } from '@/entities/subscription';
@@ -7,7 +7,6 @@ import { useClickOutside } from '@/shared/hooks';
 import { getRequiredTierLabel, isModelAvailable } from '@/shared/lib/models';
 import { cn } from '@/shared/lib/utils';
 import { Badge } from '@/shared/ui/badge';
-import { Button } from '@/shared/ui/button';
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -15,7 +14,6 @@ import {
 } from '@/shared/ui/dropdown-menu';
 import { useSelectTranslation } from '../lib/use-select-translation';
 import { MeterDots } from './meter-dots';
-import { ModelDot } from './model-dot';
 
 export const TranslationModelSelect = () => {
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -32,45 +30,29 @@ export const TranslationModelSelect = () => {
 	return (
 		<DropdownMenu open={open} onOpenChange={setOpen}>
 			<DropdownMenuTrigger asChild>
-				<Button
-					id='onboarding-model'
-					variant='outline'
-					className={cn(
-						'group h-auto gap-2.5 rounded-xl border-white/10 bg-primary-foreground py-2 pr-3 pl-2.5',
-					)}>
-					<ModelDot accent={activeModel.accent} size={22} />
-					<div className='flex flex-col items-start leading-tight'>
-						<span className='font-medium text-[12.5px]'>
-							{activeModel.name}
-						</span>
-						<span className='text-[10.5px] text-zinc-500'>
-							{activeModel.tagline}
-						</span>
-					</div>
-					<ChevronDown
-						size={13}
-						className={cn(
-							'ml-1 text-zinc-500 transition-transform duration-200',
-							open && 'rotate-180',
-						)}
-					/>
-				</Button>
+				<button
+					type='button'
+					className='flex min-w-35 items-center justify-center gap-2 rounded-full border bg-primary-foreground px-5 py-2.5'>
+					<span className='font-medium text-lg'>{activeModel.name}</span>
+					<ChevronDown size={14} className={cn({ 'rotate-180': open })} />
+				</button>
 			</DropdownMenuTrigger>
 
 			<DropdownMenuContent
 				align='start'
-				className={cn('w-[360px] border-white/10 bg-primary-foreground p-1.5')}>
+				className={
+					'scrollbar-custom max-h-[620px] w-[360px] border-white/10 bg-primary-foreground p-1.5'
+				}>
 				{/* Header */}
 				<div className='flex items-baseline justify-between px-3 pt-2.5 pb-2'>
-					<span className='font-mono text-[10.5px] uppercase tracking-[1px]'>
-						Translation model
-					</span>
+					<span className='text-sm'>Translation model</span>
 				</div>
 
 				{/* Model list */}
 				<div className='flex flex-col gap-0.5'>
 					{Object.values(VOICES_REGISTRY).map(model => {
 						const isSelected = model.modelId === activeModel.modelId;
+						const isDisabled = !model.isEnabled;
 						const locked = !isModelAvailable(model, currentTier);
 						const requiredTierLabel = getRequiredTierLabel(model);
 
@@ -97,31 +79,40 @@ export const TranslationModelSelect = () => {
 								)}>
 								<div className='min-w-0 flex-1'>
 									{/* Title row */}
-									<div className='mb-1 flex items-center gap-2'>
-										<span className='font-semibold text-[13.5px]'>
+									<div className='mb-1 flex items-center justify-between gap-2'>
+										<span className='font-semibold text-base'>
 											{model.name}
 										</span>
 
-										{model.badge && !locked && (
-											<Badge
-												variant='outline'
-												className='px-1.5 py-0 font-semibold text-[9.5px] text-white/40 uppercase tracking-[0.6px]'>
-												{model.badge}
-											</Badge>
-										)}
+										<div className='flex gap-1'>
+											{isDisabled && (
+												<Badge>
+													<LockKeyhole size={12} />
+													Coming soon
+												</Badge>
+											)}
 
-										{locked && (
-											<Badge
-												variant='outline'
-												className='ml-auto flex items-center gap-1 border-amber-500/30 bg-amber-500/15 px-1.5 py-0 font-mono font-semibold text-[9.5px] text-amber-300 uppercase tracking-[0.6px]'>
-												<Lock size={9} />
-												{requiredTierLabel}
-											</Badge>
-										)}
+											{model.badge && !locked && (
+												<Badge
+													variant='outline'
+													className='px-1.5 py-0 font-semibold text-[9.5px] text-white/40 uppercase'>
+													{model.badge}
+												</Badge>
+											)}
 
-										{isSelected && !locked && (
-											<Check size={14} className='ml-auto' />
-										)}
+											{locked && (
+												<Badge
+													variant='outline'
+													className='ml-auto flex h-6 items-center gap-1 border-amber-500/30 bg-amber-500/15 px-1.5 py-0 font-semibold text-[9.5px] text-amber-300 uppercase'>
+													<Lock size={9} />
+													{requiredTierLabel}
+												</Badge>
+											)}
+
+											{isSelected && !locked && (
+												<Check size={14} className='ml-auto' />
+											)}
+										</div>
 									</div>
 
 									{/* Description */}
@@ -134,13 +125,13 @@ export const TranslationModelSelect = () => {
 									{/* Meters */}
 									<div className='mb-2 flex items-center gap-3.5'>
 										<div className='flex items-center gap-1.5'>
-											<span className='font-mono text-[10px] text-zinc-500 uppercase tracking-[0.6px]'>
+											<span className='text-[10px] text-zinc-500 uppercase'>
 												Speed
 											</span>
 											<MeterDots value={model.speed} color={model.accent} />
 										</div>
 										<div className='flex items-center gap-1.5'>
-											<span className='font-mono text-[10px] text-zinc-500 uppercase tracking-[0.6px]'>
+											<span className='text-[10px] text-zinc-500 uppercase'>
 												Quality
 											</span>
 											<MeterDots value={model.quality} color={model.accent} />

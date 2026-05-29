@@ -2,7 +2,7 @@ import type { TSubscriptionTier } from '@/entities/subscription';
 import type { TParamId } from '@/shared/config/translation-params/model/types';
 import type { TVoiceGender, TVoiceStyle } from '@/shared/model/voices';
 
-export type TTranslationModelTTS = 'edge-tts' | 'coqui' | 'piper';
+export type TTranslationModelTTS = 'edge-tts' | 'piper' | 'eleven-labs';
 
 export type TSegment = {
 	id: string;

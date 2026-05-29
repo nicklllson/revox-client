@@ -49,7 +49,7 @@ export const ParamPill = ({
 			</DropdownMenuTrigger>
 			<DropdownMenuContent
 				align='start'
-				className='max-h-[270px] min-w-[180px]'>
+				className='scrollbar-custom max-h-[270px] min-w-[180px]'>
 				{options.map(opt => (
 					<DropdownMenuItem
 						key={opt.value}

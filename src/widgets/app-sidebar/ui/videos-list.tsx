@@ -15,7 +15,9 @@ export const VideosList = ({
 	if (!session) return null;
 
 	return isFetching && !videos
-		? [...Array(6)].map((_, index) => <Skeleton key={index} className='h-15' />)
+		? [...Array(12)].map((_, index) => (
+				<Skeleton key={index} className='h-15' />
+			))
 		: videos?.map(video => (
 				<HistoryItem
 					id={video.id}

@@ -115,6 +115,10 @@ export const router = createBrowserRouter([
 				path: ROUTES.PRIVATE.META,
 				lazy: () => import('@/pages/private/meta.page'),
 			},
+			{
+				path: ROUTES.PUBLIC.NOT_FOUND,
+				lazy: () => import('@/pages/public/not-found.page'),
+			},
 		],
 	},
 ]);

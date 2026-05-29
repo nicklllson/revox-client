@@ -10,18 +10,10 @@ export const REVOX_ULTRA: TTranslationModel = {
 	tier: 'PREMIUM',
 	badge: null,
 	eta: '~8 min for 10-min video',
-	features: [
-		'Premium voices (piper)',
-		'Accurate transcription (Whisper large-v3)',
-		'Multi-speaker',
-		'Up to 2-hour videos',
-	],
+	features: ['Premium voices', 'Accurate transcription', 'Up to 2-hour videos'],
 	accent: 'oklch(0.7 0.14 290)',
 	isEnabled: true,
-	params: [
-		{ id: 'voice', required: false },
-		{ id: 'multitalk', required: false },
-	],
+	params: [{ id: 'voice', required: false }],
 	providers: { translator: 'google', tts: 'piper', whisper: 'large-v3' },
-	pipelineFeatures: { multiSpeaker: true },
+	pipelineFeatures: { multiSpeaker: false },
 };

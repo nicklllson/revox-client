@@ -5,31 +5,25 @@ import { useMemo, useState } from 'react';
 import { usePlayer } from '@/app/providers/player-provider/player-provider';
 import { useSubtitles } from '@/app/providers/subtitles-provider';
 import type { TSegment } from '@/entities/translation';
+import { privateApi } from '@/shared/lib/api';
 import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuTrigger,
+} from '@/shared/ui/dropdown-menu';
 import { useSidebar } from '@/shared/ui/sidebar';
 import { useDynamicSubtitles } from '../lib/use-dynamic-subtitles';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/shared/ui/dropdown-menu';
+import { LANG_OPTIONS } from '../model/constants';
+import { formatTime } from '../model/services';
+import type { TSubLang } from '../model/types';
 
-// подставь свой base URL (env / api-конфиг)
-const API_BASE = import.meta.env.VITE_API_URL ?? '';
-
-const formatTime = (seconds: number) => {
-	const m = Math.floor(seconds / 60);
-	const s = Math.floor(seconds % 60);
-	return `${m}:${s.toString().padStart(2, '0')}`;
-};
-
-type SubLang = 'translated' | 'original' | 'both';
-
-const LANG_OPTIONS: { value: SubLang; label: string }[] = [
-	{ value: 'translated', label: 'Перевод' },
-	{ value: 'original', label: 'Оригинал' },
-	{ value: 'both', label: 'Перевод + оригинал' },
-];
+const REGEX = /filename="?([^"]+)"?/;
 
 export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
-	const { isOpen, toggle,  } = useSubtitles();
+	const { isOpen, toggle } = useSubtitles();
 	const { chunkMetas, playerTimeRef } = usePlayer();
 	const { open } = useSidebar();
 
@@ -48,19 +42,17 @@ export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
 		playerTimeRef,
 	);
 
-	const handleExport = async (lang: SubLang) => {
+	const handleExport = async (lang: TSubLang) => {
 		if (!sessionId || downloading) return;
 		setDownloading(true);
 		try {
-			const res = await fetch(
-				`${API_BASE}/api/subtitles/${sessionId}?lang=${lang}`,
+			const res = await privateApi<void, any>(
+				`/subtitles/${sessionId}?lang=${lang}`,
 			);
-			if (!res.ok) throw new Error(`Export failed: ${res.status}`);
-
 			const blob = await res.blob();
-			// имя файла из Content-Disposition, иначе фолбэк
+
 			const disposition = res.headers.get('Content-Disposition') ?? '';
-			const match = disposition.match(/filename="?([^"]+)"?/);
+			const match = disposition.match(REGEX);
 			const filename = match?.[1] ?? `subtitles_${lang}.srt`;
 
 			const url = URL.createObjectURL(blob);
@@ -100,65 +92,65 @@ export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
 			</div>
 
 			{allSegments.length === 0 ? (
-	<div className='flex min-h-[400px] flex-1 items-center justify-center p-4'>
-		<p className='text-center text-muted-foreground text-sm'>
-			Subtitles will appear here
-		</p>
-	</div>
-) : (
-	<>
-		<div className='max-h-[60vh] flex-1 overflow-y-auto p-3'>
-			{allSegments.map((seg, i) => {
-				const isActive = i === activeIndex;
-				const isPast = !isActive && seg.end <= currentTime;
-				return (
-					<div
-						key={seg.id}
-						ref={isActive ? activeRef : undefined}
-						className={cn(
-							'rounded-lg px-3 py-2 text-sm transition-colors duration-300',
-							isActive && 'bg-white/5 font-medium text-white',
-							isPast && 'text-white/30',
-							!isActive && !isPast && 'text-white/50',
-						)}>
-						<span
-							className={cn(
-								'mb-0.5 block font-mono text-xs',
-								isActive ? 'text-white/60' : 'opacity-40',
-							)}>
-							{formatTime(seg.start)}
-						</span>
-						{seg.translated_text}
+				<div className='flex min-h-[400px] flex-1 items-center justify-center p-4'>
+					<p className='text-center text-muted-foreground text-sm'>
+						Subtitles will appear here
+					</p>
+				</div>
+			) : (
+				<>
+					<div className='max-h-[60vh] flex-1 overflow-y-auto p-3'>
+						{allSegments.map((seg, i) => {
+							const isActive = i === activeIndex;
+							const isPast = !isActive && seg.end <= currentTime;
+							return (
+								<div
+									key={seg.id}
+									ref={isActive ? activeRef : undefined}
+									className={cn(
+										'rounded-lg px-3 py-2 text-sm transition-colors duration-300',
+										isActive && 'bg-white/5 font-medium text-white',
+										isPast && 'text-white/30',
+										!isActive && !isPast && 'text-white/50',
+									)}>
+									<span
+										className={cn(
+											'mb-0.5 block font-mono text-xs',
+											isActive ? 'text-white/60' : 'opacity-40',
+										)}>
+										{formatTime(seg.start)}
+									</span>
+									{seg.translated_text}
+								</div>
+							);
+						})}
 					</div>
-				);
-			})}
-		</div>
 
-{/* футер с экспортом */}
-<div className='shrink-0 border-border border-t p-3'>
-	<DropdownMenu>
-		<DropdownMenuTrigger asChild>
-			<Button
-				variant='outline'
-				className='w-full'
-				disabled={!sessionId || downloading}>
-				<Download className='\ size-4' />
-				{downloading ? 'Downloading...' : 'Download Subtitles SRT'}
-			</Button>
-		</DropdownMenuTrigger>
-		<DropdownMenuContent align='end' side='top' className='w-44'>
-			{LANG_OPTIONS.map((opt) => (
-				<DropdownMenuItem
-					key={opt.value}
-					onSelect={() => handleExport(opt.value)}>
-					{opt.label}
-				</DropdownMenuItem>
-			))}
-		</DropdownMenuContent>
-	</DropdownMenu>
-</div>
-	</>
-)}
+					{/* футер с экспортом */}
+					<div className='shrink-0 border-border border-t p-3'>
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									variant='outline'
+									className='w-full'
+									disabled={!sessionId || downloading}>
+									<Download className='\ size-4' />
+									{downloading ? 'Downloading...' : 'Download Subtitles SRT'}
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align='end' side='top' className='w-44'>
+								{LANG_OPTIONS.map(opt => (
+									<DropdownMenuItem
+										key={opt.value}
+										onSelect={() => handleExport(opt.value)}>
+										{opt.label}
+									</DropdownMenuItem>
+								))}
+							</DropdownMenuContent>
+						</DropdownMenu>
+					</div>
+				</>
+			)}
 		</div>
 	);
 };
