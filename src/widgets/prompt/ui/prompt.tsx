@@ -51,15 +51,19 @@ export const Prompt = () => {
 			<form
 				onSubmit={handleSubmit(onSubmit, error => handleShowError(error))}
 				className='grid w-full max-w-2xl gap-6'>
-				<InputGroup className='shadow-2xl' id='onboarding-url-input'>
+				<InputGroup
+					className='shadow-2xl'
+					id='onboarding-url-input'
+					aria-disabled={isVideoCreating}>
 					<TextareaAutosize
+						disabled={isVideoCreating}
 						data-slot='input-group-control'
 						aria-invalid={!!errors.videoUrl}
 						className='field-sizing-content flex min-h-16 w-full resize-none rounded-md bg-transparent px-3 py-2.5 text-base outline-none transition-[color,box-shadow] placeholder:text-shadow-input md:text-sm'
 						placeholder='https://www.youtube.com/watch...'
 						{...register('videoUrl')}
 					/>
-					<InputGroupAddon align='block-end'>
+					<InputGroupAddon align='block-end' aria-disabled={isVideoCreating}>
 						<div className='flex flex-wrap items-center gap-1.5'>
 							<Controller
 								name='language'
