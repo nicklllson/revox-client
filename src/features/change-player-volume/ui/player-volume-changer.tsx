@@ -21,7 +21,10 @@ export const PlayerVolumeChanger = () => {
 	return (
 		<DropdownMenu>
 			<DropdownMenuTrigger asChild id='onboarding-volume'>
-				<Button variant='outline'>Change volume</Button>
+				<Button variant='outline'>
+					{getVolumeIcon(state.dubbingVolume)}
+					Change volume
+				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className='w-60' align='end'>
 				<DropdownMenuGroup>

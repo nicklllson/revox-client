@@ -1,9 +1,5 @@
 import type { PropsWithChildren } from 'react';
 
 export const VideoBottomBar = ({ children }: PropsWithChildren) => {
-	return (
-		<div className='flex items-center justify-between gap-2 max-2xl:flex-col max-2xl:items-start'>
-			{children}
-		</div>
-	);
+	return <div className='flex flex-wrap justify-between gap-3'>{children}</div>;
 };

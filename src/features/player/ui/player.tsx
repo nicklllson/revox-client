@@ -21,7 +21,9 @@ import { type TCreateVideoVoice, useVideo } from '@/entities/video';
 import { useAudioSync, useTranslationWs } from '@/features/translations';
 import { craftVideoThumbnail } from '@/shared/model/videos.service';
 import { Button } from '@/shared/ui/button';
+import { VideoMeta } from '@/widgets/video-player';
 import { useSeekObserver } from '../lib/use-seek-observer';
+import { PLAYER_OPTIONS } from '../model/config';
 import { getChunkIdAtTime } from '../model/service';
 
 const HEARTBEAT_INTERVAL = 1000;
@@ -159,11 +161,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 		heartbeatRef.current = setInterval(() => {
 			const time = playerTimeRef.current;
 			const chunkId = getChunkIdAtTime(chunkMetasRef.current, time); // ← ref!
-			console.log('[heartbeat]', {
-				time,
-				chunkId,
-				metasSize: chunkMetasRef.current.size,
-			});
+
 			sendHeartbeat(chunkId, time);
 		}, HEARTBEAT_INTERVAL);
 	}, [sendHeartbeat]);
@@ -315,7 +313,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 
 	return (
 		<div
-			className='relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'
+			className='group relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'
 			id='onboarding-player'>
 			<Suspense
 				fallback={
@@ -328,6 +326,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 					iframeClassName='absolute top-0 left-0 h-full w-full'
 					onReady={handleOnReady}
 					onStateChange={handleStateChange}
+					opts={PLAYER_OPTIONS}
 				/>
 			</Suspense>
 
@@ -374,6 +373,12 @@ export const Player = ({ videoId }: { videoId: string }) => {
 					</div>
 				</>
 			)}
+
+			<VideoMeta
+				language={video?.language}
+				voice={video?.voiceName}
+				progress={progress?.percent ?? 0}
+			/>
 		</div>
 	);
 };

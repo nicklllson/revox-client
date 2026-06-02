@@ -1,11 +1,10 @@
 /** biome-ignore-all lint/correctness/useExhaustiveDependencies: Explicit */
 
 import { Download, X } from 'lucide-react';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { usePlayer } from '@/app/providers/player-provider/player-provider';
 import { useSubtitles } from '@/app/providers/subtitles-provider';
 import type { TSegment } from '@/entities/translation';
-import { privateApi } from '@/shared/lib/api';
 import { cn } from '@/shared/lib/utils';
 import { Button } from '@/shared/ui/button';
 import {
@@ -16,18 +15,14 @@ import {
 } from '@/shared/ui/dropdown-menu';
 import { useSidebar } from '@/shared/ui/sidebar';
 import { useDynamicSubtitles } from '../lib/use-dynamic-subtitles';
+import { useExportSubtitles } from '../lib/use-export-subtitles';
 import { LANG_OPTIONS } from '../model/constants';
 import { formatTime } from '../model/services';
-import type { TSubLang } from '../model/types';
-
-const REGEX = /filename="?([^"]+)"?/;
 
 export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
 	const { isOpen, toggle } = useSubtitles();
 	const { chunkMetas, playerTimeRef } = usePlayer();
 	const { open } = useSidebar();
-
-	const [downloading, setDownloading] = useState(false);
 
 	const allSegments = useMemo(() => {
 		const segs: TSegment[] = [];
@@ -37,38 +32,12 @@ export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
 		return segs.sort((a, b) => a.start - b.start);
 	}, [chunkMetas]);
 
+	const { downloading, handleExport } = useExportSubtitles(allSegments);
+
 	const { activeRef, currentTime, activeIndex } = useDynamicSubtitles(
 		allSegments,
 		playerTimeRef,
 	);
-
-	const handleExport = async (lang: TSubLang) => {
-		if (!sessionId || downloading) return;
-		setDownloading(true);
-		try {
-			const res = await privateApi<void, any>(
-				`/subtitles/${sessionId}?lang=${lang}`,
-			);
-			const blob = await res.blob();
-
-			const disposition = res.headers.get('Content-Disposition') ?? '';
-			const match = disposition.match(REGEX);
-			const filename = match?.[1] ?? `subtitles_${lang}.srt`;
-
-			const url = URL.createObjectURL(blob);
-			const a = document.createElement('a');
-			a.href = url;
-			a.download = filename;
-			document.body.appendChild(a);
-			a.click();
-			a.remove();
-			URL.revokeObjectURL(url);
-		} catch (err) {
-			console.error(err);
-		} finally {
-			setDownloading(false);
-		}
-	};
 
 	if (!isOpen) return null;
 
