@@ -41,13 +41,8 @@ export const TranslationModelSelect = () => {
 			<DropdownMenuContent
 				align='start'
 				className={
-					'scrollbar-custom max-h-[620px] w-[360px] border-white/10 bg-primary-foreground p-1.5'
+					'scrollbar-custom max-h-[620px] w-[360px] rounded-3xl border bg-primary-foreground p-1.5'
 				}>
-				{/* Header */}
-				<div className='flex items-baseline justify-between px-3 pt-2.5 pb-2'>
-					<span className='text-sm'>Translation model</span>
-				</div>
-
 				{/* Model list */}
 				<div className='flex flex-col gap-0.5'>
 					{Object.values(VOICES_REGISTRY).map(model => {
@@ -80,9 +75,7 @@ export const TranslationModelSelect = () => {
 								<div className='min-w-0 flex-1'>
 									{/* Title row */}
 									<div className='mb-1 flex items-center justify-between gap-2'>
-										<span className='font-semibold text-base'>
-											{model.name}
-										</span>
+										<span className='font-semibold text-lg'>{model.name}</span>
 
 										<div className='flex gap-1'>
 											{isDisabled && (
@@ -95,7 +88,7 @@ export const TranslationModelSelect = () => {
 											{model.badge && !locked && (
 												<Badge
 													variant='outline'
-													className='px-1.5 py-0 font-semibold text-[9.5px] text-white/40 uppercase'>
+													className='px-1.5 py-0 font-semibold text-[9.5px] uppercase'>
 													{model.badge}
 												</Badge>
 											)}
@@ -116,7 +109,7 @@ export const TranslationModelSelect = () => {
 									</div>
 
 									{/* Description */}
-									<p className='mb-2 text-[11.5px] text-zinc-400 leading-relaxed'>
+									<p className='mb-2 text-sm text-zinc-400 leading-relaxed'>
 										{locked
 											? `Upgrade to ${requiredTierLabel} to unlock this model`
 											: model.description}
@@ -141,11 +134,9 @@ export const TranslationModelSelect = () => {
 									{/* Features */}
 									<div className='flex flex-wrap gap-1'>
 										{model.features.map(feature => (
-											<span
-												key={feature}
-												className='rounded border border-white/4 bg-primary-foreground px-[7px] py-0.5 text-[10.5px]'>
+											<Badge key={feature} variant='secondary'>
 												{feature}
-											</span>
+											</Badge>
 										))}
 									</div>
 								</div>

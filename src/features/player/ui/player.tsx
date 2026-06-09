@@ -19,6 +19,7 @@ import { useVolume } from '@/app/providers/volume-provider';
 import { DEFAULT_VOICE_SETTINGS } from '@/entities/translation';
 import { type TCreateVideoVoice, useVideo } from '@/entities/video';
 import { useAudioSync, useTranslationWs } from '@/features/translations';
+import { cn } from '@/shared/lib/utils';
 import { craftVideoThumbnail } from '@/shared/model/videos.service';
 import { Button } from '@/shared/ui/button';
 import { VideoMeta } from '@/widgets/video-player';
@@ -31,7 +32,13 @@ const PREFETCH_AHEAD = 3;
 
 const YouTubePlayer = lazy(() => import('react-youtube'));
 
-export const Player = ({ videoId }: { videoId: string }) => {
+export const Player = ({
+	videoId,
+	isVertical,
+}: {
+	videoId: string;
+	isVertical: boolean;
+}) => {
 	const { video } = useVideo(videoId);
 	const { startNextStep } = useNextStep();
 
@@ -106,7 +113,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 				requestedChunksRef.current.delete(i);
 			}
 		}
-		sendHeartbeat(chunkId, time);
+		sendHeartbeat(chunkId);
 
 		bufferingIntervalRef.current = setInterval(() => {
 			const t = playerTimeRef.current;
@@ -118,7 +125,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 				}
 			}
 
-			sendHeartbeat(cid, t);
+			sendHeartbeat(cid);
 		}, 1000);
 
 		getPlayer()?.pauseVideo();
@@ -162,7 +169,7 @@ export const Player = ({ videoId }: { videoId: string }) => {
 			const time = playerTimeRef.current;
 			const chunkId = getChunkIdAtTime(chunkMetasRef.current, time); // ← ref!
 
-			sendHeartbeat(chunkId, time);
+			sendHeartbeat(chunkId);
 		}, HEARTBEAT_INTERVAL);
 	}, [sendHeartbeat]);
 
@@ -313,7 +320,10 @@ export const Player = ({ videoId }: { videoId: string }) => {
 
 	return (
 		<div
-			className='group relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5'
+			className={cn(
+				'group relative flex aspect-video min-h-[440px] w-full gap-5 overflow-hidden rounded-2xl bg-white/5',
+				isVertical ? 'mx-auto aspect-9/16 max-w-[420px]' : 'aspect-video',
+			)}
 			id='onboarding-player'>
 			<Suspense
 				fallback={

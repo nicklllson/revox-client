@@ -156,6 +156,15 @@ export const useTranslationWs = ({
 					});
 				}
 
+				if (msg.type === 'total_chunks' && metadataRef.current) {
+					const patched = {
+						...metadataRef.current,
+						total_chunks: msg.total_chunks,
+					};
+					metadataRef.current = patched;
+					setMetadata(patched);
+				}
+
 				if (msg.type === 'error') {
 					setError({ message: msg.message, code: msg.code });
 				}
@@ -188,39 +197,58 @@ export const useTranslationWs = ({
 	}, [enabled, youtubeUrl, token, targetLang, videoId, voice, subscription]);
 
 	const sendHeartbeat = useCallback(
-		(chunkId: number, currentTime: number) => {
+		(chunkId: number) => {
 			const ws = wsRef.current;
 			if (!ws || ws.readyState !== WebSocket.OPEN) return;
 
 			fillBuffer(chunkId);
 
+			const cm = chunkMetasRef.current.get(chunkId);
+			const time =
+				cm && cm.segments.length > 0
+					? cm.segments[0].start
+					: chunkId * CHUNK_DURATION;
+
 			ws.send(
 				JSON.stringify({
 					event: 'playing_chunk',
-					data: { chunk_id: chunkId, current_time: currentTime },
+					data: { chunk_id: chunkId, current_time: time },
 				}),
 			);
 		},
 		[fillBuffer],
 	);
 
+	const findChunkIdForTime = useCallback((time: number): number | null => {
+		let lastBefore: number | null = null;
+		for (const [chunkId, meta] of chunkMetasRef.current.entries()) {
+			const segs = meta.segments;
+			if (segs.length === 0) continue;
+
+			const start = segs[0].start;
+			const end = segs[segs.length - 1].end;
+
+			if (time >= start && time < end) return chunkId;
+			if (time >= end && (lastBefore === null || chunkId > lastBefore)) {
+				lastBefore = chunkId;
+			}
+		}
+		return lastBefore;
+	}, []);
+
 	const sendSeek = useCallback(
 		(time: number) => {
 			const ws = wsRef.current;
 			if (!ws || ws.readyState !== WebSocket.OPEN) return;
 
-			const chunkId = Math.floor(time / CHUNK_DURATION);
+			ws.send(JSON.stringify({ event: 'seek', data: { time } }));
 
-			fillBuffer(chunkId);
-
-			ws.send(
-				JSON.stringify({
-					event: 'seek',
-					data: { time },
-				}),
-			);
+			const chunkId = findChunkIdForTime(time);
+			if (chunkId !== null) {
+				fillBuffer(chunkId);
+			}
 		},
-		[fillBuffer],
+		[fillBuffer, findChunkIdForTime],
 	);
 
 	const isChunkReady = useCallback(

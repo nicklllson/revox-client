@@ -21,12 +21,15 @@ export const VideoMeta = ({
 	}, [language]);
 
 	const currentVoice = VOICE_OPTIONS[lang?.value].find(v => v.id === voice);
+	const isVideoDone = progress === 100;
 
 	return (
 		<div className='-translate-x-1/2 absolute top-4 left-1/2 z-10 opacity-0 transition-all duration-300 group-hover:opacity-100'>
 			<Badge variant='secondary'>{lang.label}</Badge>
 			<Badge variant='secondary'>{currentVoice?.name}</Badge>
-			<Badge>{progress?.toFixed()}%</Badge>
+			<Badge variant={isVideoDone ? 'default' : 'secondary'}>
+				{isVideoDone ? 'Video fully translated!' : `${progress?.toFixed()}%`}
+			</Badge>
 		</div>
 	);
 };

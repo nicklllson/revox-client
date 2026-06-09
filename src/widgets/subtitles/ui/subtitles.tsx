@@ -19,7 +19,7 @@ import { useExportSubtitles } from '../lib/use-export-subtitles';
 import { LANG_OPTIONS } from '../model/constants';
 import { formatTime } from '../model/services';
 
-export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
+export const Subtitles = ({ className }: { className?: string }) => {
 	const { isOpen, toggle } = useSubtitles();
 	const { chunkMetas, playerTimeRef } = usePlayer();
 	const { open } = useSidebar();
@@ -44,10 +44,9 @@ export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
 	return (
 		<div
 			className={cn(
-				'relative z-10 ml-2 flex w-full max-w-[14vw] flex-col overflow-hidden rounded-2xl border border-input bg-background max-2xl:max-w-[22vw]',
-				{
-					'max-w-[25vw]': !open,
-				},
+				'scrollbar-custom relative z-10 ml-2 flex w-full max-w-[14vw] flex-col overflow-hidden rounded-2xl border border-input bg-background max-2xl:max-w-[22vw]',
+				{ 'max-w-[25vw]': !open },
+				className,
 			)}>
 			<div className='flex shrink-0 items-center justify-between border-border border-b px-4 py-3'>
 				<span className='font-medium text-muted-foreground text-sm'>
@@ -72,6 +71,7 @@ export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
 						{allSegments.map((seg, i) => {
 							const isActive = i === activeIndex;
 							const isPast = !isActive && seg.end <= currentTime;
+							if (!seg.translated_text) return null;
 							return (
 								<div
 									key={seg.id}
@@ -95,14 +95,13 @@ export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
 						})}
 					</div>
 
-					{/* футер с экспортом */}
-					<div className='shrink-0 border-border border-t p-3'>
+					<div className='mt-auto flex shrink-0 flex-col gap-1.5 border-border border-t p-3'>
 						<DropdownMenu>
 							<DropdownMenuTrigger asChild>
 								<Button
 									variant='outline'
 									className='w-full'
-									disabled={!sessionId || downloading}>
+									disabled={downloading}>
 									<Download className='\ size-4' />
 									{downloading ? 'Downloading...' : 'Download Subtitles SRT'}
 								</Button>
@@ -111,7 +110,28 @@ export const Subtitles = ({ sessionId }: { sessionId: string | null }) => {
 								{LANG_OPTIONS.map(opt => (
 									<DropdownMenuItem
 										key={opt.value}
-										onSelect={() => handleExport(opt.value)}>
+										onSelect={() => handleExport(opt.value, 'srt')}>
+										{opt.label}
+									</DropdownMenuItem>
+								))}
+							</DropdownMenuContent>
+						</DropdownMenu>
+
+						<DropdownMenu>
+							<DropdownMenuTrigger asChild>
+								<Button
+									variant='outline'
+									className='w-full'
+									disabled={downloading}>
+									<Download className='\ size-4' />
+									{downloading ? 'Downloading...' : 'Download Subtitles TXT'}
+								</Button>
+							</DropdownMenuTrigger>
+							<DropdownMenuContent align='end' side='top' className='w-44'>
+								{LANG_OPTIONS.map(opt => (
+									<DropdownMenuItem
+										key={opt.value}
+										onSelect={() => handleExport(opt.value, 'txt')}>
 										{opt.label}
 									</DropdownMenuItem>
 								))}

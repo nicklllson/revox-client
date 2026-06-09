@@ -29,3 +29,13 @@ export const toSrt = (segments: TSegment[], lang: TSubLang): string => {
 		})
 		.join('\n\n');
 };
+
+export const toTxt = (segments: TSegment[], lang: TSubLang): string => {
+	return segments
+		.map(seg => {
+			if (lang === 'original') return seg.original_text;
+			if (lang === 'translated') return seg.translated_text;
+			return `${seg.translated_text}\n${seg.original_text}`;
+		})
+		.join('\n\n');
+};

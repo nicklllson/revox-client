@@ -88,14 +88,7 @@ export const VOICE_OPTIONS: Record<string, VoiceOption[]> = {
 		},
 		{
 			id: 'anna',
-			name: 'Anna',
-			gender: 'female',
-			lang: 'ru',
-			provider: 'edge-tts',
-		},
-		{
-			id: 'daria',
-			name: 'Daria',
+			name: 'Svetlana',
 			gender: 'female',
 			lang: 'ru',
 			provider: 'edge-tts',
@@ -156,7 +149,7 @@ export const VOICE_OPTIONS: Record<string, VoiceOption[]> = {
 			lang: 'de',
 			provider: 'edge-tts',
 		},
-		...piper('de', [			
+		...piper('de', [
 			{ id: 'thorsten', name: 'Thorsten', gender: 'male' },
 			{ id: 'eva_k', name: 'Eva', gender: 'female' },
 		]),

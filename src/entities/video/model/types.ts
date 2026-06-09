@@ -13,6 +13,7 @@ export type TVideo = {
 	voiceGender: 'male' | 'female';
 	voiceName: string;
 	voiceStyle: 'neutral' | 'narrator';
+	isVertical?: boolean;
 };
 
 export type TCreateVideoVoice = {

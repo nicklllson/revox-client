@@ -15,4 +15,5 @@ export type TTranslationMessage =
 			segments: TSegment[];
 			is_last: boolean;
 	  }
-	| { type: 'error'; message: string; code: string };
+	| { type: 'error'; message: string; code: string }
+	| { type: 'total_chunks'; total_chunks: number; segments_count: number };

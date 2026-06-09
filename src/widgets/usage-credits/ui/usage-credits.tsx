@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
+import { Link } from 'react-router';
 import { useSubscription } from '@/entities/subscription';
 import { cn } from '@/shared/lib/utils';
+import { ROUTES } from '@/shared/model/routes';
 import { SidebarMenu, SidebarMenuItem } from '@/shared/ui/sidebar';
 import { TIER_ACCENTS } from '../model/constants';
 
@@ -62,11 +64,12 @@ export const UsageCredits = () => {
 									{config?.name}
 								</span>
 							</div>
-							<span
+							<Link
+								to={ROUTES.PRIVATE.SUBSCRIPTION}
 								className='cursor-pointer whitespace-nowrap text-[10.5px]'
 								style={{ color: accent.hue }}>
 								Manage ↗
-							</span>
+							</Link>
 						</div>
 
 						<div className='h-[3px] overflow-hidden rounded-sm bg-muted-foreground'>

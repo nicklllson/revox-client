@@ -2,6 +2,7 @@ import { useLayoutEffect } from 'react';
 import { useParams } from 'react-router';
 import { useUpdateVideo, useVideo } from '@/entities/video';
 import { Player } from '@/features/player';
+import { cn } from '@/shared/lib/utils';
 import { Subtitles } from '@/widgets/subtitles';
 import {
 	VideoBottomBar,
@@ -31,16 +32,48 @@ export const VideoLayout = () => {
 		}
 	}, [state]);
 
+	const isVertical = video?.isVertical ?? true;
+
+	const bottomBar = (
+		<VideoBottomBar
+			className={cn(
+				isVertical ? 'flex flex-col flex-nowrap items-start justify-start' : '',
+			)}>
+			<VideoTitle title={video?.title} />
+			<VideoSettings isFavorite={video?.isFavorite} videoId={videoId} />
+		</VideoBottomBar>
+	);
+
 	return (
-		<div className='flex px-5 pt-22.5 max-2xl:pt-18'>
-			<div className='relative z-10 mx-auto flex w-full max-w-[70vw] flex-1 flex-col gap-2 max-2xl:max-w-[55vw]'>
-				<Player videoId={videoId!} key={video?.externalJobId} />
-				<VideoBottomBar>
-					<VideoTitle title={video?.title} />
-					<VideoSettings isFavorite={video?.isFavorite} videoId={videoId} />
-				</VideoBottomBar>
+		<div
+			className={cn(
+				'flex px-5 pt-22.5 max-2xl:pt-18',
+				isVertical && 'flex-col',
+			)}>
+			<div
+				className={cn(
+					'relative z-10 mx-auto flex w-full flex-1 gap-2',
+					isVertical
+						? 'max-w-[58vw] flex-row'
+						: 'max-w-[70vw] flex-col max-2xl:max-w-[55vw]',
+				)}>
+				<Player
+					videoId={videoId!}
+					isVertical={isVertical}
+					key={video?.externalJobId}
+				/>
+
+				{isVertical ? (
+					<div className='flex min-h-0 flex-1 flex-col gap-2'>
+						{bottomBar}
+						<Subtitles className='min-h-0 max-w-full flex-1' />
+					</div>
+				) : (
+					bottomBar
+				)}
 			</div>
-			<Subtitles sessionId={video?.externalJobId ?? null} />
+
+			{!isVertical && <Subtitles />}
 		</div>
 	);
 };
