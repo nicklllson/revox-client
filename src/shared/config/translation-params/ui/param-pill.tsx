@@ -40,8 +40,8 @@ export const ParamPill = ({
 				id={id}
 				aria-invalid={isInvalid}
 				className='group flex items-center gap-2 rounded-md border px-2.5 py-1.5 text-xs transition-colors hover:bg-white/5'>
-				<Icon className='size-3.5 text-white/40' />
-				<span className='text-white/40'>{label}</span>
+				<Icon className='size-3.5 dark:text-white/40' />
+				<span className='text-black dark:text-white/40'>{label}</span>
 				<span className='font-medium text-white'>
 					{current?.label ?? value}
 				</span>
