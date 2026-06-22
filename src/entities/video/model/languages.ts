@@ -1,7 +1,7 @@
 export type TLanguage = {
 	label: string;
 	value: string;
-	providers: Array<'edge-tts' | 'coqui' | 'piper'>;
+	providers: Array<'edge-tts' | 'coqui' | 'piper' | 'eleven-labs'>;
 };
 
 export const AVAILABLE_LANGUAGES: readonly TLanguage[] = [

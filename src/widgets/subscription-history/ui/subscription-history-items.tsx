@@ -1,6 +1,6 @@
 import type { TSubscriptionHistoryEntry } from '@/entities/subscription';
 import { cn } from '@/shared/lib/utils';
-import { formatHistoryAmount, formatHistoryDate } from '../lib/format';
+import { formatDate, formatHistoryAmount } from '../lib/format';
 import { EVENT_CONFIG } from '../model/event-config';
 
 export const SubscriptionHistoryItem = ({
@@ -23,7 +23,7 @@ export const SubscriptionHistoryItem = ({
 			<div className='flex flex-col'>
 				<span className='font-medium text-[13px]'>{label}</span>
 				<span className='text-[11px] text-white/45'>
-					{formatHistoryDate(entry.createdAt)} · {entry.tier}
+					{formatDate(entry.createdAt)} · {entry.tier}
 				</span>
 			</div>
 
